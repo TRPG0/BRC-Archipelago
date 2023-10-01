@@ -9,8 +9,9 @@ using Archipelago.Structures;
 using Newtonsoft.Json.Linq;
 using Archipelago.Components;
 using UnityEngine;
-using HarmonyLib;
-using Reptile.Phone;
+using Reptile;
+using System.Linq;
+using Random = UnityEngine.Random;
 
 namespace Archipelago
 {
@@ -21,7 +22,6 @@ namespace Archipelago
         public bool Authenticated;
         public ArchipelagoSession Session;
 
-        // 16 lines
         public static List<string> messages = new List<string>()
         {
             "> Test message one",
@@ -36,7 +36,7 @@ namespace Archipelago
         {
             if (Authenticated) return true;
             if (slotId == -1) return false;
-            Core.Logger.LogInfo($"{slotId} | {name} | {address} | {password}");
+            Core.Logger.LogInfo($"{slotId} | {name} | {address} | {(password == "" ? "string.Empty" : password)}");
 
             string url = address;
             int port = 38281;
@@ -68,6 +68,39 @@ namespace Archipelago
             if (loginResult is LoginSuccessful success)
             {
                 Authenticated = true;
+
+                Core.Instance.Data.skipIntro = bool.Parse(success.SlotData["skip_intro"].ToString());
+                Core.Logger.LogInfo($"Skip intro is {Core.Instance.Data.skipIntro}");
+
+                Core.Instance.Data.skipDreams = bool.Parse(success.SlotData["skip_dreams"].ToString());
+                Core.Logger.LogInfo($"Skip dreams is {Core.Instance.Data.skipDreams}");
+
+                Core.Instance.Data.startingMovestyle = (MoveStyle)Enum.Parse(typeof(MoveStyle), success.SlotData["starting_movestyle"].ToString());
+                Core.Logger.LogInfo($"Starting movestyle is {Core.Instance.Data.startingMovestyle}");
+                if (Core.Instance.Data.startingMovestyle == MoveStyle.SKATEBOARD)
+                {
+                    Core.Instance.Data.skateboardUnlocked = true;
+                    Core.Instance.Data.inlineUnlocked = false;
+                    Core.Instance.Data.bmxUnlocked = false;
+                }
+                else if (Core.Instance.Data.startingMovestyle == MoveStyle.INLINE)
+                {
+                    Core.Instance.Data.skateboardUnlocked = false;
+                    Core.Instance.Data.inlineUnlocked = true;
+                    Core.Instance.Data.bmxUnlocked = false;
+                }
+                else if (Core.Instance.Data.startingMovestyle == MoveStyle.BMX)
+                {
+                    Core.Instance.Data.skateboardUnlocked = false;
+                    Core.Instance.Data.inlineUnlocked = false;
+                    Core.Instance.Data.bmxUnlocked = true;
+                }
+
+                Core.Instance.Data.hardBattles = bool.Parse(success.SlotData["harder_crew_battles"].ToString());
+                Core.Logger.LogInfo($"Harder crew battles is {Core.Instance.Data.hardBattles}");
+
+                Core.Instance.Data.damageMultiplier = int.Parse(success.SlotData["damage_multiplier"].ToString());
+                Core.Logger.LogInfo($"Damage multiplier is {Core.Instance.Data.damageMultiplier}");
 
                 foreach (RawLocationData data in ((JArray)success.SlotData["locations"]).ToObject<RawLocationData[]>())
                 {
@@ -216,13 +249,7 @@ namespace Archipelago
                 }
 
                 messages.Add(text);
-                if (Core.Instance.PhoneManager.Phone != null)
-                {
-                    if ((bool)Traverse.Create(Core.Instance.PhoneManager.Phone).Method("IsCurrentAppAndOpen", new object[] { typeof(AppArchipelago) }).GetValue())
-                    {
-                        Core.Instance.PhoneManager.app.UpdateText();
-                    }
-                }
+                if (Core.Instance.PhoneManager.app != null) Core.Instance.PhoneManager.app.UpdateText();
             }
         }
 
@@ -231,7 +258,7 @@ namespace Archipelago
             if (helper.Index > Core.Instance.Data.index)
             {
                 string player = (Session.Players.GetPlayerAlias(helper.PeekItem().Player) == "") ? "?" : Session.Players.GetPlayerAlias(helper.PeekItem().Player);
-                Core.Logger.LogInfo($"Item: {helper.PeekItemName()} | Type: {Core.Instance.LocationManager.GetItemType(helper.PeekItemName())} | Player: {player}");
+                Core.Logger.LogInfo($"Received item: {helper.PeekItemName()} | Type: {Core.Instance.LocationManager.GetItemType(helper.PeekItemName())} | Player: {player}");
 
                 BRCItem item = new BRCItem()
                 {
@@ -240,12 +267,32 @@ namespace Archipelago
                     player_name = Core.Instance.Data.slot_name
                 };
 
-                if (Reptile.Core.Instance.BaseModule.IsPlayingInStage) Core.Instance.LocationManager.GetItem(item);
-                else Core.Instance.LocationManager.itemQueue.Add(item);
+
+                Core.Instance.LocationManager.itemQueue.Add(item);
 
                 Core.Instance.Data.index++;
             }
             helper.DequeueItem();
+        }
+
+        public void GetRandomHint()
+        {
+            if (!Authenticated) return;
+
+            var missing = Session.Locations.AllMissingLocations;
+            var alreadyHinted = Session.DataStorage.GetHints()
+                .Where(h => h.FindingPlayer == Session.ConnectionInfo.Slot)
+                .Select(h => h.LocationId);
+            var available = missing.Except(alreadyHinted).ToArray();
+
+            if (available.Any())
+            {
+                var locationId = available[Random.Range(0, available.Length)];
+
+                Session.Locations.ScoutLocationsAsync(true, locationId);
+                Core.Instance.LocationManager.notifQueue.Add(new Notification("AppArchipelago", "Hint unlocked!", null));
+            }
+            else Core.Logger.LogWarning("No locations available to hint.");
         }
 
         /*

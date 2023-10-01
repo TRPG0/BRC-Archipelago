@@ -10,6 +10,7 @@ namespace Archipelago
 {
     [BepInPlugin(PluginGUID, PluginName, PluginVersion)]
     [BepInDependency("com.yuril.brc_styleswapmod", BepInDependency.DependencyFlags.SoftDependency)]
+    [BepInDependency("dance.tari.bombrushcyberfunk.customappapi")]
     public class Core : BaseUnityPlugin
     {
         public const string PluginGUID = "trpg.brc.archipelago";
@@ -57,15 +58,18 @@ namespace Archipelago
             Harmony.PatchAll(typeof(DynamicPickup_PickupPickup_Patch));
             Harmony.PatchAll(typeof(GraffitiSpot_GiveRep_Patch));
             Harmony.PatchAll(typeof(GraffitiSpot_SpawnRep_Patch));
+            Harmony.PatchAll(typeof(Player_ChangeHP_Patch));
             Harmony.PatchAll(typeof(SaveManager_SaveCurrentSaveSlot_Patch));
             Harmony.PatchAll(typeof(SaveSlotData_UnlockCharacter_Patch));
             Harmony.PatchAll(typeof(SaveSlotMenu_OnPressedPopupDeleteButton_Patch));
+            Harmony.PatchAll(typeof(SaveSlotMenu_ShowDeleteSaveSlotPopup_Patch));
+            Harmony.PatchAll(typeof(VendingMachine_RewardIsValid_Patch));
 
             foreach (var plugin in Chainloader.PluginInfos)
             {
                 if (plugin.Value.Metadata.GUID == "com.yuril.brc_styleswapmod")
                 {
-                    Logger.LogInfo($"QuickStyleSwap is installed. Patching \"SwapStyle\"");
+                    Logger.LogInfo($"QuickStyleSwap is loaded. Applying SwapStyle patch.");
                     Harmony.PatchAll(typeof(brc_styleswapmodPlugin_SwapStyle_Patch));
                     break;
                 }

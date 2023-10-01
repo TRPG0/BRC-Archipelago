@@ -8,7 +8,7 @@ namespace Archipelago.Patches
     {
         public static bool Prefix(DynamicPickup __instance)
         {
-            if (Core.Instance.SaveManager.DataExists())
+            if (Core.Instance.SaveManager.DataExists() && __instance.unlock != null)
             {
                 Core.Instance.LocationManager.CheckLocation(__instance.unlock.name);
                 Traverse.Create(__instance).Field<bool>("pickedUp").Value = true;

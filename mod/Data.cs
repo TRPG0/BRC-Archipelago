@@ -11,6 +11,10 @@ namespace Archipelago
         public string password;
         public HashSet<string> @checked = new HashSet<string>();
 
+        public bool skipIntro = true;
+        public bool skipDreams = false;
+        public bool hardBattles = false;
+
         public HashSet<string> to_lock = new HashSet<string>()
         {
             "OVERWHELMME",
@@ -26,6 +30,7 @@ namespace Archipelago
         public int fakeRep = 0;
         public int sprayCount = 0;
 
+        public MoveStyle startingMovestyle = MoveStyle.SKATEBOARD;
         public bool skateboardUnlocked = true;
         public bool inlineUnlocked = false;
         public bool bmxUnlocked = false;
@@ -33,6 +38,7 @@ namespace Archipelago
         public Characters firstCharacter = Characters.NONE;
         public bool dummyUnlocked = false;
 
+        public int damageMultiplier = 1;
         public bool death_link = false;
     }
 }

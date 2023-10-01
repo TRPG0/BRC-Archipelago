@@ -37,6 +37,7 @@ namespace Archipelago.Components
             if (slot < 0 || slot > 2)
             {
                 Core.Logger.LogError("APSlotButton has no corresponding slot.");
+                DestroyImmediate(this);
                 return;
             }
 

@@ -4,11 +4,14 @@ using System.Collections.Generic;
 using UnityEngine.Events;
 using Reptile.Phone;
 using UnityEngine;
+using Archipelago.Components;
 
 namespace Archipelago
 {
     public class WorldManager
     {
+        public PlayerChecker checker;
+
         public GameObject barricadeChunks;
         public GameObject progressObjectBel;
         public GameObject npcBel;
@@ -230,21 +233,14 @@ namespace Archipelago
 
         public void SetChapter4Character(StoryManager sm)
         {
-            if (Reptile.Core.Instance.BaseModule.CurrentStage == Stage.hideout) return;
+            if (Reptile.Core.Instance.BaseModule.CurrentStage != Stage.hideout) return;
             foreach (ProgressObject obj in Traverse.Create(sm).Field<List<ProgressObject>>("progressObjects").Value)
             {
                 if (obj.name == "ProgressObject_Exposition_HeadInsideHead")
                 {
-                    foreach (PersistentCall call in obj.OnExitSequence.m_PersistentCalls.m_Calls)
-                    {
-                        if (call.methodName == "SetPlayerAsCharacter")
-                        {
-                            Characters chara = Core.Instance.Data.firstCharacter;
-                            if (chara == Characters.NONE) chara = Characters.metalHead;
-                            call.arguments.stringArgument = chara.ToString();
-                            break;
-                        }
-                    }
+                    Characters chara = Core.Instance.Data.firstCharacter;
+                    if (chara == Characters.NONE) chara = Characters.metalHead;
+                    obj.OnExitSequence.AddListener(delegate { obj.SetPlayerAsCharacter(chara.ToString()); });
                     break;
                 }
             }
@@ -258,9 +254,15 @@ namespace Archipelago
                 if (obj.name == "ProgressObject_Bel")
                 {
                     progressObjectBel = obj.gameObject;
+                    Core.Logger.LogInfo("Found ProgressObject_Bel");
                     npcBel = obj.gameObject.transform.parent.Find("NPC_Bel").gameObject;
+                    Core.Logger.LogInfo("Found NPC_Bel");
                 }
-                if (obj.name == "BarricadeChunks1") barricadeChunks = obj.gameObject;
+                else if (obj.name == "BarricadeChunks1")
+                {
+                    barricadeChunks = obj.gameObject;
+                    Core.Logger.LogInfo("Found BarricadeChunks1");
+                }
             }
 
             if (!Core.Instance.Data.hasM) {
@@ -302,6 +304,19 @@ namespace Archipelago
             }
         }
 
+        public void DontUnlockCharacterSelect(StoryManager sm)
+        {
+            if (Reptile.Core.Instance.BaseModule.CurrentStage != Stage.square) return;
+            foreach (ProgressObject obj in Traverse.Create(sm).Field<List<ProgressObject>>("progressObjects").Value)
+            {
+                if (obj.name == "ProgressObject_Phonecall_TeachCypher")
+                {
+                    Traverse.Create(obj).Field<UnityEvent>("OnTrigger").Value.m_PersistentCalls.Clear();
+                    break;
+                }
+            }
+        }
+
         public void AddCallToFinalBoss(StoryManager sm)
         {
             if (Reptile.Core.Instance.BaseModule.CurrentStage != Stage.osaka) return;
@@ -310,6 +325,51 @@ namespace Archipelago
                 if (obj.name == "SnakeBossEncounter")
                 {
                     ((CombatEncounter)obj).OnCompleted.AddListener(delegate { Core.Instance.Multiworld.SendCompletion(); });
+                    break;
+                }
+            }
+        }
+
+        public void SkipDreams(StoryManager sm)
+        {
+            foreach (GameplayEvent obj in Traverse.Create(sm).Field<List<GameplayEvent>>("gameplayEvents").Value)
+            {
+                if (obj is DreamEncounter de)
+                {
+                    de.OnIntro.AddListener(delegate { de.CheatComplete(); });
+                    break;
+                }
+            }
+        }
+
+        public void SkipDream5(StoryManager sm)
+        {
+            if (Reptile.Core.Instance.BaseModule.CurrentStage != Stage.osaka) return;
+            foreach (GameplayEvent obj in Traverse.Create(sm).Field<List<GameplayEvent>>("gameplayEvents").Value)
+            {
+                if (obj is DreamEncounter de)
+                {
+                    Traverse traverse = Traverse.Create(de);
+                    traverse.Field<bool>("startMusicAfterFirstCheckpoint").Value = false;
+                    de.OnIntro.AddListener(delegate 
+                    {
+                        traverse.Method("SetPlayerAsCharacter", new object[] { Characters.legendMetalHead }).GetValue();
+                        WorldHandler.instance.PlaceCurrentPlayerAt(de.checkpoints[5].spawnLocation); 
+                    });
+                    break;
+                }
+            }
+        }
+
+        public void SetCrewBattleScore(StoryManager sm, int score)
+        {
+            foreach (GameplayEvent obj in Traverse.Create(sm).Field<List<GameplayEvent>>("gameplayEvents").Value)
+            {
+                if (obj is ScoreEncounter se && se.name.Contains("CrewBattle"))
+                {
+                    se.targetScore = score;
+                    Core.Logger.LogInfo($"Set {se.name} target score to {score}");
+                    break;
                 }
             }
         }
@@ -317,7 +377,15 @@ namespace Archipelago
         public void DoStageSetup()
         {
             Stage stage = Reptile.Core.Instance.BaseModule.CurrentStage;
+            Core.Logger.LogInfo($"Current stage is {stage}");
+            StoryManager sm = Traverse.Create(WorldHandler.instance).Field<StoryManager>("storyManager").Value;
             Player player = WorldHandler.instance.GetCurrentPlayer();
+            
+            if (stage != Stage.Prelude)
+            {
+                checker = player.gameObject.AddComponent<PlayerChecker>();
+                checker.Init();
+            }
 
             Traverse.Create(player).Field<float>("rep").Value = 0;
             Core.Instance.SaveManager.CurrentSaveSlot.GetCurrentStageProgress().reputation = 0;
@@ -332,15 +400,35 @@ namespace Archipelago
                 Stage.osaka
             };
 
-            if (changeRepStages.Contains(stage)) SetNPCRep(Traverse.Create(WorldHandler.instance).Field<StoryManager>("storyManager").Value);
-
-            if (stage == Stage.hideout) SetChapter4Character(Traverse.Create(WorldHandler.instance).Field<StoryManager>("storyManager").Value);
-            if (stage == Stage.downhill)
+            Dictionary<Stage, int> crewScores = new Dictionary<Stage, int>()
             {
-                FindChapter1Objects(Traverse.Create(WorldHandler.instance).Field<StoryManager>("storyManager").Value);
-                AddCallToPrinceCutscene(Traverse.Create(WorldHandler.instance).Field<StoryManager>("storyManager").Value);
+                [Stage.downhill] = 1500000,
+                [Stage.tower] = 2500000,
+                [Stage.Mall] = 2500000,
+                [Stage.pyramid] = 3000000,
+                [Stage.osaka] = 4000000
+            };
+
+            if (changeRepStages.Contains(stage))
+            {
+                SetNPCRep(sm);
+                if (Core.Instance.Data.skipDreams)
+                {
+                    if (stage == Stage.osaka) SkipDream5(sm);
+                    else SkipDreams(sm);
+                }
             }
-            if (stage == Stage.osaka) AddCallToFinalBoss(Traverse.Create(WorldHandler.instance).Field<StoryManager>("storyManager").Value);
+
+            if (Core.Instance.Data.hardBattles && crewScores.ContainsKey(stage)) SetCrewBattleScore(sm, crewScores[stage]);
+
+            if (stage == Stage.hideout) SetChapter4Character(sm);
+            else if (stage == Stage.downhill)
+            {
+                FindChapter1Objects(sm);
+                AddCallToPrinceCutscene(sm);
+            }
+            else if (stage == Stage.square) DontUnlockCharacterSelect(sm);
+            else if (stage == Stage.osaka) AddCallToFinalBoss(sm);
 
             Traverse.Create(player).Field<float>("rep").Value = Core.Instance.Data.fakeRep;
             Core.Instance.SaveManager.CurrentSaveSlot.GetCurrentStageProgress().reputation = Core.Instance.Data.fakeRep;

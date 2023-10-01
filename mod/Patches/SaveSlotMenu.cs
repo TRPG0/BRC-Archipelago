@@ -13,4 +13,14 @@ namespace Archipelago.Patches
             Core.Instance.UIManager.slotButtons[slot].ChangeState(Components.APSlotButton.SlotState.NoData);
         }
     }
+
+    [HarmonyPatch(typeof(SaveSlotMenu), "ShowDeleteSaveSlotPopup")]
+    public class SaveSlotMenu_ShowDeleteSaveSlotPopup_Patch
+    {
+        public static void Prefix()
+        {
+            Core.Instance.UIManager.HideMenu();
+            Core.Instance.UIManager.SetResult(string.Empty);
+        }
+    }
 }

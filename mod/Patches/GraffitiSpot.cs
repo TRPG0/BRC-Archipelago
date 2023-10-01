@@ -8,10 +8,14 @@ namespace Archipelago.Patches
     {
         public static bool Prefix(GraffitiSpot __instance)
         {
-            if (__instance.bottomCrew != __instance.topCrew && (__instance.topCrew == Crew.PLAYERS || __instance.topCrew == Crew.ROGUE) && Core.Instance.SaveManager.DataExists())
+            if (Core.Instance.SaveManager.DataExists())
             {
-                Core.Instance.LocationManager.CountAndCheckSpray();
-                return false;
+                if (__instance.bottomCrew != __instance.topCrew && (__instance.topCrew == Crew.PLAYERS || __instance.topCrew == Crew.ROGUE) && Reptile.Core.Instance.BaseModule.CurrentStage != Stage.Prelude)
+                {
+                    Core.Instance.LocationManager.CountAndCheckSpray();
+                    return false;
+                }
+                else return false;
             }
             else return true;
         }

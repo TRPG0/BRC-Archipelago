@@ -21,14 +21,19 @@ namespace Archipelago.Patches
             Core.Instance.UIManager.HideMenu();
             if (Core.Instance.Multiworld.Authenticated)
             {
-                __instance.LoadStage(Stage.hideout);
+                if (Core.Instance.Data.skipIntro)
+                {
+                    __instance.LoadStage(Stage.hideout);
+                    Core.Instance.SaveManager.CurrentSaveSlot.CurrentStoryObjective = Story.ObjectiveID.JoinTheCrew;
+                }
+                else __instance.LoadStage(Stage.Prelude);
                 Core.Instance.WorldManager.UnlockMaps(Core.Instance.SaveManager.CurrentSaveSlot);
                 Core.Instance.SaveManager.CurrentSaveSlot.LockCharacter(Characters.blockGuy);
                 Core.Instance.SaveManager.CurrentSaveSlot.LockCharacter(Characters.spaceGirl);
                 Core.Instance.SaveManager.CurrentSaveSlot.LockCharacter(Characters.girl1);
+                Core.Instance.SaveManager.CurrentSaveSlot.GetCharacterProgress(Characters.metalHead).moveStyle = Core.Instance.Data.startingMovestyle;
                 Core.Instance.SaveManager.CurrentSaveSlot.characterSelectLocked = true;
                 Core.Instance.SaveManager.CurrentSaveSlot.cameraAppLocked = true;
-                Core.Instance.SaveManager.CurrentSaveSlot.CurrentStoryObjective = Story.ObjectiveID.JoinTheCrew;
                 return false;
             }
             else return true;
@@ -41,8 +46,10 @@ namespace Archipelago.Patches
         public static void Postfix()
         {
             if (Core.Instance.Multiworld.Authenticated) Core.Instance.Multiworld.Disconnect();
-            Core.Instance.LocationManager.locations = null;
+            Core.Instance.LocationManager.locations.Clear();
             Core.Instance.UIManager.connectingSlot = -1;
+            Core.Instance.UIManager.SetResult(string.Empty);
+            Core.Instance.UIManager.HideMenu();
             Core.Instance.SaveManager.currentSlot = -1;
         }
     }
@@ -54,12 +61,12 @@ namespace Archipelago.Patches
         {
             if (Core.Instance.SaveManager.DataExists())
             {
-                Core.Instance.WorldManager.DoStageSetup();
-                Core.Instance.WorldManager.SetGarages();
-                Core.Instance.WorldManager.LockDefaultGraffiti(Core.Instance.Data.to_lock);
+                if (__instance.CurrentStage == Stage.hideout) Core.Instance.WorldManager.SetGarages();
+                if (__instance.CurrentStage != Stage.Prelude) Core.Instance.WorldManager.LockDefaultGraffiti(Core.Instance.Data.to_lock);
                 Core.Instance.PhoneManager.DoAppSetup();
-                Core.Instance.LocationManager.GetQueuedItems();
-                Core.Instance.LocationManager.PushNotifications();
+                Core.Instance.WorldManager.DoStageSetup();
+                //Core.Instance.LocationManager.GetQueuedItems();
+                //Core.Instance.LocationManager.PushQueuedNotifications();
             }
         }
     }

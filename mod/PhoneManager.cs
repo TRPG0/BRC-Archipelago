@@ -87,10 +87,12 @@ namespace Archipelago
             mainNotification.GetComponentInChildren<TMProFontLocalizer>().UpdateTextMeshLanguageFont(SystemLanguage.English);
             Component.Destroy(mainNotification.GetComponentInChildren<TMProFontLocalizer>());
             mainNotification.GetComponentInChildren<Image>().sprite = UIManager.bundle.LoadAsset<Sprite>("assets/archipelago.png");
+            mainNotification.GetComponentInChildren<TextMeshProUGUI>().richText = true;
 
             outsideNotification.GetComponentInChildren<TMProFontLocalizer>().UpdateTextMeshLanguageFont(SystemLanguage.English);
             Component.Destroy(outsideNotification.GetComponentInChildren<TMProFontLocalizer>());
             outsideNotification.transform.Find("ActionImage").GetComponent<Image>().sprite = UIManager.bundle.LoadAsset<Sprite>("assets/archipelago.png");
+            outsideNotification.GetComponentInChildren<TextMeshProUGUI>().richText = true;
 
             appT.Property("Notification").Field<GameObject>("appNotificationPanel_Main").Value = mainNotification;
             appT.Property("Notification").Field<GameObject>("appNotificationPanel_Outside").Value = outsideNotification;
