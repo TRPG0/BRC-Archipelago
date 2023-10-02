@@ -10,7 +10,7 @@ namespace Archipelago
 {
     [BepInPlugin(PluginGUID, PluginName, PluginVersion)]
     [BepInDependency("com.yuril.brc_styleswapmod", BepInDependency.DependencyFlags.SoftDependency)]
-    [BepInDependency("dance.tari.bombrushcyberfunk.customappapi")]
+    [BepInDependency("dance.tari.bombrushcyberfunk.fasttravel", BepInDependency.DependencyFlags.SoftDependency)]
     public class Core : BaseUnityPlugin
     {
         public const string PluginGUID = "trpg.brc.archipelago";
@@ -35,6 +35,9 @@ namespace Archipelago
         public static ConfigEntry<Color> configColorItemFiller;
         public static ConfigEntry<Color> configColorItemTrap;
         public static ConfigEntry<Color> configColorLocation;
+
+        public static bool isQuickStyleSwapLoaded = false;
+        public static bool isFastTravelLoaded = false;
 
         private void Awake()
         {
@@ -69,10 +72,24 @@ namespace Archipelago
             {
                 if (plugin.Value.Metadata.GUID == "com.yuril.brc_styleswapmod")
                 {
-                    Logger.LogInfo($"QuickStyleSwap is loaded. Applying SwapStyle patch.");
-                    Harmony.PatchAll(typeof(brc_styleswapmodPlugin_SwapStyle_Patch));
-                    break;
+                    isQuickStyleSwapLoaded = true;
                 }
+                else if (plugin.Value.Metadata.GUID == "dance.tari.bombrushcyberfunk.fasttravel")
+                {
+                    isFastTravelLoaded = true;
+                }
+            }
+
+            if (isQuickStyleSwapLoaded)
+            {
+                Logger.LogInfo("QuickStyleSwap is loaded. Applying SwapStyle patch.");
+                Harmony.PatchAll(typeof(brc_styleswapmodPlugin_SwapStyle_Patch));
+            }
+
+            if (isFastTravelLoaded)
+            {
+                Logger.LogInfo("FastTravel is loaded. Applying OnAppEnable patch.");
+                Harmony.PatchAll(typeof(AppFastTravel_OnAppEnable_Patch));
             }
 
             Reptile.Core.OnCoreInitialized += SaveManager.GetSavePath;

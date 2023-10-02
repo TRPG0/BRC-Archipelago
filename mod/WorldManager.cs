@@ -353,8 +353,8 @@ namespace Archipelago
                     traverse.Field<bool>("startMusicAfterFirstCheckpoint").Value = false;
                     de.OnIntro.AddListener(delegate 
                     {
-                        traverse.Method("SetPlayerAsCharacter", new object[] { Characters.legendMetalHead }).GetValue();
-                        WorldHandler.instance.PlaceCurrentPlayerAt(de.checkpoints[5].spawnLocation); 
+                        WorldHandler.instance.PlaceCurrentPlayerAt(de.checkpoints[5].spawnLocation);
+                        traverse.Method("SetPlayerAsCharacter", new object[] { Characters.legendFace }).GetValue();
                     });
                     break;
                 }

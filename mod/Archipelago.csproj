@@ -31,11 +31,17 @@
     <Reference Include="CharacterAPI">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\BombRushCyberfunk\BepInEx\plugins\viliger-CharacterAPI\CharacterAPI.dll</HintPath>
     </Reference>
+    <Reference Include="CustomAppAPI">
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\BombRushCyberfunk\BepInEx\plugins\tari-CustomAppAPI\CustomAppAPI.dll</HintPath>
+    </Reference>
     <Reference Include="DOTween">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\BombRushCyberfunk\Bomb Rush Cyberfunk_Data\Managed\DOTween.dll</HintPath>
     </Reference>
     <Reference Include="DOTweenPro">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\BombRushCyberfunk\Bomb Rush Cyberfunk_Data\Managed\DOTweenPro.dll</HintPath>
+    </Reference>
+    <Reference Include="FastTravel">
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\BombRushCyberfunk\BepInEx\plugins\tari-FastTravel\FastTravel.dll</HintPath>
     </Reference>
     <Reference Include="Unity.TextMeshPro">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\BombRushCyberfunk\Bomb Rush Cyberfunk_Data\Managed\Unity.TextMeshPro.dll</HintPath>
