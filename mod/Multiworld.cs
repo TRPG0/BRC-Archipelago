@@ -36,7 +36,7 @@ namespace Archipelago
         {
             if (Authenticated) return true;
             if (slotId == -1) return false;
-            Core.Logger.LogInfo($"{slotId} | {name} | {address} | {(password == "" ? "string.Empty" : password)}");
+            Core.Logger.LogInfo($"Attempting connection - Slot: {slotId} | Name: {name}");
 
             string url = address;
             int port = 38281;
@@ -75,6 +75,9 @@ namespace Archipelago
                 Core.Instance.Data.skipDreams = bool.Parse(success.SlotData["skip_dreams"].ToString());
                 Core.Logger.LogInfo($"Skip dreams is {Core.Instance.Data.skipDreams}");
 
+                Core.Instance.Data.totalRep = int.Parse(success.SlotData["total_rep"].ToString());
+                Core.Logger.LogInfo($"Total REP is {Core.Instance.Data.totalRep}");
+
                 Core.Instance.Data.startingMovestyle = (MoveStyle)Enum.Parse(typeof(MoveStyle), success.SlotData["starting_movestyle"].ToString());
                 Core.Logger.LogInfo($"Starting movestyle is {Core.Instance.Data.startingMovestyle}");
                 if (Core.Instance.Data.startingMovestyle == MoveStyle.SKATEBOARD)
@@ -94,6 +97,13 @@ namespace Archipelago
                     Core.Instance.Data.skateboardUnlocked = false;
                     Core.Instance.Data.inlineUnlocked = false;
                     Core.Instance.Data.bmxUnlocked = true;
+                }
+
+                Core.Instance.Data.limitedGraffiti = bool.Parse(success.SlotData["limited_graffiti"].ToString());
+                Core.Logger.LogInfo($"Limited graffiti is {Core.Instance.Data.limitedGraffiti}");
+                if (Core.Instance.Data.limitedGraffiti)
+                {
+                    Core.Instance.Data.grafUses = new Dictionary<string, int>();
                 }
 
                 Core.Instance.Data.hardBattles = bool.Parse(success.SlotData["harder_crew_battles"].ToString());
@@ -249,7 +259,7 @@ namespace Archipelago
                 }
 
                 messages.Add(text);
-                if (Core.Instance.PhoneManager.app != null) Core.Instance.PhoneManager.app.UpdateText();
+                if (Core.Instance.PhoneManager.appArchipelago != null) Core.Instance.PhoneManager.appArchipelago.UpdateText();
             }
         }
 

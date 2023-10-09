@@ -16,6 +16,8 @@ namespace Archipelago
         public GameObject progressObjectBel;
         public GameObject npcBel;
 
+        public GameObject osakaCrewBattle;
+
         public void LockDefaultGraffiti(HashSet<string> list)
         {
             foreach (string title in list)
@@ -224,7 +226,7 @@ namespace Archipelago
                 {
                     if (GetNewRepRequirement(Reptile.Core.Instance.BaseModule.CurrentStage, npc).HasValue)
                     {
-                        Core.Logger.LogInfo($"{npc.name} | {npc.transform.parent.name} | {npc.requirement}");
+                        Core.Logger.LogInfo($"{npc.name} | {npc.transform.parent.name} | {npc.requirement} > {GetNewRepRequirement(Reptile.Core.Instance.BaseModule.CurrentStage, npc).Value}");
                         npc.requirement = GetNewRepRequirement(Reptile.Core.Instance.BaseModule.CurrentStage, npc).Value;
                     }
                 }
@@ -234,6 +236,7 @@ namespace Archipelago
         public void SetChapter4Character(StoryManager sm)
         {
             if (Reptile.Core.Instance.BaseModule.CurrentStage != Stage.hideout) return;
+            if (Core.Instance.Data.firstCharacter == Characters.blockGuy) return;
             foreach (ProgressObject obj in Traverse.Create(sm).Field<List<ProgressObject>>("progressObjects").Value)
             {
                 if (obj.name == "ProgressObject_Exposition_HeadInsideHead")
@@ -317,6 +320,33 @@ namespace Archipelago
             }
         }
 
+        public void FindOsakaCrewBattle(StoryManager sm)
+        {
+            if (Reptile.Core.Instance.BaseModule.CurrentStage != Stage.osaka) return;
+            foreach (GameplayEvent obj in Traverse.Create(sm).Field<List<GameplayEvent>>("gameplayEvents").Value)
+            {
+                if (obj.name == "ScoreEncounter_CrewBattle")
+                {
+                    osakaCrewBattle = obj.transform.parent.gameObject;
+                    break;
+                }
+            }
+
+            if (!Core.Instance.Data.hasXL) osakaCrewBattle.SetActive(false);
+        }
+
+        public void ActivateOsakaCrewBattle()
+        {
+            if (osakaCrewBattle == null) return;
+            osakaCrewBattle.SetActive(true);
+        }
+
+        public void DeactivateOsakaCrewBattle()
+        {
+            if (osakaCrewBattle == null) return;
+            osakaCrewBattle.SetActive(false);
+        }
+
         public void AddCallToFinalBoss(StoryManager sm)
         {
             if (Reptile.Core.Instance.BaseModule.CurrentStage != Stage.osaka) return;
@@ -367,8 +397,8 @@ namespace Archipelago
             {
                 if (obj is ScoreEncounter se && se.name.Contains("CrewBattle"))
                 {
+                    Core.Logger.LogInfo($"Setting {se.name} target score to {score} (prev: {se.targetScore})");
                     se.targetScore = score;
-                    Core.Logger.LogInfo($"Set {se.name} target score to {score}");
                     break;
                 }
             }
@@ -428,11 +458,18 @@ namespace Archipelago
                 AddCallToPrinceCutscene(sm);
             }
             else if (stage == Stage.square) DontUnlockCharacterSelect(sm);
-            else if (stage == Stage.osaka) AddCallToFinalBoss(sm);
+            else if (stage == Stage.osaka)
+            {
+                FindOsakaCrewBattle(sm);
+                AddCallToFinalBoss(sm);
+            }
 
             Traverse.Create(player).Field<float>("rep").Value = Core.Instance.Data.fakeRep;
             Core.Instance.SaveManager.CurrentSaveSlot.GetCurrentStageProgress().reputation = Core.Instance.Data.fakeRep;
-            Traverse.Create(WorldHandler.instance).Field<int>("totalREPInCurrentStage").Value = 1792;
+
+            if (Core.Instance.Data.totalRep == 0) Traverse.Create(WorldHandler.instance).Field<int>("totalREPInCurrentStage").Value = 1792;
+            if (Core.Instance.Data.totalRep == 1) Traverse.Create(WorldHandler.instance).Field<int>("totalREPInCurrentStage").Value = 1472;
+            if (Core.Instance.Data.totalRep == 2) Traverse.Create(WorldHandler.instance).Field<int>("totalREPInCurrentStage").Value = 1184;
         }
     }
 }

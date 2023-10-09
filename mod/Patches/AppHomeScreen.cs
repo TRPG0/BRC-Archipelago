@@ -12,7 +12,7 @@ namespace Archipelago.Patches
     {
         public static bool Prefix(AppHomeScreen __instance, HomescreenButton appToOpen)
         {
-            if (appToOpen.AssignedApp.AppName == "AppArchipelago")
+            if (appToOpen.AssignedApp.AppName == "AppArchipelago" || appToOpen.AssignedApp.AppName == "AppEncounter")
             {
                 Traverse thisHome = Traverse.Create(__instance);
                 Sequence sequence = DOTween.Sequence();
@@ -63,10 +63,20 @@ namespace Archipelago.Patches
                 {
                     thisHome.Field<bool>("<HandleInput>k__BackingField").Value = true;
                 });
-                sequence.OnComplete(delegate
+                if (appToOpen.AssignedApp.AppName == "AppArchipelago")
                 {
-                    thisHome.Property<Phone>("MyPhone").Value.OpenApp(typeof(AppArchipelago));
-                });
+                    sequence.OnComplete(delegate
+                    {
+                        thisHome.Property<Phone>("MyPhone").Value.OpenApp(typeof(AppArchipelago));
+                    });
+                }
+                else if (appToOpen.AssignedApp.AppName == "AppEncounter")
+                {
+                    sequence.OnComplete(delegate
+                    {
+                        thisHome.Property<Phone>("MyPhone").Value.OpenApp(typeof(AppEncounter));
+                    });
+                }
                 Traverse.Create(thisHome.Field<AudioManager>("m_AudioManager").Value).Method("PlaySfxGameplay", new object[] { SfxCollectionID.PhoneSfx, AudioClipID.FlipPhone_Confirm, 0f }).GetValue();
                 return false;
             }

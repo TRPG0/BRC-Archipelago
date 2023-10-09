@@ -41,7 +41,7 @@ namespace Archipelago
 
         public void GetItem(AItem item, bool playSound = true)
         {
-            Core.Instance.PhoneManager.app.UpdateText();
+            Core.Instance.PhoneManager.appArchipelago.UpdateText();
             if (playSound) Traverse.Create(Reptile.Core.Instance.AudioManager).Method("PlaySfxGameplay", new object[] { SfxCollectionID.MenuSfx, AudioClipID.unlockNotification, 0f }).GetValue();
             if (item is BRCItem brcitem && item.player_name == Core.Instance.Data.slot_name)
             {
@@ -65,11 +65,18 @@ namespace Archipelago
                             Core.Instance.Data.hasM = true;
                             if (Reptile.Core.Instance.BaseModule.CurrentStage == Stage.downhill) Core.Instance.WorldManager.ActivateChapter1Objects(); 
                         }
+                        else if (brcitem.type == BRCType.GraffitiXL)
+                        {
+                            Core.Instance.Data.hasXL = true;
+                            if (Reptile.Core.Instance.BaseModule.CurrentStage == Stage.osaka) Core.Instance.WorldManager.ActivateOsakaCrewBattle();
+                        }
 
                         if (Core.Instance.Data.to_lock.Contains(substring)) Core.Instance.Data.to_lock.Remove(substring);
 
                         GraffitiAppEntry graffiti = WorldHandler.instance.graffitiArtInfo.FindByTitle(substring).unlockable;
                         Core.Instance.SaveManager.CurrentSaveSlot.GetUnlockableDataByUid(graffiti.Uid).IsUnlocked = true;
+
+                        if (Core.Instance.Data.limitedGraffiti) Core.Instance.Data.grafUses[graffiti.Uid] = 0;
                         notifQueue.Add(new Notification("AppGraffiti", $"Graffiti ({graffiti.Size} - {graffiti.Title})", graffiti));
                         break;
                     case BRCType.Skateboard:

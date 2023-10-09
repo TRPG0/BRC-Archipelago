@@ -13,6 +13,7 @@ namespace Archipelago
 
         public bool skipIntro = true;
         public bool skipDreams = false;
+        public int totalRep = 0;
         public bool hardBattles = false;
 
         public HashSet<string> to_lock = new HashSet<string>()
@@ -25,7 +26,11 @@ namespace Archipelago
             "Bombing by FireMan"
         };
 
+        public bool limitedGraffiti = false;
+        public Dictionary<string, int> grafUses = null;
+
         public bool hasM = false;
+        public bool hasXL = false;
 
         public int fakeRep = 0;
         public int sprayCount = 0;

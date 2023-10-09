@@ -82,5 +82,19 @@ namespace Archipelago
             CurrentSaveSlot.GetCharacterProgress(character).unlocked = true;
             Reptile.Core.Instance.SaveManager.SaveCurrentSaveSlot();
         }
+
+        public bool IsAnyGraffitiUnlocked(GraffitiSize size)
+        {
+            bool unlocked = false;
+            foreach (GraffitiArt grafArt in WorldHandler.instance.graffitiArtInfo.FindBySize(size))
+            {
+                if (CurrentSaveSlot.GetUnlockableDataByUid(grafArt.unlockable.Uid).IsUnlocked)
+                {
+                    unlocked = true;
+                    break;
+                }
+            }
+            return unlocked;
+        }
     }
 }

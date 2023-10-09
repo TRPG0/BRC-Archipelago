@@ -43,6 +43,9 @@
     <Reference Include="FastTravel">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\BombRushCyberfunk\BepInEx\plugins\tari-FastTravel\FastTravel.dll</HintPath>
     </Reference>
+    <Reference Include="Rewired_Core">
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\BombRushCyberfunk\Bomb Rush Cyberfunk_Data\Managed\Rewired_Core.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.TextMeshPro">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\BombRushCyberfunk\Bomb Rush Cyberfunk_Data\Managed\Unity.TextMeshPro.dll</HintPath>
     </Reference>

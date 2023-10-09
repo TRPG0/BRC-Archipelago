@@ -59,6 +59,8 @@ namespace Archipelago
             Harmony.PatchAll(typeof(CharacterSelect_PopulateListOfSelectableCharacters_Patch));
             Harmony.PatchAll(typeof(Collectable_PickupCollectable_Patch));
             Harmony.PatchAll(typeof(DynamicPickup_PickupPickup_Patch));
+            Harmony.PatchAll(typeof(GraffitiGame_SetState_Patch));
+            Harmony.PatchAll(typeof(GraffitiGame_SetStateVisual_Patch));
             Harmony.PatchAll(typeof(GraffitiSpot_GiveRep_Patch));
             Harmony.PatchAll(typeof(GraffitiSpot_SpawnRep_Patch));
             Harmony.PatchAll(typeof(Player_ChangeHP_Patch));

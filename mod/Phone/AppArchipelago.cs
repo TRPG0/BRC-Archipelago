@@ -25,11 +25,16 @@ namespace Reptile.Phone
             text.GetComponent<RectTransform>().sizeDelta = new Vector2(transform.parent.GetComponent<RectMask2D>().canvasRect.width * 0.94f, transform.parent.GetComponent<RectMask2D>().canvasRect.height * 0.89f);
         }
 
+        public void Start()
+        {
+            ResizeDelta();
+            Invoke("ResizeDelta", 0.3f);
+        }
+
         public override void OnAppRefresh()
         {
             base.OnAppRefresh();
             UpdateText();
-            ResizeDelta();
         }
 
         public override void OnAppEnable()
@@ -37,7 +42,6 @@ namespace Reptile.Phone
             base.OnAppEnable();
             HandleInput = true;
             UpdateText();
-            ResizeDelta();
         }
 
         public override void OnAppDisable()
