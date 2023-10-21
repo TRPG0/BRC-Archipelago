@@ -28,6 +28,9 @@ namespace Archipelago
 
         public static new ManualLogSource Logger = BepInEx.Logging.Logger.CreateLogSource("Archipelago");
 
+        public static ConfigEntry<string> configDefaultName;
+        public static ConfigEntry<string> configDefaultAddress;
+        public static ConfigEntry<string> configDefaultPassword;
         public static ConfigEntry<Color> configColorPlayerSelf;
         public static ConfigEntry<Color> configColorPlayerOther;
         public static ConfigEntry<Color> configColorItemAdvancement;
@@ -41,7 +44,7 @@ namespace Archipelago
 
         private void Awake()
         {
-            Logger.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
+            Logger.LogInfo($"{PluginInfo.PLUGIN_GUID} is loaded.");
             Instance = this;
 
             Harmony Harmony = new Harmony("Archipelago");
@@ -51,7 +54,6 @@ namespace Archipelago
             Harmony.PatchAll(typeof(AppGraffiti_OnPressRight_Patch));
             Harmony.PatchAll(typeof(AppGraffiti_OnPressUp_Patch));
             Harmony.PatchAll(typeof(AppGraffiti_OnReleaseRight_Patch));
-            Harmony.PatchAll(typeof(AppHomeScreen_OpenApp_Patch));
             Harmony.PatchAll(typeof(BaseModule_HandleStageFullyLoaded_Patch));
             Harmony.PatchAll(typeof(BaseModule_QuitCurrentGameSession_Patch));
             Harmony.PatchAll(typeof(BaseModule_ShowMainMenu_Patch));
@@ -63,11 +65,15 @@ namespace Archipelago
             Harmony.PatchAll(typeof(GraffitiGame_SetStateVisual_Patch));
             Harmony.PatchAll(typeof(GraffitiSpot_GiveRep_Patch));
             Harmony.PatchAll(typeof(GraffitiSpot_SpawnRep_Patch));
+            Harmony.PatchAll(typeof(LocalizationLookupTable_GetLocalizationValueFromSubgroup_Patch));
             Harmony.PatchAll(typeof(Player_ChangeHP_Patch));
+            Harmony.PatchAll(typeof(Player_StartGraffitiMode_Patch));
             Harmony.PatchAll(typeof(SaveManager_SaveCurrentSaveSlot_Patch));
             Harmony.PatchAll(typeof(SaveSlotData_UnlockCharacter_Patch));
             Harmony.PatchAll(typeof(SaveSlotMenu_OnPressedPopupDeleteButton_Patch));
             Harmony.PatchAll(typeof(SaveSlotMenu_ShowDeleteSaveSlotPopup_Patch));
+            Harmony.PatchAll(typeof(TextMeshProGameTextLocalizer_GetRawDialogueTextValue_Patch));
+            Harmony.PatchAll(typeof(Type_GetType_Patch));
             Harmony.PatchAll(typeof(VendingMachine_RewardIsValid_Patch));
 
             foreach (var plugin in Chainloader.PluginInfos)
@@ -95,6 +101,21 @@ namespace Archipelago
             }
 
             Reptile.Core.OnCoreInitialized += SaveManager.GetSavePath;
+
+            configDefaultName = Config.Bind("Defaults",
+                "defaultName",
+                "Red",
+                "The default name used when opening the connection menu for a slate with no save data.");
+
+            configDefaultAddress = Config.Bind("Defaults",
+                "defaultAddress",
+                "archipelago.gg",
+                "The default address used when opening the connection menu for a slate with no save data.");
+
+            configDefaultPassword = Config.Bind("Defaults",
+                "defaultPassword",
+                "",
+                "The default password used when opening the connection menu for a slate with no save data.");
 
             configColorPlayerSelf = Config.Bind("Colors", 
                 "colorPlayerSelf", 

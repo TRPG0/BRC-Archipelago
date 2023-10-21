@@ -62,7 +62,8 @@ namespace Archipelago
             }
             else
             {
-                Core.Logger.LogWarning($"File at {filePath} doesn't exist.");
+                Core.Logger.LogWarning($"File at {filePath} doesn't exist. Resetting data.");
+                Core.Instance.Data = new Data();
             }
         }
 
@@ -85,6 +86,7 @@ namespace Archipelago
 
         public bool IsAnyGraffitiUnlocked(GraffitiSize size)
         {
+            if (size == GraffitiSize.S) return true;
             bool unlocked = false;
             foreach (GraffitiArt grafArt in WorldHandler.instance.graffitiArtInfo.FindBySize(size))
             {

@@ -15,8 +15,18 @@ namespace Archipelago
         public GameObject barricadeChunks;
         public GameObject progressObjectBel;
         public GameObject npcBel;
+        public GameObject princeCrewBattleTrigger;
 
-        public GameObject osakaCrewBattle;
+        public GameObject towerCrewBattleTrigger;
+
+        public NPC mallPoliceNPC;
+        public GameObject mallCrewBattleTrigger;
+
+        public GameObject pyramidCopterTrigger;
+        public GameObject pyramidDJTrigger;
+
+        public GameObject osakaCrewBattleTrigger;
+        public ProgressObject osakaSnakeTrigger;
 
         public void LockDefaultGraffiti(HashSet<string> list)
         {
@@ -90,144 +100,16 @@ namespace Archipelago
             SetBMXGarage(Core.Instance.Data.bmxUnlocked);
         }
 
-        public int? GetNewRepRequirement(Stage stage, NPC npc)
-        {
-            switch (stage)
-            {
-                case Stage.downhill:
-                    switch (npc.transform.parent.name)
-                    {
-                        case "WallrunsChallenge":
-                            return 50;
-                        case "ManualChallenge":
-                            return 58;
-                        case "CornersScoreChallenge":
-                            return 65;
-                        case "Crew_Wall":
-                            return 90;
-                        case "OldHeadWall":
-                            return 120;
-                        default:
-                            return null;
-                    }
-                case Stage.square:
-                    switch (npc.transform.name)
-                    {
-                        case "NPC_EclipseCrew":
-                            return 180;
-                        case "NPC_oldhead":
-                            return 380;
-                        default:
-                            return null;
-                    }
-                case Stage.tower:
-                    switch (npc.transform.parent.name)
-                    {
-                        case "UpsideGrind_Challenge":
-                            return 188;
-                        case "Manual_Challenge ":
-                            return 200;
-                        case "Score_Challenge":
-                            return 220;
-                        case "Chapter2":
-                            switch (npc.transform.name)
-                            {
-                                case "CombatEncounter_SniperCaptain":
-                                    return 260;
-                                case "NPC_TowerGuard":
-                                    return 280;
-                                default:
-                                    return null;
-                            }
-                        case "OldHeadWall":
-                            switch (npc.requirement)
-                            {
-                                case 70:
-                                    return 250;
-                                case 140:
-                                    return 320;
-                                default:
-                                    return null;
-                            }
-                        default:
-                            return null;
-                    }
-                case Stage.Mall:
-                    switch (npc.transform.parent.name)
-                    {
-                        case "Palms_Challenge":
-                            return 434;
-                        case "Slidepads_Challenge":
-                            return 442;
-                        case "Fish_Challenge ":
-                            return 450;
-                        case "Tricks_Challenge":
-                            return 458;
-                        case "Chapter3":
-                            if (npc.transform.name == "NPC_Crew_GUARDING") return 491;
-                            else return null;
-                        case "Oldhead1":
-                            return 530;
-                        case "Oldhead2":
-                            return 580;
-                        default:
-                            return null;
-                    }
-                case Stage.pyramid:
-                    switch (npc.transform.parent.name)
-                    {
-                        case "Chapter4":
-                            if (npc.transform.name == "NPC_OnDoor") return 620;
-                            else if (npc.transform.name == "NPC_Crew_CrewBattle_Starter") return 730;
-                            else return null;
-                        case "Tricks_ScoreChallenge":
-                            return 630;
-                        case "RaceChallenge":
-                            return 640;
-                        case "Tricks2_ScoreChallenge":
-                            return 650;
-                        case "Manual_Challenge":
-                            return 660;
-                        case "OldHeadWall":
-                            return 780;
-                        default:
-                            return null;
-                    }
-                case Stage.osaka:
-                    switch (npc.transform.parent.name)
-                    {
-                        case "Chapter5":
-                            if (npc.transform.name == "NPC_Crew_GateGuard") return 850;
-                            else return null;
-                        case "Race_Challenge":
-                            return 864;
-                        case "WallrunsChallenge":
-                            return 880;
-                        case "ScoreChallenge":
-                            return 920;
-                        case "OldHeadWall":
-                        case "OldHeadWall2":
-                            return 935;
-                        case "CrewBattle":
-                            return 960;
-                        default:
-                            return null;
-                    }
-                default:
-                    return null;
-            }
-        }
-
         public void SetNPCRep(StoryManager sm)
         {
             foreach (NPC npc in Traverse.Create(sm).Field<List<NPC>>("npcs").Value)
             {
                 if (npc != null && npc.requirement != 0)
                 {
-                    if (GetNewRepRequirement(Reptile.Core.Instance.BaseModule.CurrentStage, npc).HasValue)
+                    if (RepRequirements.GetNPCNewRep(Reptile.Core.Instance.BaseModule.CurrentStage, npc).HasValue)
                     {
-                        Core.Logger.LogInfo($"{npc.name} | {npc.transform.parent.name} | {npc.requirement} > {GetNewRepRequirement(Reptile.Core.Instance.BaseModule.CurrentStage, npc).Value}");
-                        npc.requirement = GetNewRepRequirement(Reptile.Core.Instance.BaseModule.CurrentStage, npc).Value;
+                        Core.Logger.LogInfo($"{npc.name} | {npc.transform.parent.name} | {npc.requirement} > {RepRequirements.GetNPCNewRep(Reptile.Core.Instance.BaseModule.CurrentStage, npc).Value}");
+                        npc.requirement = RepRequirements.GetNPCNewRep(Reptile.Core.Instance.BaseModule.CurrentStage, npc).Value;
                     }
                 }
             }
@@ -268,7 +150,9 @@ namespace Archipelago
                 }
             }
 
-            if (!Core.Instance.Data.hasM) {
+            if (!Core.Instance.SaveManager.IsAnyGraffitiUnlocked(GraffitiSize.M))
+            {
+                Core.Logger.LogInfo("Deactivated downhill story objects");
                 progressObjectBel.SetActive(false);
                 npcBel.SetActive(false);
                 barricadeChunks.SetActive(false);
@@ -278,9 +162,10 @@ namespace Archipelago
         public void DeactivateChapter1Objects()
         {
             if (barricadeChunks == null) return;
+            Core.Logger.LogInfo("Deactivated downhill story objects");
             barricadeChunks.SetActive(false);
 
-            if (Core.Instance.Data.hasM) return;
+            if (Core.Instance.SaveManager.IsAnyGraffitiUnlocked(GraffitiSize.M)) return;
             progressObjectBel.SetActive(false);
             npcBel.SetActive(false);
 
@@ -289,6 +174,7 @@ namespace Archipelago
         public void ActivateChapter1Objects()
         {
             if (barricadeChunks == null) return;
+            Core.Logger.LogInfo("Activated downhill story objects");
 
             progressObjectBel.SetActive(true);
             npcBel.SetActive(true);
@@ -307,6 +193,39 @@ namespace Archipelago
             }
         }
 
+        public void FindPrinceCrewBattleTrigger(StoryManager sm)
+        {
+            if (Reptile.Core.Instance.BaseModule.CurrentStage != Stage.downhill) return;
+            foreach (ProgressObject obj in Traverse.Create(sm).Field<List<ProgressObject>>("progressObjects").Value)
+            {
+                if (obj.name == "BackToPrinceTrigger")
+                {
+                    princeCrewBattleTrigger = obj.transform.Find("trigger").gameObject;
+                    break;
+                }
+            }
+
+            if (!Core.Instance.SaveManager.IsAnyGraffitiUnlocked(GraffitiSize.M))
+            {
+                Core.Logger.LogInfo("Deactivated prince crew battle trigger");
+                princeCrewBattleTrigger.SetActive(false);
+            }
+        }
+
+        public void ActivatePrinceCrewBattleTrigger()
+        {
+            if (princeCrewBattleTrigger == null) return;
+            Core.Logger.LogInfo("Activated prince crew battle trigger");
+            princeCrewBattleTrigger.SetActive(true);
+        }
+
+        public void DeactivatePrinceCrewBattleTrigger()
+        {
+            if (princeCrewBattleTrigger == null) return;
+            Core.Logger.LogInfo("Deactivated prince crew battle trigger");
+            princeCrewBattleTrigger.SetActive(false);
+        }
+
         public void DontUnlockCharacterSelect(StoryManager sm)
         {
             if (Reptile.Core.Instance.BaseModule.CurrentStage != Stage.square) return;
@@ -315,36 +234,237 @@ namespace Archipelago
                 if (obj.name == "ProgressObject_Phonecall_TeachCypher")
                 {
                     Traverse.Create(obj).Field<UnityEvent>("OnTrigger").Value.m_PersistentCalls.Clear();
+                    Core.Logger.LogInfo("Removed character select unlock from call with Tryce");
                     break;
                 }
             }
+        }
+
+        public void FindTowerCrewBattle(StoryManager sm)
+        {
+            if (Reptile.Core.Instance.BaseModule.CurrentStage != Stage.tower) return;
+            foreach (NPC npc in Traverse.Create(sm).Field<List<NPC>>("npcs").Value)
+            {
+                if (npc.name == "NPC_Crew_Tower")
+                {
+                    towerCrewBattleTrigger = npc.transform.Find("Trigger").gameObject;
+                    Core.Logger.LogInfo("Found NPC_Crew_Tower");
+                    break;
+                }
+            }
+
+            if (!Core.Instance.SaveManager.IsAnyGraffitiUnlocked(GraffitiSize.L))
+            {
+                Core.Logger.LogInfo("Deactivated tower crew battle trigger");
+                towerCrewBattleTrigger.SetActive(false);
+            }
+        }
+
+        public void ActivateTowerCrewBattle()
+        {
+            if (towerCrewBattleTrigger == null) return;
+            Core.Logger.LogInfo("Activated tower crew battle trigger");
+            towerCrewBattleTrigger.SetActive(true);
+        }
+
+        public void DeactivateTowerCrewBattle()
+        {
+            if (towerCrewBattleTrigger == null) return;
+            Core.Logger.LogInfo("Deactivated tower crew battle trigger");
+            towerCrewBattleTrigger.SetActive(false);
+        }
+
+        public void FindMallNPCs(StoryManager sm)
+        {
+            if (Reptile.Core.Instance.BaseModule.CurrentStage != Stage.Mall) return;
+            foreach (NPC npc in Traverse.Create(sm).Field<List<NPC>>("npcs").Value)
+            {
+                if (npc.name == "NPC_policeActivator")
+                {
+                    mallPoliceNPC = npc;
+                    Core.Logger.LogInfo("Found NPC_policeActivator");
+                }
+                else if (npc.name == "NPC_Crew_BattleStarter")
+                {
+                    mallCrewBattleTrigger = npc.transform.Find("Sphere (1)").gameObject;
+                    Core.Logger.LogInfo("Found NPC_Crew_BattleStarter");
+                }
+            }
+
+            if (!Core.Instance.SaveManager.IsAnyGraffitiUnlocked(GraffitiSize.M))
+            {
+                Core.Logger.LogInfo("Set police activator requirement to 5");
+                mallPoliceNPC.requirement = 5;
+            }
+            if (!Core.Instance.SaveManager.IsAnyGraffitiUnlocked(GraffitiSize.L))
+            {
+                Core.Logger.LogInfo("Deactivated mall crew battle trigger");
+                mallCrewBattleTrigger.SetActive(false);
+            }
+        }
+
+        public void ActivateMallPoliceNPC()
+        {
+            if (mallPoliceNPC == null) return;
+            Core.Logger.LogInfo("Set police activator requirement to 4");
+            mallPoliceNPC.requirement = 4;
+        }
+
+        public void DeactivateMallPoliceNPC()
+        {
+            if (mallPoliceNPC == null) return;
+            Core.Logger.LogInfo("Set police activator requirement to 5");
+            mallPoliceNPC.requirement = 5;
+        }
+
+        public void ActivateMallCrewBattle()
+        {
+            if (mallCrewBattleTrigger == null) return;
+            Core.Logger.LogInfo("Activated mall crew battle trigger");
+            mallCrewBattleTrigger.SetActive(true);
+        }
+
+        public void DeactivateMallCrewBattle()
+        {
+            if (mallCrewBattleTrigger == null) return;
+            Core.Logger.LogInfo("Deactivated mall crew battle trigger");
+            mallCrewBattleTrigger.SetActive(false);
+        }
+
+        public void FindPyramidCopterEncounter(StoryManager sm)
+        {
+            if (Reptile.Core.Instance.BaseModule.CurrentStage != Stage.pyramid) return;
+            foreach (NPC npc in Traverse.Create(sm).Field<List<NPC>>("npcs").Value)
+            {
+                if (npc.name == "NPC_Crew_CopterEncounter_Starter")
+                {
+                    pyramidCopterTrigger = npc.transform.Find("Trigger").gameObject;
+                    Core.Logger.LogInfo("Found NPC_Crew_CopterEncounter_Starter");
+                    break;
+                }
+            }
+
+            if (!Core.Instance.SaveManager.IsAnyGraffitiUnlocked(GraffitiSize.M))
+            {
+                Core.Logger.LogInfo("Deactivated helicopter encounter trigger");
+                pyramidCopterTrigger.SetActive(false);
+            }
+        }
+
+        public void ActivatePyramidCopterBattle()
+        {
+            if (pyramidCopterTrigger == null) return;
+            Core.Logger.LogInfo("Activated helicopter encounter trigger");
+            pyramidCopterTrigger.SetActive(true);
+        }
+
+        public void DeactivatePyramidCopterBattle()
+        {
+            if (pyramidCopterTrigger == null) return;
+            Core.Logger.LogInfo("Deactivated helicopter encounter trigger");
+            pyramidCopterTrigger.SetActive(false);
+        }
+
+        public void FindPyramidDJEncounter(StoryManager sm)
+        {
+            if (Reptile.Core.Instance.BaseModule.CurrentStage != Stage.pyramid) return;
+            foreach (GameplayEvent obj in Traverse.Create(sm).Field<List<GameplayEvent>>("gameplayEvents").Value)
+            {
+                if (obj.name == "DJBossEncounterPhase1")
+                {
+                    pyramidDJTrigger = obj.transform.Find("Trigger").gameObject;
+                    Core.Logger.LogInfo("Found DJBossEncounterPhase1");
+                    break;
+                }
+            }
+
+            if (!Core.Instance.SaveManager.IsAnyGraffitiUnlocked(GraffitiSize.L))
+            {
+                Core.Logger.LogInfo("Deactivated pyramid DJ battle trigger");
+                pyramidDJTrigger.SetActive(false);
+            }
+        }
+
+        public void ActivatePyramidDJBattle()
+        {
+            if (pyramidDJTrigger == null) return;
+            Core.Logger.LogInfo("Activated pyramid DJ battle trigger");
+            pyramidDJTrigger.SetActive(true);
+        }
+
+        public void DeactivatePyramidDJBattle()
+        {
+            if (pyramidDJTrigger == null) return;
+            Core.Logger.LogInfo("Deactivated pyramid DJ battle trigger");
+            pyramidDJTrigger.SetActive(false);
         }
 
         public void FindOsakaCrewBattle(StoryManager sm)
         {
             if (Reptile.Core.Instance.BaseModule.CurrentStage != Stage.osaka) return;
-            foreach (GameplayEvent obj in Traverse.Create(sm).Field<List<GameplayEvent>>("gameplayEvents").Value)
+            foreach (NPC npc in Traverse.Create(sm).Field<List<NPC>>("npcs").Value)
             {
-                if (obj.name == "ScoreEncounter_CrewBattle")
+                if (npc.name == "NPC_Crew_BattleStarter")
                 {
-                    osakaCrewBattle = obj.transform.parent.gameObject;
+                    osakaCrewBattleTrigger = npc.transform.Find("Trigger").gameObject;
+                    Core.Logger.LogInfo("Found NPC_Crew_BattleStarter");
                     break;
                 }
             }
 
-            if (!Core.Instance.Data.hasXL) osakaCrewBattle.SetActive(false);
+            if (!Core.Instance.SaveManager.IsAnyGraffitiUnlocked(GraffitiSize.XL))
+            {
+                Core.Logger.LogInfo("Deactivated osaka crew battle trigger");
+                osakaCrewBattleTrigger.SetActive(false);
+            }
         }
 
         public void ActivateOsakaCrewBattle()
         {
-            if (osakaCrewBattle == null) return;
-            osakaCrewBattle.SetActive(true);
+            if (osakaCrewBattleTrigger == null) return;
+            Core.Logger.LogInfo("Activated osaka crew battle trigger");
+            osakaCrewBattleTrigger.SetActive(true);
         }
 
         public void DeactivateOsakaCrewBattle()
         {
-            if (osakaCrewBattle == null) return;
-            osakaCrewBattle.SetActive(false);
+            if (osakaCrewBattleTrigger == null) return;
+            Core.Logger.LogInfo("Deactivated osaka crew battle trigger");
+            osakaCrewBattleTrigger.SetActive(false);
+        }
+
+        public void FindOsakaSnakeTrigger(StoryManager sm)
+        {
+            if (Reptile.Core.Instance.BaseModule.CurrentStage != Stage.osaka) return;
+            foreach (ProgressObject po in Traverse.Create(sm).Field<List<ProgressObject>>("progressObjects").Value)
+            {
+                if (po.name == "ProgressObject_ShowPathToFaux")
+                {
+                    osakaSnakeTrigger = po;
+                    Core.Logger.LogInfo("Found ProgressObject_ShowPathToFaux");
+                    break;
+                }
+            }
+
+            if (!Core.Instance.SaveManager.IsAnyGraffitiUnlocked(GraffitiSize.M))
+            {
+                Core.Logger.LogInfo("Deactivated osaka snake trigger");
+                osakaSnakeTrigger.SetTriggerable(false);
+            }
+        }
+
+        public void ActivateOsakaSnakeTrigger()
+        {
+            if (osakaSnakeTrigger == null) return;
+            Core.Logger.LogInfo("Activated osaka snake battle trigger");
+            osakaSnakeTrigger.SetTriggerable(true);
+        }
+
+        public void DeactivateOsakaSnakeTrigger()
+        {
+            if (osakaSnakeTrigger == null) return;
+            Core.Logger.LogInfo("Deactivated osaka snake battle trigger");
+            osakaSnakeTrigger.SetTriggerable(false);
         }
 
         public void AddCallToFinalBoss(StoryManager sm)
@@ -355,6 +475,7 @@ namespace Archipelago
                 if (obj.name == "SnakeBossEncounter")
                 {
                     ((CombatEncounter)obj).OnCompleted.AddListener(delegate { Core.Instance.Multiworld.SendCompletion(); });
+                    Core.Logger.LogInfo("Added SendCompletion call to SnakeBossEncounter");
                     break;
                 }
             }
@@ -367,6 +488,7 @@ namespace Archipelago
                 if (obj is DreamEncounter de)
                 {
                     de.OnIntro.AddListener(delegate { de.CheatComplete(); });
+                    Core.Logger.LogInfo($"Added CheatComplete to OnIntro of {de.name}");
                     break;
                 }
             }
@@ -386,6 +508,7 @@ namespace Archipelago
                         WorldHandler.instance.PlaceCurrentPlayerAt(de.checkpoints[5].spawnLocation);
                         traverse.Method("SetPlayerAsCharacter", new object[] { Characters.legendFace }).GetValue();
                     });
+                    Core.Logger.LogInfo($"Added PlaceCurrentPlayerAt to OnIntro of {de.name}");
                     break;
                 }
             }
@@ -432,9 +555,9 @@ namespace Archipelago
 
             Dictionary<Stage, int> crewScores = new Dictionary<Stage, int>()
             {
-                [Stage.downhill] = 1500000,
-                [Stage.tower] = 2500000,
-                [Stage.Mall] = 2500000,
+                [Stage.downhill] = 1500000, // 2 mil
+                [Stage.tower] = 2500000, // 4 mil
+                [Stage.Mall] = 2500000, // 3 mil?
                 [Stage.pyramid] = 3000000,
                 [Stage.osaka] = 4000000
             };
@@ -456,11 +579,29 @@ namespace Archipelago
             {
                 FindChapter1Objects(sm);
                 AddCallToPrinceCutscene(sm);
+                FindPrinceCrewBattleTrigger(sm);
             }
-            else if (stage == Stage.square) DontUnlockCharacterSelect(sm);
+            else if (stage == Stage.square)
+            {
+                DontUnlockCharacterSelect(sm);
+            }
+            else if (stage == Stage.tower)
+            {
+                FindTowerCrewBattle(sm);
+            }
+            else if (stage == Stage.Mall)
+            {
+                FindMallNPCs(sm);
+            }
+            else if (stage == Stage.pyramid)
+            {
+                FindPyramidCopterEncounter(sm);
+                FindPyramidDJEncounter(sm);
+            }
             else if (stage == Stage.osaka)
             {
                 FindOsakaCrewBattle(sm);
+                FindOsakaSnakeTrigger(sm);
                 AddCallToFinalBoss(sm);
             }
 
@@ -468,8 +609,8 @@ namespace Archipelago
             Core.Instance.SaveManager.CurrentSaveSlot.GetCurrentStageProgress().reputation = Core.Instance.Data.fakeRep;
 
             if (Core.Instance.Data.totalRep == 0) Traverse.Create(WorldHandler.instance).Field<int>("totalREPInCurrentStage").Value = 1792;
-            if (Core.Instance.Data.totalRep == 1) Traverse.Create(WorldHandler.instance).Field<int>("totalREPInCurrentStage").Value = 1472;
-            if (Core.Instance.Data.totalRep == 2) Traverse.Create(WorldHandler.instance).Field<int>("totalREPInCurrentStage").Value = 1184;
+            else if (Core.Instance.Data.totalRep == 1) Traverse.Create(WorldHandler.instance).Field<int>("totalREPInCurrentStage").Value = 1472;
+            else if (Core.Instance.Data.totalRep == 2) Traverse.Create(WorldHandler.instance).Field<int>("totalREPInCurrentStage").Value = 1184;
         }
     }
 }

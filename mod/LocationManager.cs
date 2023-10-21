@@ -62,19 +62,31 @@ namespace Archipelago
 
                         if (brcitem.type == BRCType.GraffitiM)
                         {
-                            Core.Instance.Data.hasM = true;
-                            if (Reptile.Core.Instance.BaseModule.CurrentStage == Stage.downhill) Core.Instance.WorldManager.ActivateChapter1Objects(); 
+                            if (Reptile.Core.Instance.BaseModule.CurrentStage == Stage.downhill)
+                            {
+                                Core.Instance.WorldManager.ActivateChapter1Objects();
+                                Core.Instance.WorldManager.ActivatePrinceCrewBattleTrigger();
+                            }
+                            else if (Reptile.Core.Instance.BaseModule.CurrentStage == Stage.Mall) Core.Instance.WorldManager.ActivateMallPoliceNPC();
+                            else if (Reptile.Core.Instance.BaseModule.CurrentStage == Stage.pyramid) Core.Instance.WorldManager.ActivatePyramidCopterBattle();
+                            else if (Reptile.Core.Instance.BaseModule.CurrentStage == Stage.osaka) Core.Instance.WorldManager.ActivateOsakaSnakeTrigger();
                         }
-                        else if (brcitem.type == BRCType.GraffitiXL)
+                        else if (brcitem.type == BRCType.GraffitiL)
                         {
-                            Core.Instance.Data.hasXL = true;
-                            if (Reptile.Core.Instance.BaseModule.CurrentStage == Stage.osaka) Core.Instance.WorldManager.ActivateOsakaCrewBattle();
+                            if (Reptile.Core.Instance.BaseModule.CurrentStage == Stage.tower) Core.Instance.WorldManager.ActivateTowerCrewBattle();
+                            else if (Reptile.Core.Instance.BaseModule.CurrentStage == Stage.Mall) Core.Instance.WorldManager.ActivateMallCrewBattle();
+                            else if (Reptile.Core.Instance.BaseModule.CurrentStage == Stage.pyramid) Core.Instance.WorldManager.ActivatePyramidDJBattle();
                         }
 
                         if (Core.Instance.Data.to_lock.Contains(substring)) Core.Instance.Data.to_lock.Remove(substring);
 
                         GraffitiAppEntry graffiti = WorldHandler.instance.graffitiArtInfo.FindByTitle(substring).unlockable;
                         Core.Instance.SaveManager.CurrentSaveSlot.GetUnlockableDataByUid(graffiti.Uid).IsUnlocked = true;
+
+                        if (Core.Instance.SaveManager.IsAnyGraffitiUnlocked(GraffitiSize.XL) && Core.Instance.SaveManager.IsAnyGraffitiUnlocked(GraffitiSize.M))
+                        {
+                            if (Reptile.Core.Instance.BaseModule.CurrentStage == Stage.osaka) Core.Instance.WorldManager.ActivateOsakaCrewBattle();
+                        }
 
                         if (Core.Instance.Data.limitedGraffiti) Core.Instance.Data.grafUses[graffiti.Uid] = 0;
                         notifQueue.Add(new Notification("AppGraffiti", $"Graffiti ({graffiti.Size} - {graffiti.Title})", graffiti));

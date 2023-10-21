@@ -80,31 +80,30 @@ namespace Archipelago
 
                 Core.Instance.Data.startingMovestyle = (MoveStyle)Enum.Parse(typeof(MoveStyle), success.SlotData["starting_movestyle"].ToString());
                 Core.Logger.LogInfo($"Starting movestyle is {Core.Instance.Data.startingMovestyle}");
-                if (Core.Instance.Data.startingMovestyle == MoveStyle.SKATEBOARD)
+                if (!Core.Instance.SaveManager.DataExists(slotId))
                 {
-                    Core.Instance.Data.skateboardUnlocked = true;
-                    Core.Instance.Data.inlineUnlocked = false;
-                    Core.Instance.Data.bmxUnlocked = false;
-                }
-                else if (Core.Instance.Data.startingMovestyle == MoveStyle.INLINE)
-                {
-                    Core.Instance.Data.skateboardUnlocked = false;
-                    Core.Instance.Data.inlineUnlocked = true;
-                    Core.Instance.Data.bmxUnlocked = false;
-                }
-                else if (Core.Instance.Data.startingMovestyle == MoveStyle.BMX)
-                {
-                    Core.Instance.Data.skateboardUnlocked = false;
-                    Core.Instance.Data.inlineUnlocked = false;
-                    Core.Instance.Data.bmxUnlocked = true;
+                    if (Core.Instance.Data.startingMovestyle == MoveStyle.SKATEBOARD)
+                    {
+                        Core.Instance.Data.skateboardUnlocked = true;
+                        Core.Instance.Data.inlineUnlocked = false;
+                        Core.Instance.Data.bmxUnlocked = false;
+                    }
+                    else if (Core.Instance.Data.startingMovestyle == MoveStyle.INLINE)
+                    {
+                        Core.Instance.Data.skateboardUnlocked = false;
+                        Core.Instance.Data.inlineUnlocked = true;
+                        Core.Instance.Data.bmxUnlocked = false;
+                    }
+                    else if (Core.Instance.Data.startingMovestyle == MoveStyle.BMX)
+                    {
+                        Core.Instance.Data.skateboardUnlocked = false;
+                        Core.Instance.Data.inlineUnlocked = false;
+                        Core.Instance.Data.bmxUnlocked = true;
+                    }
                 }
 
                 Core.Instance.Data.limitedGraffiti = bool.Parse(success.SlotData["limited_graffiti"].ToString());
                 Core.Logger.LogInfo($"Limited graffiti is {Core.Instance.Data.limitedGraffiti}");
-                if (Core.Instance.Data.limitedGraffiti)
-                {
-                    Core.Instance.Data.grafUses = new Dictionary<string, int>();
-                }
 
                 Core.Instance.Data.hardBattles = bool.Parse(success.SlotData["harder_crew_battles"].ToString());
                 Core.Logger.LogInfo($"Harder crew battles is {Core.Instance.Data.hardBattles}");
@@ -192,7 +191,6 @@ namespace Archipelago
         {
             Core.Logger.LogError(message);
             if (e != null) Core.Logger.LogError(e.ToString());
-            Disconnect();
         }
 
         public void PacketReceived(ArchipelagoPacketBase packet)

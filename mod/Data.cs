@@ -27,10 +27,7 @@ namespace Archipelago
         };
 
         public bool limitedGraffiti = false;
-        public Dictionary<string, int> grafUses = null;
-
-        public bool hasM = false;
-        public bool hasXL = false;
+        public Dictionary<string, int> grafUses = new Dictionary<string, int>();
 
         public int fakeRep = 0;
         public int sprayCount = 0;

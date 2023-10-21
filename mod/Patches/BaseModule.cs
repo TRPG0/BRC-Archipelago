@@ -32,8 +32,11 @@ namespace Archipelago.Patches
                 Core.Instance.SaveManager.CurrentSaveSlot.LockCharacter(Characters.spaceGirl);
                 Core.Instance.SaveManager.CurrentSaveSlot.LockCharacter(Characters.girl1);
                 Core.Instance.SaveManager.CurrentSaveSlot.GetCharacterProgress(Characters.metalHead).moveStyle = Core.Instance.Data.startingMovestyle;
+                Core.Instance.SaveManager.CurrentSaveSlot.GetCharacterProgress(Characters.legendMetalHead).moveStyle = Core.Instance.Data.startingMovestyle;
+                Core.Instance.SaveManager.CurrentSaveSlot.GetCharacterProgress(Characters.legendFace).moveStyle = Core.Instance.Data.startingMovestyle;
                 Core.Instance.SaveManager.CurrentSaveSlot.characterSelectLocked = true;
                 Core.Instance.SaveManager.CurrentSaveSlot.cameraAppLocked = true;
+                Core.Instance.SaveManager.CurrentSaveSlot.taxiLocked = false;
                 return false;
             }
             else return true;

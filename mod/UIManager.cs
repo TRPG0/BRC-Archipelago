@@ -169,7 +169,7 @@ namespace Archipelago
             APMenuNameInput.transform.localPosition = pos9;
 
             APMenuAddressInput = GameObject.Instantiate(APMenuNameInput.gameObject, buttonsGroup.transform).GetComponent<TMP_InputField>();
-            APMenuAddressInput.text = "archipelago.gg:38281";
+            APMenuAddressInput.text = "archipelago.gg";
             Vector3 pos10 = APMenuNameInput.transform.localPosition;
             pos10.y = APMenuAddressLabel.transform.localPosition.y;
             APMenuAddressInput.transform.localPosition = pos10;
@@ -264,11 +264,11 @@ namespace Archipelago
 
             Core.Instance.SaveManager.LoadData(connectingSlot);
             if (Core.Instance.Data.slot_name != null) APMenuNameInput.text = Core.Instance.Data.slot_name;
-            else APMenuNameInput.text = "Red";
+            else APMenuNameInput.text = Core.configDefaultName.Value;
             if (Core.Instance.Data.host_name != null) APMenuAddressInput.text = Core.Instance.Data.host_name;
-            else APMenuAddressInput.text = "archipelago.gg";
+            else APMenuAddressInput.text = Core.configDefaultAddress.Value;
             if (Core.Instance.Data.password != null) APMenuPasswordInput.text = Core.Instance.Data.password;
-            else APMenuPasswordInput.text = "";
+            else APMenuPasswordInput.text = Core.configDefaultPassword.Value;
 
             SelectionBarImage.SetActive(true);
             APMenuHeaderText.gameObject.SetActive(true);

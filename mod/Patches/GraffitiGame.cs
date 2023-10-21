@@ -9,12 +9,13 @@ namespace Archipelago.Patches
     {
         public static void Postfix(GraffitiGame __instance, GraffitiGame.GraffitiGameState setState)
         {
+            if (Traverse.Create(__instance).Field<GraffitiSpot>("gSpot").Value is GraffitiSpotFinisher) return;
             if (Core.Instance.SaveManager.DataExists() && Core.Instance.Data.limitedGraffiti)
             {
                 if (setState == GraffitiGame.GraffitiGameState.SHOW_PIECE)
                 {
                     GraffitiSpot gSpot = Traverse.Create(__instance).Field<GraffitiSpot>("gSpot").Value;
-                    if (gSpot.size != GraffitiSize.S)
+                    if (gSpot.size != GraffitiSize.S && gSpot.attachedTo == GraffitiSpot.AttachType.DEFAULT)
                     {
                         if (gSpot.bottomCrew != gSpot.topCrew && (gSpot.topCrew == Crew.PLAYERS || gSpot.bottomCrew == Crew.ROGUE) && Reptile.Core.Instance.BaseModule.CurrentStage != Stage.Prelude)
                         {
@@ -28,7 +29,7 @@ namespace Archipelago.Patches
                             {
                                 grafArt.unlockable.IsDefault = false;
                                 Core.Instance.SaveManager.CurrentSaveSlot.GetUnlockableDataByUid(grafArt.unlockable.Uid).IsUnlocked = false;
-                                Core.Instance.LocationManager.notifQueue.Add(new Structures.Notification("AppGraffiti", $"{grafArt.title} has been depleted.", null));
+                                Core.Instance.LocationManager.notifQueue.Add(new Structures.Notification("AppGraffiti", $"\"{grafArt.title}\" has been depleted.", null));
 
                                 List<string> defaults = new List<string>()
                                 {
@@ -44,12 +45,23 @@ namespace Archipelago.Patches
 
                                 if (!Core.Instance.SaveManager.IsAnyGraffitiUnlocked(GraffitiSize.M))
                                 {
-                                    Core.Instance.Data.hasM = false;
-                                    if (Reptile.Core.Instance.BaseModule.CurrentStage == Stage.downhill) Core.Instance.WorldManager.DeactivateChapter1Objects();
+                                    if (Reptile.Core.Instance.BaseModule.CurrentStage == Stage.downhill)
+                                    {
+                                        Core.Instance.WorldManager.DeactivateChapter1Objects();
+                                        Core.Instance.WorldManager.DeactivatePrinceCrewBattleTrigger();
+                                    }
+                                    else if (Reptile.Core.Instance.BaseModule.CurrentStage == Stage.Mall) Core.Instance.WorldManager.DeactivateMallPoliceNPC();
+                                    else if (Reptile.Core.Instance.BaseModule.CurrentStage == Stage.pyramid) Core.Instance.WorldManager.DeactivatePyramidCopterBattle();
+                                    else if (Reptile.Core.Instance.BaseModule.CurrentStage == Stage.osaka) Core.Instance.WorldManager.DeactivateOsakaSnakeTrigger();
                                 }
-                                else if (!Core.Instance.SaveManager.IsAnyGraffitiUnlocked(GraffitiSize.XL))
+                                if (!Core.Instance.SaveManager.IsAnyGraffitiUnlocked(GraffitiSize.L))
                                 {
-                                    Core.Instance.Data.hasXL = false;
+                                    if (Reptile.Core.Instance.BaseModule.CurrentStage == Stage.tower) Core.Instance.WorldManager.DeactivateTowerCrewBattle();
+                                    else if (Reptile.Core.Instance.BaseModule.CurrentStage == Stage.Mall) Core.Instance.WorldManager.DeactivateMallCrewBattle();
+                                    else if (Reptile.Core.Instance.BaseModule.CurrentStage == Stage.pyramid) Core.Instance.WorldManager.DeactivatePyramidDJBattle();
+                                }
+                                if (!Core.Instance.SaveManager.IsAnyGraffitiUnlocked(GraffitiSize.XL) || !Core.Instance.SaveManager.IsAnyGraffitiUnlocked(GraffitiSize.M))
+                                {
                                     if (Reptile.Core.Instance.BaseModule.CurrentStage == Stage.osaka) Core.Instance.WorldManager.DeactivateOsakaCrewBattle();
                                 }
                             }
@@ -71,6 +83,7 @@ namespace Archipelago.Patches
     {
         public static void Postfix(GraffitiGame __instance, GraffitiGame.GraffitiGameState setState)
         {
+            if (Traverse.Create(__instance).Field<GraffitiSpot>("gSpot").Value is GraffitiSpotFinisher) return;
             if (Core.Instance.SaveManager.DataExists() && Core.Instance.Data.limitedGraffiti)
             {
                 Traverse traverse = Traverse.Create(__instance);
@@ -78,7 +91,7 @@ namespace Archipelago.Patches
 
                 if (gSpot.bottomCrew != gSpot.topCrew && (gSpot.topCrew == Crew.PLAYERS || gSpot.bottomCrew == Crew.ROGUE))
                 {
-                    if (setState == GraffitiGame.GraffitiGameState.SHOW_PIECE && gSpot.size != GraffitiSize.S)
+                    if (setState == GraffitiGame.GraffitiGameState.SHOW_PIECE && gSpot.size != GraffitiSize.S && gSpot.attachedTo == GraffitiSpot.AttachType.DEFAULT)
                     {
                         GraffitiArt grafArt = traverse.Field<GraffitiArt>("grafArt").Value;
                         GameplayUI ui = traverse.Field("player").Field<GameplayUI>("ui").Value;

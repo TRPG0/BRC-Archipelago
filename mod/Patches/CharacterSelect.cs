@@ -1,7 +1,6 @@
 ﻿using HarmonyLib;
 using Reptile;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Archipelago.Patches
 {

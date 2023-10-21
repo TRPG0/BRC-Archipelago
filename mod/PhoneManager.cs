@@ -22,7 +22,7 @@ namespace Archipelago
             }
         }
 
-        public static int maxMessages = 16;
+        public static int maxMessages = 8;
 
         public AppArchipelago appArchipelago;
         public AppEncounter appEncounter;
@@ -76,6 +76,7 @@ namespace Archipelago
             appET.Method("Awake").GetValue();
             appET.Field<Phone>("<MyPhone>k__BackingField").Value = Phone;
             appET.Field<AUnlockable[]>("m_Unlockables").Value = new AUnlockable[] { };
+            appEncounter.Content.Find("Overlay").Find("Icons").Find("AppIcon").GetComponent<Image>().sprite = UIManager.bundle.LoadAsset<Sprite>("assets/encounter.png");
             appEncounter.Content.Find("Overlay").GetComponentInChildren<TextMeshProUGUI>().text = "Encounter";
             appEncounter.bottomLeftText = appEncounter.Content.Find("Messages").GetComponent<TextMeshProUGUI>();
             appEncounter.bottomLeftText.gameObject.name = "CancelText";
@@ -109,7 +110,7 @@ namespace Archipelago
             hsaEncounter.Field<HomeScreenApp.HomeScreenAppType>("appType").Value = HomeScreenApp.HomeScreenAppType.EMAIL;
             hsaEncounter.Field<string>("m_AppName").Value = "AppEncounter";
             hsaEncounter.Field<string>("m_DisplayName").Value = "ENCOUNTER";
-            hsaEncounter.Field<Sprite>("m_AppIcon").Value = UIManager.bundle.LoadAsset<Sprite>("assets/archipelago.png");
+            hsaEncounter.Field<Sprite>("m_AppIcon").Value = UIManager.bundle.LoadAsset<Sprite>("assets/encounter.png");
 
             HomeScreenApp homeScreenAppArchipelago = ScriptableObject.CreateInstance<HomeScreenApp>();
             homeScreenAppArchipelago.name = "AppArchipelago";
@@ -133,12 +134,12 @@ namespace Archipelago
 
             mainNotification.GetComponentInChildren<TMProFontLocalizer>().UpdateTextMeshLanguageFont(SystemLanguage.English);
             Component.Destroy(mainNotification.GetComponentInChildren<TMProFontLocalizer>());
-            mainNotification.GetComponentInChildren<Image>().sprite = UIManager.bundle.LoadAsset<Sprite>("assets/archipelago.png");
+            mainNotification.GetComponentInChildren<Image>().sprite = UIManager.bundle.LoadAsset<Sprite>("assets/notification.png");
             mainNotification.GetComponentInChildren<TextMeshProUGUI>().richText = true;
 
             outsideNotification.GetComponentInChildren<TMProFontLocalizer>().UpdateTextMeshLanguageFont(SystemLanguage.English);
             Component.Destroy(outsideNotification.GetComponentInChildren<TMProFontLocalizer>());
-            outsideNotification.transform.Find("ActionImage").GetComponent<Image>().sprite = UIManager.bundle.LoadAsset<Sprite>("assets/archipelago.png");
+            outsideNotification.transform.Find("ActionImage").GetComponent<Image>().sprite = UIManager.bundle.LoadAsset<Sprite>("assets/notification.png");
             outsideNotification.GetComponentInChildren<TextMeshProUGUI>().richText = true;
 
             appAT.Property("Notification").Field<GameObject>("appNotificationPanel_Main").Value = mainNotification;
