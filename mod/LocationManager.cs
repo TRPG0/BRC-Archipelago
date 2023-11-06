@@ -1,5 +1,4 @@
-﻿using Archipelago.Components;
-using Archipelago.MultiClient.Net.Enums;
+﻿using Archipelago.MultiClient.Net.Enums;
 using Archipelago.Structures;
 using HarmonyLib;
 using Reptile;
@@ -60,33 +59,14 @@ namespace Archipelago
                         if (brcitem.type == BRCType.GraffitiXL) substring = brcitem.item_name.Substring(15, brcitem.item_name.Length-16);
                         else substring = brcitem.item_name.Substring(14, brcitem.item_name.Length - 15);
 
-                        if (brcitem.type == BRCType.GraffitiM)
-                        {
-                            if (Reptile.Core.Instance.BaseModule.CurrentStage == Stage.downhill)
-                            {
-                                Core.Instance.WorldManager.ActivateChapter1Objects();
-                                Core.Instance.WorldManager.ActivatePrinceCrewBattleTrigger();
-                            }
-                            else if (Reptile.Core.Instance.BaseModule.CurrentStage == Stage.Mall) Core.Instance.WorldManager.ActivateMallPoliceNPC();
-                            else if (Reptile.Core.Instance.BaseModule.CurrentStage == Stage.pyramid) Core.Instance.WorldManager.ActivatePyramidCopterBattle();
-                            else if (Reptile.Core.Instance.BaseModule.CurrentStage == Stage.osaka) Core.Instance.WorldManager.ActivateOsakaSnakeTrigger();
-                        }
-                        else if (brcitem.type == BRCType.GraffitiL)
-                        {
-                            if (Reptile.Core.Instance.BaseModule.CurrentStage == Stage.tower) Core.Instance.WorldManager.ActivateTowerCrewBattle();
-                            else if (Reptile.Core.Instance.BaseModule.CurrentStage == Stage.Mall) Core.Instance.WorldManager.ActivateMallCrewBattle();
-                            else if (Reptile.Core.Instance.BaseModule.CurrentStage == Stage.pyramid) Core.Instance.WorldManager.ActivatePyramidDJBattle();
-                        }
+                        if (brcitem.type == BRCType.GraffitiM) Core.Instance.stageManager.YesGraffitiM();
+                        else if (brcitem.type == BRCType.GraffitiL) Core.Instance.stageManager.YesGraffitiL();
+                        else if (brcitem.type == BRCType.GraffitiXL) Core.Instance.stageManager.YesGraffitiXL();
 
                         if (Core.Instance.Data.to_lock.Contains(substring)) Core.Instance.Data.to_lock.Remove(substring);
 
                         GraffitiAppEntry graffiti = WorldHandler.instance.graffitiArtInfo.FindByTitle(substring).unlockable;
                         Core.Instance.SaveManager.CurrentSaveSlot.GetUnlockableDataByUid(graffiti.Uid).IsUnlocked = true;
-
-                        if (Core.Instance.SaveManager.IsAnyGraffitiUnlocked(GraffitiSize.XL) && Core.Instance.SaveManager.IsAnyGraffitiUnlocked(GraffitiSize.M))
-                        {
-                            if (Reptile.Core.Instance.BaseModule.CurrentStage == Stage.osaka) Core.Instance.WorldManager.ActivateOsakaCrewBattle();
-                        }
 
                         if (Core.Instance.Data.limitedGraffiti) Core.Instance.Data.grafUses[graffiti.Uid] = 0;
                         notifQueue.Add(new Notification("AppGraffiti", $"Graffiti ({graffiti.Size} - {graffiti.Title})", graffiti));
@@ -94,7 +74,7 @@ namespace Archipelago
                     case BRCType.Skateboard:
                         substring = brcitem.item_name.Substring(12, brcitem.item_name.Length - 13);
                         Core.Instance.Data.skateboardUnlocked = true;
-                        if (Reptile.Core.Instance.BaseModule.CurrentStage == Stage.hideout) Core.Instance.WorldManager.SetSkateboardGarage(true);
+                        if (Core.Instance.stageManager is HideoutManager) ((HideoutManager)Core.Instance.stageManager).SetSkateboardGarage(true);
                         MoveStyleSkin skateboard = GetSkateboardSkin(GetSkateboardAssetName(substring));
                         Core.Instance.SaveManager.CurrentSaveSlot.GetUnlockableDataByUid(skateboard.Uid).IsUnlocked = true;
                         notifQueue.Add(new Notification("AppArchipelago", brcitem.item_name, null));
@@ -102,7 +82,7 @@ namespace Archipelago
                     case BRCType.InlineSkates:
                         substring = brcitem.item_name.Substring(15, brcitem.item_name.Length - 16);
                         Core.Instance.Data.inlineUnlocked = true;
-                        if (Reptile.Core.Instance.BaseModule.CurrentStage == Stage.hideout) Core.Instance.WorldManager.SetInlineGarage(true);
+                        if (Core.Instance.stageManager is HideoutManager) ((HideoutManager)Core.Instance.stageManager).SetInlineGarage(true);
                         MoveStyleSkin inlineskates = GetInlineSkin(GetInlineAssetName(substring));
                         Core.Instance.SaveManager.CurrentSaveSlot.GetUnlockableDataByUid(inlineskates.Uid).IsUnlocked = true;
                         notifQueue.Add(new Notification("AppArchipelago", brcitem.item_name, null));
@@ -110,7 +90,7 @@ namespace Archipelago
                     case BRCType.BMX:
                         substring = brcitem.item_name.Substring(5, brcitem.item_name.Length - 6);
                         Core.Instance.Data.bmxUnlocked = true;
-                        if (Reptile.Core.Instance.BaseModule.CurrentStage == Stage.hideout) Core.Instance.WorldManager.SetBMXGarage(true);
+                        if (Core.Instance.stageManager is HideoutManager) ((HideoutManager)Core.Instance.stageManager).SetBMXGarage(true);
                         MoveStyleSkin bmx = GetBMXSkin(GetBMXAssetName(substring));
                         Core.Instance.SaveManager.CurrentSaveSlot.GetUnlockableDataByUid(bmx.Uid).IsUnlocked = true;
                         notifQueue.Add(new Notification("AppArchipelago", brcitem.item_name, null));
@@ -127,17 +107,17 @@ namespace Archipelago
                         if (brcitem.type == BRCType.CharacterSkateboard)
                         {
                             Core.Instance.Data.skateboardUnlocked = true;
-                            if (Reptile.Core.Instance.BaseModule.CurrentStage == Stage.hideout) Core.Instance.WorldManager.SetSkateboardGarage(true);
+                            if (Core.Instance.stageManager is HideoutManager) ((HideoutManager)Core.Instance.stageManager).SetSkateboardGarage(true);
                         }
                         if (brcitem.type == BRCType.CharacterInlineSkates)
                         {
                             Core.Instance.Data.inlineUnlocked = true;
-                            if (Reptile.Core.Instance.BaseModule.CurrentStage == Stage.hideout) Core.Instance.WorldManager.SetInlineGarage(true);
+                            if (Core.Instance.stageManager is HideoutManager) ((HideoutManager)Core.Instance.stageManager).SetInlineGarage(true);
                         }
                         if (brcitem.type == BRCType.CharacterBMX)
                         {
                             Core.Instance.Data.bmxUnlocked = true;
-                            if (Reptile.Core.Instance.BaseModule.CurrentStage == Stage.hideout) Core.Instance.WorldManager.SetBMXGarage(true);
+                            if (Core.Instance.stageManager is HideoutManager) ((HideoutManager)Core.Instance.stageManager).SetBMXGarage(true);
                         }
                         Core.Instance.SaveManager.CurrentSaveSlot.characterSelectLocked = false;
 

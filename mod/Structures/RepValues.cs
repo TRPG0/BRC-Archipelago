@@ -1,8 +1,13 @@
 ﻿namespace Archipelago.Structures
 {
-    public class RepValues
+    public class RepValues : Values
     {
-        public int oldValue;
         public int newValue;
+
+        public RepValues(int oldValue, int newValue)
+        {
+            this.oldValue = oldValue;
+            this.newValue = newValue;
+        }
     }
 }

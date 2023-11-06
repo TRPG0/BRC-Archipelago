@@ -11,11 +11,11 @@ namespace Archipelago.Patches
         {
             if (Reptile.Core.Instance.BaseModule.IsPlayingInStage && Core.Instance.SaveManager.DataExists() && groupName == "Notifications")
             {
-                RepValues values = RepRequirements.GetLocalizedTextRepValues(localizationKey);
+                RepValues values = Requirements.GetLocalizedTextRepValues(localizationKey);
                 if (values == null) return;
 
                 __result = __result.Replace(values.oldValue.ToString(), values.newValue.ToString());
-                Core.Logger.LogInfo($"Changed \"notification\" with key {localizationKey} by replacing \"{values.oldValue}\" with \"{values.newValue}\".");
+                Core.Logger.LogInfo($"Changed notification with key \"{localizationKey}\" by replacing \"{values.oldValue}\" with \"{values.newValue}\".");
             }
         }
     }

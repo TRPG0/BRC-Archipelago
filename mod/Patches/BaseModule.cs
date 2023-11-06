@@ -27,7 +27,7 @@ namespace Archipelago.Patches
                     Core.Instance.SaveManager.CurrentSaveSlot.CurrentStoryObjective = Story.ObjectiveID.JoinTheCrew;
                 }
                 else __instance.LoadStage(Stage.Prelude);
-                Core.Instance.WorldManager.UnlockMaps(Core.Instance.SaveManager.CurrentSaveSlot);
+                Core.Instance.SaveManager.UnlockMaps();
                 Core.Instance.SaveManager.CurrentSaveSlot.LockCharacter(Characters.blockGuy);
                 Core.Instance.SaveManager.CurrentSaveSlot.LockCharacter(Characters.spaceGirl);
                 Core.Instance.SaveManager.CurrentSaveSlot.LockCharacter(Characters.girl1);
@@ -40,6 +40,19 @@ namespace Archipelago.Patches
                 return false;
             }
             else return true;
+        }
+    }
+
+    [HarmonyPatch(typeof(BaseModule), "SaveBeforeStageExit")]
+    public class BaseModule_SaveBeforeStageExit_Patch
+    {
+        public static void Prefix()
+        {
+            Core.Instance.stageManager = null;
+            if (Core.Instance.SaveManager.DataExists())
+            {
+                Core.Instance.SaveManager.CurrentSaveSlot.GetCurrentStageProgress().reputation = 0;
+            }
         }
     }
 
@@ -64,12 +77,34 @@ namespace Archipelago.Patches
         {
             if (Core.Instance.SaveManager.DataExists())
             {
-                if (__instance.CurrentStage == Stage.hideout) Core.Instance.WorldManager.SetGarages();
-                if (__instance.CurrentStage != Stage.Prelude) Core.Instance.WorldManager.LockDefaultGraffiti(Core.Instance.Data.to_lock);
-                Core.Instance.PhoneManager.DoAppSetup();
-                Core.Instance.WorldManager.DoStageSetup();
-                //Core.Instance.LocationManager.GetQueuedItems();
-                //Core.Instance.LocationManager.PushQueuedNotifications();
+                switch (__instance.CurrentStage)
+                {
+                    case Stage.hideout:
+                        Core.Instance.stageManager = new HideoutManager();
+                        break;
+                    case Stage.downhill:
+                        Core.Instance.stageManager = new DownhillManager();
+                        break;
+                    case Stage.square:
+                        Core.Instance.stageManager = new SquareManager();
+                        break;
+                    case Stage.tower:
+                        Core.Instance.stageManager = new TowerManager();
+                        break;
+                    case Stage.Mall:
+                        Core.Instance.stageManager = new MallManager();
+                        break;
+                    case Stage.pyramid:
+                        Core.Instance.stageManager = new PyramidManager();
+                        break;
+                    case Stage.osaka:
+                        Core.Instance.stageManager = new OsakaManager();
+                        break;
+                    default:
+                        break;
+                }
+
+                if (Core.Instance.stageManager != null) Core.Instance.stageManager.DoStageSetup();
             }
         }
     }

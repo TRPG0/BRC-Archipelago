@@ -11,7 +11,7 @@ namespace Archipelago.Patches
         {
             if (Reptile.Core.Instance.BaseModule.IsPlayingInStage && Core.Instance.SaveManager.DataExists())
             {
-                RepValues values = RepRequirements.GetLocalizedTextRepValues(localizationKey);
+                RepValues values = Requirements.GetLocalizedTextRepValues(localizationKey);
                 if (values == null) return;
 
                 if (localizationKey == "Dialogue_tower_82") __result = __result.Replace((values.oldValue - 1).ToString(), (values.newValue - 1).ToString());

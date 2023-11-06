@@ -12,6 +12,7 @@ using UnityEngine;
 using Reptile;
 using System.Linq;
 using Random = UnityEngine.Random;
+using BepInEx.Bootstrap;
 
 namespace Archipelago
 {
@@ -36,6 +37,16 @@ namespace Archipelago
         {
             if (Authenticated) return true;
             if (slotId == -1) return false;
+            if (Core.forbiddenModsLoaded > 0)
+            {
+                if (Core.forbiddenModsLoaded == 1) Core.Instance.UIManager.SetResult($"A forbidden mod is loaded. ({Core.forbiddenGUIDs})");
+                else Core.Instance.UIManager.SetResult($"A forbidden mod is loaded. ({Core.forbiddenModsLoaded} mods)");
+
+                Core.Logger.LogWarning($"A forbidden mod is loaded. ({Core.forbiddenGUIDs})");
+                Core.Instance.UIManager.slotButtons[slotId].ChangeState(APSlotButton.SlotState.Disconnected);
+                Core.Instance.UIManager.SetStatus(APSlotButton.SlotState.Disconnected);
+                return false;
+            }
             Core.Logger.LogInfo($"Attempting connection - Slot: {slotId} | Name: {name}");
 
             string url = address;

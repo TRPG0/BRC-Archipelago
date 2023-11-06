@@ -84,6 +84,14 @@ namespace Archipelago
             Reptile.Core.Instance.SaveManager.SaveCurrentSaveSlot();
         }
 
+        public void UnlockMaps()
+        {
+            foreach (StageProgress progress in CurrentSaveSlot.GetAllStageProgress())
+            {
+                progress.mapFound = true;
+            }
+        }
+
         public bool IsAnyGraffitiUnlocked(GraffitiSize size)
         {
             if (size == GraffitiSize.S) return true;

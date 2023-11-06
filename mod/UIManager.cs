@@ -63,7 +63,7 @@ namespace Archipelago
             if (APSlotThreeButton != null) return;
 
             GameObject version = Traverse.Create(Reptile.Core.Instance.UIManager).Field<MainMenuManager>("mainMenu").Value.GetFirstFocusGameObject().transform.parent.Find("VersionText").gameObject;
-            version.GetComponent<TextMeshProUGUI>().text = "ARCHIPELAGO: " + Core.PluginVersion + " (prerelease 2)\n" + version.GetComponent<TextMeshProUGUI>().text;
+            version.GetComponent<TextMeshProUGUI>().text = "ARCHIPELAGO: " + Core.PluginVersion + " (prerelease 3)\n" + version.GetComponent<TextMeshProUGUI>().text;
             version.GetComponent<TextMeshProUGUI>().verticalAlignment = VerticalAlignmentOptions.Bottom;
 
             FindSaveSlotMenu();

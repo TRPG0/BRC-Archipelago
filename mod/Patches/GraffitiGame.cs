@@ -45,24 +45,15 @@ namespace Archipelago.Patches
 
                                 if (!Core.Instance.SaveManager.IsAnyGraffitiUnlocked(GraffitiSize.M))
                                 {
-                                    if (Reptile.Core.Instance.BaseModule.CurrentStage == Stage.downhill)
-                                    {
-                                        Core.Instance.WorldManager.DeactivateChapter1Objects();
-                                        Core.Instance.WorldManager.DeactivatePrinceCrewBattleTrigger();
-                                    }
-                                    else if (Reptile.Core.Instance.BaseModule.CurrentStage == Stage.Mall) Core.Instance.WorldManager.DeactivateMallPoliceNPC();
-                                    else if (Reptile.Core.Instance.BaseModule.CurrentStage == Stage.pyramid) Core.Instance.WorldManager.DeactivatePyramidCopterBattle();
-                                    else if (Reptile.Core.Instance.BaseModule.CurrentStage == Stage.osaka) Core.Instance.WorldManager.DeactivateOsakaSnakeTrigger();
+                                    Core.Instance.stageManager.NoGraffitiM();
                                 }
                                 if (!Core.Instance.SaveManager.IsAnyGraffitiUnlocked(GraffitiSize.L))
                                 {
-                                    if (Reptile.Core.Instance.BaseModule.CurrentStage == Stage.tower) Core.Instance.WorldManager.DeactivateTowerCrewBattle();
-                                    else if (Reptile.Core.Instance.BaseModule.CurrentStage == Stage.Mall) Core.Instance.WorldManager.DeactivateMallCrewBattle();
-                                    else if (Reptile.Core.Instance.BaseModule.CurrentStage == Stage.pyramid) Core.Instance.WorldManager.DeactivatePyramidDJBattle();
+                                    Core.Instance.stageManager.NoGraffitiL();
                                 }
-                                if (!Core.Instance.SaveManager.IsAnyGraffitiUnlocked(GraffitiSize.XL) || !Core.Instance.SaveManager.IsAnyGraffitiUnlocked(GraffitiSize.M))
+                                if (!Core.Instance.SaveManager.IsAnyGraffitiUnlocked(GraffitiSize.XL))
                                 {
-                                    if (Reptile.Core.Instance.BaseModule.CurrentStage == Stage.osaka) Core.Instance.WorldManager.DeactivateOsakaCrewBattle();
+                                    Core.Instance.stageManager.NoGraffitiXL();
                                 }
                             }
 

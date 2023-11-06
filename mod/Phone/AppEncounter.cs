@@ -39,7 +39,8 @@ namespace Reptile.Phone
             Dream,
             FloorIsLava,
             Race,
-            Score
+            Score,
+            Unknown
         }
 
         public bool CanQuitCurrentEncounter => CurrentType == EncounterType.Race || CurrentType == EncounterType.Score;
@@ -53,6 +54,7 @@ namespace Reptile.Phone
             else if (CurrentEncounter is FloorIsLavaEncounter) CurrentType = EncounterType.FloorIsLava;
             else if (CurrentEncounter is RaceEncounter) CurrentType = EncounterType.Race;
             else if (CurrentEncounter is ScoreEncounter) CurrentType = EncounterType.Score;
+            else CurrentType = EncounterType.Unknown;
         }
 
         public void Init()

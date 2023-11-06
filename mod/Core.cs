@@ -4,6 +4,7 @@ using BepInEx.Bootstrap;
 using BepInEx.Configuration;
 using BepInEx.Logging;
 using HarmonyLib;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Archipelago
@@ -24,7 +25,7 @@ namespace Archipelago
         public Multiworld Multiworld = new Multiworld();
         public LocationManager LocationManager = new LocationManager();
         public SaveManager SaveManager = new SaveManager();
-        public WorldManager WorldManager = new WorldManager();
+        public StageManager stageManager = null;
 
         public static new ManualLogSource Logger = BepInEx.Logging.Logger.CreateLogSource("Archipelago");
 
@@ -42,6 +43,30 @@ namespace Archipelago
         public static bool isQuickStyleSwapLoaded = false;
         public static bool isFastTravelLoaded = false;
 
+        internal static int forbiddenModsLoaded = 0;
+        internal static string forbiddenGUIDs = string.Empty;
+        private static List<string> forbiddenMods = new List<string>()
+        {
+            "QuickGraffiti",
+            "com.Dragsun.FastCypher",
+            "dance.tari.bombrushcyberfunk.customgraffiti",
+            "TombRush"
+        };
+
+        private void CheckForbiddenMods()
+        {
+            foreach (var plugin in Chainloader.PluginInfos)
+            {
+                if (forbiddenMods.Contains(plugin.Value.Metadata.GUID))
+                {
+                    forbiddenModsLoaded++;
+                    Logger.LogWarning($"A forbidden mod is loaded. (\"{plugin.Value.Metadata.GUID}\")");
+                    if (forbiddenGUIDs == string.Empty) forbiddenGUIDs = $"\"{plugin.Value.Metadata.GUID}\"";
+                    else forbiddenGUIDs = forbiddenGUIDs += $", \"{plugin.Value.Metadata.GUID}\"";
+                }
+            }
+        }
+
         private void Awake()
         {
             Logger.LogInfo($"{PluginInfo.PLUGIN_GUID} is loaded.");
@@ -55,6 +80,7 @@ namespace Archipelago
             Harmony.PatchAll(typeof(AppGraffiti_OnPressUp_Patch));
             Harmony.PatchAll(typeof(AppGraffiti_OnReleaseRight_Patch));
             Harmony.PatchAll(typeof(BaseModule_HandleStageFullyLoaded_Patch));
+            Harmony.PatchAll(typeof(BaseModule_SaveBeforeStageExit_Patch));
             Harmony.PatchAll(typeof(BaseModule_QuitCurrentGameSession_Patch));
             Harmony.PatchAll(typeof(BaseModule_ShowMainMenu_Patch));
             Harmony.PatchAll(typeof(BaseModule_StartNewGame_Patch));
@@ -101,6 +127,7 @@ namespace Archipelago
             }
 
             Reptile.Core.OnCoreInitialized += SaveManager.GetSavePath;
+            Reptile.Core.OnCoreInitialized += CheckForbiddenMods;
 
             configDefaultName = Config.Bind("Defaults",
                 "defaultName",
