@@ -77,5 +77,6 @@ After someone has opened a room by following the server setup instructions, and 
 
 When you click the Archipelago button, it will open a menu that looks like this:
 
+![20230914000344_1](https://github.com/TRPG0/BRC-Archipelago/assets/80716066/22bc010a-e643-456e-b777-32495830c6d1)
 
 Enter your name, which is the name used in the `.yaml` file, the address of the server to connect to, and the password if there is one. If not, then the password can be left empty. Then click the checkmark to connect to the server. An easy way to be sure if it's working correctly or not is by opening the phone and checking if the Encounter and Archipelago apps are there.
