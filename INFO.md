@@ -56,7 +56,7 @@ There are several options that can be changed before generating a run:
 5. Host a game, either manually by running `ArchipelagoServer.exe` (if installed), or by [uploading](https://archipelago.gg/uploads) it to the Archipelago website and clicking Create New Room. The address to use when connecting will appear above the list of players.
 
 
-# Setup (Client)
+## Setup (Client)
 
 The mod for Bomb Rush Cyberfunk Randomizer can either be installed manually by adding it to your plugins folder after setting up [BepInEx](https://github.com/BepInEx/BepInEx/releases), or by using a mod manager like [r2modman](https://thunderstore.io/package/ebkr/r2modman/), selecting a profile, then going to Settings > Import Local Mod. 
 
