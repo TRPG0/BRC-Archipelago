@@ -41,11 +41,10 @@ namespace Archipelago
         public static ConfigEntry<Color> configColorLocation;
 
         public static bool isQuickStyleSwapLoaded = false;
-        public static bool isFastTravelLoaded = false;
 
         internal static int forbiddenModsLoaded = 0;
         internal static string forbiddenGUIDs = string.Empty;
-        private static List<string> forbiddenMods = new List<string>()
+        private readonly List<string> forbiddenMods = new List<string>()
         {
             "QuickGraffiti",
             "com.Dragsun.FastCypher",
@@ -107,23 +106,10 @@ namespace Archipelago
                 if (plugin.Value.Metadata.GUID == "com.yuril.brc_styleswapmod")
                 {
                     isQuickStyleSwapLoaded = true;
-                }
-                else if (plugin.Value.Metadata.GUID == "dance.tari.bombrushcyberfunk.fasttravel")
-                {
-                    isFastTravelLoaded = true;
-                }
-            }
+                    Logger.LogInfo("QuickStyleSwap is loaded. Applying SwapStyle patch.");
+                    Harmony.PatchAll(typeof(brc_styleswapmodPlugin_SwapStyle_Patch));
 
-            if (isQuickStyleSwapLoaded)
-            {
-                Logger.LogInfo("QuickStyleSwap is loaded. Applying SwapStyle patch.");
-                Harmony.PatchAll(typeof(brc_styleswapmodPlugin_SwapStyle_Patch));
-            }
-
-            if (isFastTravelLoaded)
-            {
-                Logger.LogInfo("FastTravel is loaded. Applying OnAppEnable patch.");
-                Harmony.PatchAll(typeof(AppFastTravel_OnAppEnable_Patch));
+                }
             }
 
             Reptile.Core.OnCoreInitialized += SaveManager.GetSavePath;
