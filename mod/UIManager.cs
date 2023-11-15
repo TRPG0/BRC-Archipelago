@@ -38,7 +38,10 @@ namespace Archipelago
         public TMP_InputField APMenuPasswordInput;
 
         public TextMeshProUGUI APMenuStatus;
+        public TextMeshProUGUI APMenuLocations;
+        public const int totalLocations = 216;
         public TextMeshProUGUI APMenuResult;
+        public TextMeshProUGUI APMenuChat;
         public int connectingSlot = -1;
 
         public SelectEnlargeButton APMenuConnectButton;
@@ -85,6 +88,8 @@ namespace Archipelago
             SaveSlotThreeButton.onDelayedButtonClick.RemoveAllListeners();
             SaveSlotThreeButton.onDelayedButtonClick.SetPersistentListenerState(0, UnityEngine.Events.UnityEventCallState.Off);
             SaveSlotThreeButton.onDelayedButtonClick.AddListener(delegate { CheckAndStartGameFromSlot(2); });
+
+            //buttonsGroup.transform.Find("BackTextButton").GetComponent<TextMeshProMenuButton>().onClick.AddListener(delegate { HideMenu(); APMenuChat.gameObject.SetActive(false); });
 
 
             APSlotOneButton = GameObject.Instantiate(buttonsGroup.transform.Find("DeleteSlotOneButton").gameObject, buttonsGroup.transform).AddComponent<APSlotButton>();
@@ -194,23 +199,44 @@ namespace Archipelago
             APMenuStatus.color = Color.black;
             APMenuStatus.text = "Status: Not connected.";
             Vector3 pos13 = APMenuNameLabel.transform.localPosition;
-            pos13.x = pos13.x - (APMenuStatus.GetComponent<RectTransform>().rect.height * 3);
+            pos13.x = pos13.x - (APMenuStatus.GetComponent<RectTransform>().rect.height * 2.2f);
             APMenuStatus.transform.localPosition = pos13;
             APMenuStatus.transform.SetSiblingIndex(15);
 
+            APMenuLocations = GameObject.Instantiate(APMenuAddressLabel.gameObject, buttonsGroup.transform).GetComponent<TextMeshProUGUI>();
+            APMenuLocations.horizontalAlignment = HorizontalAlignmentOptions.Right;
+            APMenuLocations.fontStyle = FontStyles.Normal;
+            APMenuLocations.color = Color.black;
+            APMenuLocations.text = $"? / {totalLocations}";
+            Vector3 pos14 = APMenuStatus.transform.localPosition;
+            pos14.y = APMenuAddressLabel.transform.localPosition.y;
+            APMenuLocations.transform.localPosition = pos14;
+            APMenuLocations.transform.SetSiblingIndex(16);
+
+            APMenuChat = GameObject.Instantiate(APMenuNameLabel.gameObject, buttonsGroup.transform).GetComponent<TextMeshProUGUI>();
+            APMenuChat.fontSize = APMenuNameLabel.fontSize;
+            APMenuChat.fontStyle = FontStyles.Normal;
+            APMenuChat.alignment = TextAlignmentOptions.BottomLeft;
+            //APMenuChat.color = new Color(0.875f, 0.871f, 0.753f);
+            APMenuChat.color = new Color(0.925f, 0.91f, 0.796f);
+            APMenuChat.transform.localPosition = new Vector3(-612, -240, 0);
+            APMenuChat.gameObject.AddComponent<ResizeChatOnEnable>().parentTransform = APMenuChat.GetComponent<RectTransform>();
+            APMenuChat.GetComponent<ResizeChatOnEnable>().targetTransform = buttonsGroup.transform.parent.Find("SwirlBottom").GetComponent<RectTransform>();
+            APMenuChat.gameObject.SetActive(false);
+
             APMenuCancelButton = GameObject.Instantiate(buttonsGroup.transform.Find("DeleteSlotThreeButton").gameObject, buttonsGroup.transform).GetComponent<SelectEnlargeButton>();
-            Vector3 pos14 = buttonsGroup.transform.Find("DeleteSlotThreeButton").localPosition;
-            pos14.y = pos14.y + ydiff;
-            APMenuCancelButton.transform.localPosition = pos14;
+            Vector3 pos15 = buttonsGroup.transform.Find("DeleteSlotThreeButton").localPosition;
+            pos15.y = pos15.y + ydiff;
+            APMenuCancelButton.transform.localPosition = pos15;
             APMenuCancelButton.GetComponent<Image>().color = new Color(1, 1, 1, 1);
             APMenuCancelButton.onClick.RemoveAllListeners();
             APMenuCancelButton.onClick.SetPersistentListenerState(0, UnityEngine.Events.UnityEventCallState.Off);
             APMenuCancelButton.onClick.AddListener(Core.Instance.UIManager.HideMenu);
 
             APMenuConnectButton = GameObject.Instantiate(APSlotThreeButton.gameObject, buttonsGroup.transform).GetComponent<SelectEnlargeButton>();
-            Vector3 pos15 = APSlotThreeButton.transform.localPosition;
-            pos15.y = pos15.y + ydiff;
-            APMenuConnectButton.transform.localPosition = pos15;
+            Vector3 pos16 = APSlotThreeButton.transform.localPosition;
+            pos16.y = pos16.y + ydiff;
+            APMenuConnectButton.transform.localPosition = pos16;
             Component.Destroy(APMenuConnectButton.GetComponent<APSlotButton>());
             APMenuConnectButton.GetComponent<Image>().sprite = bundle.LoadAsset<Sprite>("assets/check1.png");
             SpriteState spriteState = new SpriteState
@@ -240,6 +266,7 @@ namespace Archipelago
             APMenuAddressInput.gameObject.SetActive(false);
             APMenuPasswordInput.gameObject.SetActive(false);
             APMenuStatus.gameObject.SetActive(false);
+            APMenuLocations.gameObject.SetActive(false);
             APMenuResult.gameObject.SetActive(false);
             APMenuConnectButton.gameObject.SetActive(false);
             APMenuCancelButton.gameObject.SetActive(false);
@@ -251,7 +278,7 @@ namespace Archipelago
 
             AudioManager am = Traverse.Create(APButton.button).Field<AudioManager>("audioManager").Value;
 
-            if (APButton.CurrentState == APSlotButton.SlotState.Vanilla)
+            if (APButton.CurrentState == APSlotButton.SlotState.Vanilla || (Core.Instance.Multiworld.Authenticated && APButton.slot != Core.Instance.SaveManager.currentSlot))
             {
                 Traverse.Create(am).Method("PlaySfxUI", new object[] { SfxCollectionID.MenuSfx, AudioClipID.cancel, 0f }).GetValue();
                 return;
@@ -260,9 +287,9 @@ namespace Archipelago
             Traverse.Create(am).Method("PlaySfxUI", new object[] { SfxCollectionID.MenuSfx, AudioClipID.confirm, 0f }).GetValue();
             connectingSlot = APButton.slot;
             SetHeaderSlot(APButton.slot);
-            SetStatus(APButton.CurrentState);
 
             Core.Instance.SaveManager.LoadData(connectingSlot);
+            SetStatus(APButton.CurrentState);
             if (Core.Instance.Data.slot_name != null) APMenuNameInput.text = Core.Instance.Data.slot_name;
             else APMenuNameInput.text = Core.configDefaultName.Value;
             if (Core.Instance.Data.host_name != null) APMenuAddressInput.text = Core.Instance.Data.host_name;
@@ -279,6 +306,7 @@ namespace Archipelago
             APMenuAddressInput.gameObject.SetActive(true);
             APMenuPasswordInput.gameObject.SetActive(true);
             APMenuStatus.gameObject.SetActive(true);
+            APMenuLocations.gameObject.SetActive(true);
             APMenuResult.gameObject.SetActive(true);
             APMenuConnectButton.gameObject.SetActive(true);
             APMenuCancelButton.gameObject.SetActive(true);
@@ -294,6 +322,7 @@ namespace Archipelago
         public void SetStatus(APSlotButton.SlotState state)
         {
             string status = string.Empty;
+            string locations = Core.Instance.SaveManager.DataExists(connectingSlot) ? Core.Instance.Data.@checked.Count.ToString() : "?";
 
             switch (state)
             {
@@ -316,6 +345,7 @@ namespace Archipelago
             }
 
             APMenuStatus.text = status;
+            APMenuLocations.text = $"{locations} / {totalLocations}";
         }
 
         public void SetResult(string result)
@@ -367,6 +397,8 @@ namespace Archipelago
                 {
                     Core.Logger.LogInfo($"Save slot {slotId} has randomizer data and is connected. Starting game.");
                     Traverse.Create(ssm).Method("StartGameFromSlot", new object[] { slotId }).GetValue();
+                    HideMenu();
+                    APMenuChat.gameObject.SetActive(false);
                 }
             }
             else
@@ -380,6 +412,8 @@ namespace Archipelago
                 {
                     Core.Logger.LogInfo($"Save slot {slotId} has no randomizer data and is not connected. Starting game.");
                     Traverse.Create(ssm).Method("StartGameFromSlot", new object[] { slotId }).GetValue();
+                    HideMenu();
+                    APMenuChat.gameObject.SetActive(false);
                 }
             }
         }

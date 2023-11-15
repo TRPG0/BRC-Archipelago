@@ -66,6 +66,7 @@ namespace Archipelago.Patches
             Core.Instance.UIManager.connectingSlot = -1;
             Core.Instance.UIManager.SetResult(string.Empty);
             Core.Instance.UIManager.HideMenu();
+            Core.Instance.UIManager.APMenuChat.gameObject.SetActive(false);
             Core.Instance.SaveManager.currentSlot = -1;
         }
     }

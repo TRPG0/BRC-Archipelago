@@ -12,7 +12,6 @@ using UnityEngine;
 using Reptile;
 using System.Linq;
 using Random = UnityEngine.Random;
-using BepInEx.Bootstrap;
 
 namespace Archipelago
 {
@@ -166,6 +165,7 @@ namespace Archipelago
                 Core.Instance.UIManager.slotButtons[slotId].ChangeState(APSlotButton.SlotState.Connected);
                 Core.Instance.UIManager.SetResult($"Successfully connected to server as player \"{name}\".");
                 Core.Instance.UIManager.SetStatus(APSlotButton.SlotState.Connected);
+                Core.Instance.UIManager.APMenuChat.gameObject.SetActive(true);
                 Core.Logger.LogInfo($"Successfully connected to server as player \"{name}\".");
             }
             else if (loginResult is LoginFailure failure)
@@ -187,6 +187,7 @@ namespace Archipelago
         {
             if (Session != null && Session.Socket != null) Session.Socket.DisconnectAsync();
             messages.Clear();
+            Core.Instance.UIManager.APMenuChat.gameObject.SetActive(false);
             Session = null;
             DeathLinkService = null;
             Authenticated = false;
@@ -268,6 +269,7 @@ namespace Archipelago
                 }
 
                 messages.Add(text);
+                Core.Instance.UIManager.APMenuChat.text = string.Join("\n", messages.ToArray());
                 if (Core.Instance.PhoneManager.appArchipelago != null) Core.Instance.PhoneManager.appArchipelago.UpdateText();
             }
         }
