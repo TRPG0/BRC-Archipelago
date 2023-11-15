@@ -11,9 +11,9 @@ namespace Archipelago
         public static RepValues DownhillChallenge2Rep = new RepValues(38, 58);
         public static RepValues DownhillChallenge3Rep = new RepValues(45, 65);
         public static RepValues DownhillCrewWallRep = new RepValues(70, 90);
-        public static ScoreValues DownhillCrewBattleScore = new ScoreValues(60000, 0, 0, 3500000);
+        public static ScoreValues DownhillCrewBattleScore = new ScoreValues(60000, 1500000, 2500000, 3500000);
         public static RepValues DownhillOldheadRep = new RepValues(100, 120);
-        public static ScoreValues DownhillRaveScore = new ScoreValues(50000, 0, 0, 2000000);
+        public static ScoreValues DownhillRaveScore = new ScoreValues(50000, 500000, 1000000, 2000000);
         public static ScoreValues DownhillFrankScore = new ScoreValues(0, 0, 0, 0); // to do
 
         public static RepValues SquareEclipseRep = new RepValues(60, 180);
@@ -21,36 +21,36 @@ namespace Archipelago
 
         public static RepValues TowerChallenge1Rep = new RepValues(8, 188);
         public static RepValues TowerChallenge2Rep = new RepValues(20, 200);
-        public static ScoreValues TowerChallenge2Score = new ScoreValues(25000, 0, 0, 400000);
+        public static ScoreValues TowerChallenge2Score = new ScoreValues(25000, 100000, 250000, 400000);
         public static RepValues TowerChallenge3Rep = new RepValues(40, 220);
         public static RepValues TowerEscherRep = new RepValues(80, 260);
         public static RepValues TowerCrewWallRep = new RepValues(100, 280);
-        public static ScoreValues TowerCrewBattleScore = new ScoreValues(150000, 0, 0, 7500000);
+        public static ScoreValues TowerCrewBattleScore = new ScoreValues(150000, 2500000, 4000000, 7500000);
         public static RepValues TowerOldhead1Rep = new RepValues(70, 250);
         public static RepValues TowerOldhead2Rep = new RepValues(140, 320);
-        public static ScoreValues TowerMeshScore = new ScoreValues(70000, 0, 0, 750000);
+        public static ScoreValues TowerMeshScore = new ScoreValues(70000, 250000, 500000, 750000);
         public static ScoreValues TowerEclipseScore = new ScoreValues(0, 0, 0, 0); // to do
 
         public static RepValues MallChallenge1Rep = new RepValues(54, 434);
         public static RepValues MallChallenge2Rep = new RepValues(62, 442);
         public static RepValues MallChallenge3Rep = new RepValues(70, 450);
         public static RepValues MallChallenge4Rep = new RepValues(78, 458);
-        public static ScoreValues MallChallenge4Score = new ScoreValues(100000, 0, 0, 2500000);
+        public static ScoreValues MallChallenge4Score = new ScoreValues(100000, 750000, 1500000, 2500000);
         public static RepValues MallCrewWallRep = new RepValues(111, 491);
-        public static ScoreValues MallCrewBattleScore = new ScoreValues(300000, 0, 0, 12000000);
+        public static ScoreValues MallCrewBattleScore = new ScoreValues(300000, 3000000, 7000000, 12000000);
         public static RepValues MallOldhead1Rep = new RepValues(150, 530);
         public static RepValues MallOldhead2Rep = new RepValues(200, 580);
         public static ScoreValues MallDotEXEScore = new ScoreValues(0, 0, 0, 0); // to do
 
         public static RepValues PyramidGateRep = new RepValues(40, 620);
         public static RepValues PyramidChallenge1Rep = new RepValues(50, 630);
-        public static ScoreValues PyramidChallenge1Score = new ScoreValues(70000, 0, 0, 600000);
+        public static ScoreValues PyramidChallenge1Score = new ScoreValues(70000, 200000, 400000, 600000);
         public static RepValues PyramidChallenge2Rep = new RepValues(60, 640);
         public static RepValues PyramidChallenge3Rep = new RepValues(70, 650);
-        public static ScoreValues PyramidChallenge3Score = new ScoreValues(100000, 0, 0, 1000000);
+        public static ScoreValues PyramidChallenge3Score = new ScoreValues(100000, 500000, 750000, 1000000);
         public static RepValues PyramidChallenge4Rep = new RepValues(80, 660);
         public static RepValues PyramidCrewRep = new RepValues(150, 730);
-        public static ScoreValues PyramidCrewBattleScore = new ScoreValues(450000, 0, 0, 15000000);
+        public static ScoreValues PyramidCrewBattleScore = new ScoreValues(450000, 3000000, 8000000, 15000000);
         public static RepValues PyramidOldheadRep = new RepValues(200, 780);
         public static ScoreValues PyramidDevilTheoryScore = new ScoreValues(0, 0, 0, 0); // to do
 
@@ -58,9 +58,9 @@ namespace Archipelago
         public static RepValues OsakaChallenge1Rep = new RepValues(84, 864);
         public static RepValues OsakaChallenge2Rep = new RepValues(100, 880);
         public static RepValues OsakaChallenge3Rep = new RepValues(140, 920);
-        public static ScoreValues OsakaChallenge3Score = new ScoreValues(60000, 0, 0, 500000);
+        public static ScoreValues OsakaChallenge3Score = new ScoreValues(60000, 200000, 350000, 500000);
         public static RepValues OsakaCrewRep = new RepValues(180, 960);
-        public static ScoreValues OsakaCrewBattleScore = new ScoreValues(600000, 0, 0, 18000000);
+        public static ScoreValues OsakaCrewBattleScore = new ScoreValues(600000, 4000000, 10000000, 18000000);
         public static RepValues OsakaOldheadRep = new RepValues(155, 935);
         public static ScoreValues OsakaFuturismScore = new ScoreValues(0, 0, 0, 0); // to do
 
