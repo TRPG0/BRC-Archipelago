@@ -7,6 +7,7 @@ namespace Archipelago
     public class HideoutManager : StageManager
     {
         public override bool ChangeNPCs => false;
+        public override bool ChangeScores => false;
 
         public void SetSkateboardGarage(bool open)
         {
@@ -58,7 +59,7 @@ namespace Archipelago
             SetInlineGarage(Core.Instance.Data.inlineUnlocked);
             SetBMXGarage(Core.Instance.Data.bmxUnlocked);
 
-            StoryManager sm = Traverse.Create(WorldHandler.instance).Field<StoryManager>("storyManager").Value;
+            StoryManager sm = WorldHandler.instance.StoryManager;
             SetChapter4Character(sm);
         }
     }

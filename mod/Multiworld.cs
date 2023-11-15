@@ -85,10 +85,10 @@ namespace Archipelago
                 Core.Instance.Data.skipDreams = bool.Parse(success.SlotData["skip_dreams"].ToString());
                 Core.Logger.LogInfo($"Skip dreams is {Core.Instance.Data.skipDreams}");
 
-                Core.Instance.Data.totalRep = int.Parse(success.SlotData["total_rep"].ToString());
+                Core.Instance.Data.totalRep = (TotalRep)int.Parse(success.SlotData["total_rep"].ToString());
                 Core.Logger.LogInfo($"Total REP is {Core.Instance.Data.totalRep}");
 
-                Core.Instance.Data.startingMovestyle = (MoveStyle)Enum.Parse(typeof(MoveStyle), success.SlotData["starting_movestyle"].ToString());
+                Core.Instance.Data.startingMovestyle = (MoveStyle)int.Parse(success.SlotData["starting_movestyle"].ToString());
                 Core.Logger.LogInfo($"Starting movestyle is {Core.Instance.Data.startingMovestyle}");
                 if (!Core.Instance.SaveManager.DataExists(slotId))
                 {
@@ -115,8 +115,8 @@ namespace Archipelago
                 Core.Instance.Data.limitedGraffiti = bool.Parse(success.SlotData["limited_graffiti"].ToString());
                 Core.Logger.LogInfo($"Limited graffiti is {Core.Instance.Data.limitedGraffiti}");
 
-                Core.Instance.Data.hardBattles = bool.Parse(success.SlotData["harder_crew_battles"].ToString());
-                Core.Logger.LogInfo($"Harder crew battles is {Core.Instance.Data.hardBattles}");
+                Core.Instance.Data.scoreDifficulty = (ScoreDifficulty)int.Parse(success.SlotData["score_difficulty"].ToString());
+                Core.Logger.LogInfo($"Score difficulty is {Core.Instance.Data.scoreDifficulty}");
 
                 Core.Instance.Data.damageMultiplier = int.Parse(success.SlotData["damage_multiplier"].ToString());
                 Core.Logger.LogInfo($"Damage multiplier is {Core.Instance.Data.damageMultiplier}");

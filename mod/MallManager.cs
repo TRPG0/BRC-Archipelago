@@ -71,9 +71,8 @@ namespace Archipelago
         {
             base.DoStageSetup();
 
-            StoryManager sm = Traverse.Create(WorldHandler.instance).Field<StoryManager>("storyManager").Value;
+            StoryManager sm = WorldHandler.instance.StoryManager;
             FindMallNPCs(sm);
-            SetCrewBattleScore(sm, 2500000);
             SkipDream(sm);
         }
 

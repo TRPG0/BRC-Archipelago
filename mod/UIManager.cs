@@ -280,11 +280,11 @@ namespace Archipelago
 
             if (APButton.CurrentState == APSlotButton.SlotState.Vanilla || (Core.Instance.Multiworld.Authenticated && APButton.slot != Core.Instance.SaveManager.currentSlot))
             {
-                Traverse.Create(am).Method("PlaySfxUI", new object[] { SfxCollectionID.MenuSfx, AudioClipID.cancel, 0f }).GetValue();
+                PlaySfxUI(SfxCollectionID.MenuSfx, AudioClipID.cancel);
                 return;
             }
 
-            Traverse.Create(am).Method("PlaySfxUI", new object[] { SfxCollectionID.MenuSfx, AudioClipID.confirm, 0f }).GetValue();
+            PlaySfxUI(SfxCollectionID.MenuSfx, AudioClipID.confirm);
             connectingSlot = APButton.slot;
             SetHeaderSlot(APButton.slot);
 
@@ -386,12 +386,12 @@ namespace Archipelago
                 if (!Core.Instance.Multiworld.Authenticated)
                 {
                     Core.Logger.LogInfo($"Save slot {slotId} has randomizer data, but is not connected.");
-                    Traverse.Create(ssm).Field("audioManager").Method("PlaySfxUI", new object[] { SfxCollectionID.MenuSfx, AudioClipID.cancel, 0f }).GetValue();
+                    PlaySfxUI(SfxCollectionID.MenuSfx, AudioClipID.cancel);
                 }
                 else if (slotId != Core.Instance.SaveManager.currentSlot)
                 {
                     Core.Logger.LogInfo($"Save slot {slotId} does not match connected slot. ({Core.Instance.SaveManager.currentSlot})");
-                    Traverse.Create(ssm).Field("audioManager").Method("PlaySfxUI", new object[] { SfxCollectionID.MenuSfx, AudioClipID.cancel, 0f }).GetValue();
+                    PlaySfxUI(SfxCollectionID.MenuSfx, AudioClipID.cancel);
                 }
                 else
                 {
@@ -406,7 +406,7 @@ namespace Archipelago
                 if (Core.Instance.Multiworld.Authenticated)
                 {
                     Core.Logger.LogInfo($"Save slot {slotId} has no randomizer data, but is currently connected.");
-                    Traverse.Create(ssm).Field("audioManager").Method("PlaySfxUI", new object[] { SfxCollectionID.MenuSfx, AudioClipID.cancel, 0f }).GetValue();
+                    PlaySfxUI(SfxCollectionID.MenuSfx, AudioClipID.cancel);
                 }
                 else
                 {
@@ -416,6 +416,16 @@ namespace Archipelago
                     APMenuChat.gameObject.SetActive(false);
                 }
             }
+        }
+
+        public void PlaySfxUI(SfxCollectionID collectionId, AudioClipID audioClipId, float randomPitchVariance = 0f)
+        {
+            Traverse.Create(Reptile.Core.Instance.AudioManager).Method("PlaySfxUI", new object[] { collectionId, audioClipId, randomPitchVariance }).GetValue();
+        }
+
+        public void PlaySfxGameplay(SfxCollectionID collectionId, AudioClipID audioClipId, float randomPitchVariance = 0f)
+        {
+            Traverse.Create(Reptile.Core.Instance.AudioManager).Method("PlaySfxGameplay", new object[] { collectionId, audioClipId, randomPitchVariance }).GetValue();
         }
     }
 }

@@ -96,7 +96,7 @@ namespace Reptile.Phone
         {
             if (CanQuitCurrentEncounter)
             {
-                Traverse.Create(Core.Instance.AudioManager).Method("PlaySfxGameplay", new object[] { SfxCollectionID.PhoneSfx, AudioClipID.FlipPhone_Confirm, 0f }).GetValue();
+                Archipelago.Core.Instance.UIManager.PlaySfxGameplay(SfxCollectionID.PhoneSfx, AudioClipID.FlipPhone_Confirm);
                 GiveUp();
             }
         }
@@ -122,14 +122,14 @@ namespace Reptile.Phone
 
         public void SetTopText()
         {
-            topText.text = $"\n\nCurrent Encounter Type:\n<b>{CurrentType}</b>";
+            topText.text = $"Current Encounter Type:\n<b>{CurrentType}</b>";
         }
 
         public void SetCenterText()
         {
-            if (CanQuitCurrentEncounter) centerText.text = "\n\nAre you sure you want to give up on this encounter?";
-            else if (CurrentType == EncounterType.None) centerText.text = "\n\nThere is no encounter active right now.";
-            else centerText.text = "\n\nThis encounter cannot be ended early.";
+            if (CanQuitCurrentEncounter) centerText.text = "Are you sure you want to give up on this encounter?";
+            else if (CurrentType == EncounterType.None) centerText.text = "There is no encounter active right now.";
+            else centerText.text = "This encounter cannot be ended early.";
         }
 
         public void SetBottomText()

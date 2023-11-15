@@ -86,8 +86,7 @@ namespace Archipelago
         {
             base.DoStageSetup();
 
-            StoryManager sm = Traverse.Create(WorldHandler.instance).Field<StoryManager>("storyManager").Value;
-            SetCrewBattleScore(sm, 3000000);
+            StoryManager sm = WorldHandler.instance.StoryManager;
             FindPyramidCopterEncounter(sm);
             FindPyramidDJEncounter(sm);
             SkipDream(sm);

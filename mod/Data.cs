@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Archipelago.Structures;
 using Reptile;
 
 namespace Archipelago
@@ -13,8 +14,8 @@ namespace Archipelago
 
         public bool skipIntro = true;
         public bool skipDreams = false;
-        public int totalRep = 0;
-        public bool hardBattles = false;
+        public TotalRep totalRep = TotalRep.Normal;
+        public ScoreDifficulty scoreDifficulty = ScoreDifficulty.Normal;
 
         public HashSet<string> to_lock = new HashSet<string>()
         {

@@ -37,7 +37,7 @@ namespace Archipelago
         public static RepValues MallChallenge4Rep = new RepValues(78, 458);
         public static ScoreValues MallChallenge4Score = new ScoreValues(100000, 0, 0, 2500000);
         public static RepValues MallCrewWallRep = new RepValues(111, 491);
-        public static ScoreValues MallCrewBattle = new ScoreValues(300000, 0, 0, 12000000);
+        public static ScoreValues MallCrewBattleScore = new ScoreValues(300000, 0, 0, 12000000);
         public static RepValues MallOldhead1Rep = new RepValues(150, 530);
         public static RepValues MallOldhead2Rep = new RepValues(200, 580);
         public static ScoreValues MallDotEXEScore = new ScoreValues(0, 0, 0, 0); // to do
@@ -184,6 +184,69 @@ namespace Archipelago
                             return OsakaOldheadRep.newValue;
                         case "CrewBattle":
                             return OsakaCrewRep.newValue;
+                        default:
+                            return null;
+                    }
+                default:
+                    return null;
+            }
+        }
+
+        public static ScoreValues GetEncounterNewScore(Stage stage, ScoreEncounter encounter)
+        {
+            switch (stage)
+            {
+                case Stage.downhill:
+                    switch (encounter.name)
+                    {
+                        case "ScoreEncounterBazaar":
+                            return DownhillRaveScore;
+                        case "CrewBattle_ScoreEncounter":
+                            return DownhillCrewBattleScore;
+                        default:
+                            return null;
+                    }
+                case Stage.tower:
+                    switch (encounter.transform.parent.name)
+                    {
+                        case "Score_Challenge":
+                            return TowerChallenge2Score;
+                        case "Score_Challenge ":
+                            return TowerMeshScore;
+                        case "ScoreEncounter_CrewBattle":
+                            return TowerCrewBattleScore;
+                        default:
+                            return null;
+                    }
+                case Stage.Mall:
+                    switch (encounter.name)
+                    {
+                        case "ScoreEncounter_Tricks":
+                            return MallChallenge4Score;
+                        case "CrewBattle_ScoreEncounter":
+                            return MallCrewBattleScore;
+                        default:
+                            return null;
+                    }
+                case Stage.pyramid:
+                    switch (encounter.name)
+                    {
+                        case "ScoreEncounter_Tricks1":
+                            return PyramidChallenge1Score;
+                        case "ScoreEncounter_Tricks2":
+                            return PyramidChallenge3Score;
+                        case "CrewBattle_ScoreEncounter":
+                            return PyramidCrewBattleScore;
+                        default:
+                            return null;
+                    }
+                case Stage.osaka:
+                    switch (encounter.name)
+                    {
+                        case "ScoreEncounter":
+                            return OsakaChallenge3Score;
+                        case "ScoreEncounter_CrewBattle":
+                            return OsakaCrewBattleScore;
                         default:
                             return null;
                     }

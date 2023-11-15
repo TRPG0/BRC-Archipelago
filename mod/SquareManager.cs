@@ -7,6 +7,8 @@ namespace Archipelago
 {
     public class SquareManager : StageManager
     {
+        public override bool ChangeScores => false;
+
         public void DontUnlockCharacterSelect(StoryManager sm)
         {
             if (Reptile.Core.Instance.BaseModule.CurrentStage != Stage.square) return;
@@ -25,7 +27,7 @@ namespace Archipelago
         {
             base.DoStageSetup();
 
-            StoryManager sm = Traverse.Create(WorldHandler.instance).Field<StoryManager>("storyManager").Value;
+            StoryManager sm = WorldHandler.instance.StoryManager;
             DontUnlockCharacterSelect(sm);
         }
     }

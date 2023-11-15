@@ -7,6 +7,7 @@ namespace Archipelago
 {
     public class DownhillManager : StageManager
     {
+
         public GameObject barricadeChunks;
         public GameObject progressObjectBel;
         public GameObject npcBel;
@@ -111,11 +112,10 @@ namespace Archipelago
         {
             base.DoStageSetup();
 
-            StoryManager sm = Traverse.Create(WorldHandler.instance).Field<StoryManager>("storyManager").Value;
+            StoryManager sm = WorldHandler.instance.StoryManager;
             FindChapter1Objects(sm);
             AddCallToPrinceCutscene(sm);
             FindPrinceCrewBattleTrigger(sm);
-            SetCrewBattleScore(sm, 1500000);
             SkipDream(sm);
         }
 

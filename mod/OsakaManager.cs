@@ -116,8 +116,7 @@ namespace Archipelago
         {
             base.DoStageSetup();
 
-            StoryManager sm = Traverse.Create(WorldHandler.instance).Field<StoryManager>("storyManager").Value;
-            SetCrewBattleScore(sm, 4000000);
+            StoryManager sm = WorldHandler.instance.StoryManager;
             FindOsakaCrewBattle(sm);
             FindOsakaSnakeTrigger(sm);
             AddCallToFinalBoss(sm);

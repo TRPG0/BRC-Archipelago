@@ -41,7 +41,7 @@ namespace Archipelago
         public void GetItem(AItem item, bool playSound = true)
         {
             Core.Instance.PhoneManager.appArchipelago.UpdateText();
-            if (playSound) Traverse.Create(Reptile.Core.Instance.AudioManager).Method("PlaySfxGameplay", new object[] { SfxCollectionID.MenuSfx, AudioClipID.unlockNotification, 0f }).GetValue();
+            if (playSound) Core.Instance.UIManager.PlaySfxGameplay(SfxCollectionID.MenuSfx, AudioClipID.unlockNotification);
             if (item is BRCItem brcitem && item.player_name == Core.Instance.Data.slot_name)
             {
                 string substring;
