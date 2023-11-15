@@ -13,10 +13,21 @@ namespace Archipelago.Patches
         {
             if (Core.Instance.SaveManager.DataExists())
             {
-                Core.Logger.LogInfo($"Attempted swap to {NewStyle}");
-                if (NewStyle == MoveStyle.SKATEBOARD && !Core.Instance.Data.skateboardUnlocked) return false;
-                else if (NewStyle == MoveStyle.INLINE && !Core.Instance.Data.inlineUnlocked) return false;
-                else if (NewStyle == MoveStyle.BMX && !Core.Instance.Data.bmxUnlocked) return false;
+                if (NewStyle == MoveStyle.SKATEBOARD && !Core.Instance.Data.skateboardUnlocked)
+                {
+                    Core.Logger.LogWarning("Can't quick swap to skateboard because it is not unlocked. (Archipelago.Patches.brc_styleswapmodPlugin_SwapStyle_Patch)");
+                    return false;
+                }
+                else if (NewStyle == MoveStyle.INLINE && !Core.Instance.Data.inlineUnlocked)
+                {
+                    Core.Logger.LogWarning("Can't quick swap to inline skates because it is not unlocked. (Archipelago.Patches.brc_styleswapmodPlugin_SwapStyle_Patch)");
+                    return false;
+                }
+                else if (NewStyle == MoveStyle.BMX && !Core.Instance.Data.bmxUnlocked)
+                {
+                    Core.Logger.LogWarning("Can't quick swap to BMX because it is not unlocked. (Archipelago.Patches.brc_styleswapmodPlugin_SwapStyle_Patch)");
+                    return false;
+                }
                 else return true;
             }
             else return true;
