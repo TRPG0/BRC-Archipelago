@@ -1,6 +1,6 @@
 ﻿namespace Archipelago.Structures
 {
-    public class Values
+    public abstract class Values
     {
         public int oldValue;
     }

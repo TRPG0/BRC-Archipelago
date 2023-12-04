@@ -8,7 +8,7 @@ namespace Archipelago.Patches
     {
         public static bool Prefix(ref Characters character)
         {
-            if (Core.Instance.SaveManager.DataExists())
+            if (Core.Instance.SaveManager.DataExists() && !(character == Characters.metalHead || character == Characters.legendMetalHead || character == Characters.legendFace))
             {
                 Core.Instance.LocationManager.CheckLocation(character.ToString());
                 return false;

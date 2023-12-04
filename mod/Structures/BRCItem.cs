@@ -14,9 +14,7 @@
         Skateboard,
         InlineSkates,
         BMX,
-        CharacterSkateboard,
-        CharacterInlineSkates,
-        CharacterBMX,
+        Character,
         Outfit,
         REP
     }

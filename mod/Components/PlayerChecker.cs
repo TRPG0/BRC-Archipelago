@@ -9,7 +9,7 @@ namespace Archipelago.Components
         private Player player;
         private Traverse playerT;
         private Traverse whT;
-        public bool canGetItem => !playerT.Field<bool>("isDisabled").Value && !playerT.Field<bool>("inGraffitiGame").Value;
+        public bool canGetItem => !playerT.Field<bool>("isDisabled").Value && !playerT.Field<bool>("inGraffitiGame").Value && !player.IsDead();
         public bool canGetNotif
         {
             get
@@ -32,6 +32,10 @@ namespace Archipelago.Components
         public void Update()
         {
             if (player == null) return;
+            if (Core.Instance.Multiworld.DeathLinkKilling)
+            {
+                if (canGetItem) player.ChangeHP(6);
+            }
             if (Core.Instance.LocationManager.itemQueue.Count > 0)
             {
                 if (canGetItem)
@@ -52,6 +56,16 @@ namespace Archipelago.Components
                     Core.Instance.LocationManager.notifQueue.RemoveAt(0);
                 }
             }
+        }
+
+        public void OnDisable()
+        {
+            try
+            {
+                Core.Instance.stageManager.contextGraffitiIcon.SetActive(false);
+                Core.Instance.stageManager.contextLabel.gameObject.SetActive(false);
+            }
+            catch { }
         }
     }
 }

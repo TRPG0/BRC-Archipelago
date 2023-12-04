@@ -3,15 +3,17 @@ using Reptile;
 using System.Collections.Generic;
 using UnityEngine.Events;
 
-namespace Archipelago
+namespace Archipelago.Stages
 {
     public class SquareManager : StageManager
     {
         public override bool ChangeScores => false;
+        public override bool HasDream => false;
+        public override string StoryPath => "story_Square";
+        public override Story.Chapter MinimumChapter => Story.Chapter.CHAPTER_1;
 
-        public void DontUnlockCharacterSelect(StoryManager sm)
+        public override void FindStoryObjects(StoryManager sm)
         {
-            if (Reptile.Core.Instance.BaseModule.CurrentStage != Stage.square) return;
             foreach (ProgressObject obj in Traverse.Create(sm).Field<List<ProgressObject>>("progressObjects").Value)
             {
                 if (obj.name == "ProgressObject_Phonecall_TeachCypher")
@@ -21,14 +23,6 @@ namespace Archipelago
                     break;
                 }
             }
-        }
-
-        public override void DoStageSetup()
-        {
-            base.DoStageSetup();
-
-            StoryManager sm = WorldHandler.instance.StoryManager;
-            DontUnlockCharacterSelect(sm);
         }
     }
 }

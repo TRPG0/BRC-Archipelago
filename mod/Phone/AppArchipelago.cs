@@ -102,7 +102,7 @@ namespace Reptile.Phone
                 AppArchipelagoOptions.LimitedGraffiti => ValueToText(Archipelago.Core.Instance.Data.limitedGraffiti),
                 AppArchipelagoOptions.ScoreDifficulty => ValueToText(Archipelago.Core.Instance.Data.scoreDifficulty),
                 AppArchipelagoOptions.DamageMultiplier => ValueToText(Archipelago.Core.Instance.Data.damageMultiplier),
-                AppArchipelagoOptions.DeathLink => ValueToText(Archipelago.Core.Instance.Data.death_link),
+                AppArchipelagoOptions.DeathLink => ValueToText(Archipelago.Core.Instance.Data.deathLink),
                 _ => "?"
             };
         }
@@ -146,7 +146,7 @@ namespace Reptile.Phone
             else if (m_State == AppArchipelagoState.Options)
             {
                 bottomLeftText.text = "Back";
-                if (m_CurrentOption == AppArchipelagoOptions.ScoreDifficulty)
+                if (m_CurrentOption == AppArchipelagoOptions.ScoreDifficulty || m_CurrentOption == AppArchipelagoOptions.DamageMultiplier || m_CurrentOption == AppArchipelagoOptions.DeathLink)
                 {
                     bottomRightText.text = "Change";
                     bottomRightText.gameObject.SetActive(true);
@@ -249,6 +249,21 @@ namespace Reptile.Phone
                     Archipelago.Core.Instance.Data.scoreDifficulty += 1;
                     if (Archipelago.Core.Instance.Data.scoreDifficulty > ScoreDifficulty.Extreme) Archipelago.Core.Instance.Data.scoreDifficulty = ScoreDifficulty.Normal;
                     Archipelago.Core.Instance.stageManager.SetEncounterScores(WorldHandler.instance.StoryManager);
+                    UpdateOptionText();
+                }
+                else if (m_CurrentOption == AppArchipelagoOptions.DamageMultiplier)
+                {
+                    Archipelago.Core.Instance.UIManager.PlaySfxGameplay(SfxCollectionID.PhoneSfx, AudioClipID.FlipPhone_Select);
+                    Archipelago.Core.Instance.Data.damageMultiplier += 1;
+                    if (Archipelago.Core.Instance.Data.damageMultiplier > 6) Archipelago.Core.Instance.Data.damageMultiplier = 1;
+                    UpdateOptionText();
+                }
+                else if (m_CurrentOption == AppArchipelagoOptions.DeathLink)
+                {
+                    Archipelago.Core.Instance.UIManager.PlaySfxGameplay(SfxCollectionID.PhoneSfx, AudioClipID.FlipPhone_Select);
+                    Archipelago.Core.Instance.Data.deathLink ^= true;
+                    if (Archipelago.Core.Instance.Data.deathLink) Archipelago.Core.Instance.Multiworld.EnableDeathLink();
+                    else Archipelago.Core.Instance.Multiworld.DisableDeathLink();
                     UpdateOptionText();
                 }
             }

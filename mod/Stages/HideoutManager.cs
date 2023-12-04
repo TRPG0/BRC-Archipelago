@@ -2,12 +2,14 @@
 using Reptile;
 using System.Collections.Generic;
 
-namespace Archipelago
+namespace Archipelago.Stages
 {
     public class HideoutManager : StageManager
     {
         public override bool ChangeNPCs => false;
         public override bool ChangeScores => false;
+        public override bool HasDream => false;
+        public override bool HasChapter6Content => false;
 
         public void SetSkateboardGarage(bool open)
         {
@@ -36,9 +38,8 @@ namespace Archipelago
             }
         }
 
-        public void SetChapter4Character(StoryManager sm)
+        public override void FindStoryObjects(StoryManager sm)
         {
-            if (Reptile.Core.Instance.BaseModule.CurrentStage != Stage.hideout) return;
             if (Core.Instance.Data.firstCharacter == Characters.blockGuy) return;
             foreach (ProgressObject obj in Traverse.Create(sm).Field<List<ProgressObject>>("progressObjects").Value)
             {
@@ -58,9 +59,6 @@ namespace Archipelago
             SetSkateboardGarage(Core.Instance.Data.skateboardUnlocked);
             SetInlineGarage(Core.Instance.Data.inlineUnlocked);
             SetBMXGarage(Core.Instance.Data.bmxUnlocked);
-
-            StoryManager sm = WorldHandler.instance.StoryManager;
-            SetChapter4Character(sm);
         }
     }
 }

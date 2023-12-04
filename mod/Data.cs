@@ -42,6 +42,6 @@ namespace Archipelago
         public bool dummyUnlocked = false;
 
         public int damageMultiplier = 1;
-        public bool death_link = false;
+        public bool deathLink = false;
     }
 }

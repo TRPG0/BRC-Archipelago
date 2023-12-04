@@ -31,6 +31,7 @@ namespace Archipelago
 
         public DeathLinkService DeathLinkService = null;
         public bool DeathLinkKilling = false;
+        public string DeathLinkReason { get; private set; }
 
         public bool Connect(int slotId, string name, string address, string password = null)
         {
@@ -48,17 +49,7 @@ namespace Archipelago
             }
             Core.Logger.LogInfo($"Attempting connection - Slot: {slotId} | Name: {name}");
 
-            string url = address;
-            int port = 38281;
-
-            if (url.Contains(":"))
-            {
-                var splits = url.Split(new char[] { ':' });
-                url = splits[0];
-                if (!int.TryParse(splits[1], out port)) port = 38281;
-            }
-
-            Session = ArchipelagoSessionFactory.CreateSession(url, port);
+            Session = ArchipelagoSessionFactory.CreateSession(address);
             Session.Socket.SocketClosed += SocketClosed;
             Session.Socket.ErrorReceived += ErrorReceived;
             Session.Socket.PacketReceived += PacketReceived;
@@ -77,19 +68,12 @@ namespace Archipelago
 
             if (loginResult is LoginSuccessful success)
             {
-                Authenticated = true;
-
                 Core.Instance.Data.skipIntro = bool.Parse(success.SlotData["skip_intro"].ToString());
-                Core.Logger.LogInfo($"Skip intro is {Core.Instance.Data.skipIntro}");
-
                 Core.Instance.Data.skipDreams = bool.Parse(success.SlotData["skip_dreams"].ToString());
-                Core.Logger.LogInfo($"Skip dreams is {Core.Instance.Data.skipDreams}");
-
                 Core.Instance.Data.totalRep = (TotalRep)int.Parse(success.SlotData["total_rep"].ToString());
-                Core.Logger.LogInfo($"Total REP is {Core.Instance.Data.totalRep}");
-
                 Core.Instance.Data.startingMovestyle = (MoveStyle)int.Parse(success.SlotData["starting_movestyle"].ToString());
-                Core.Logger.LogInfo($"Starting movestyle is {Core.Instance.Data.startingMovestyle}");
+                Core.Instance.Data.limitedGraffiti = bool.Parse(success.SlotData["limited_graffiti"].ToString());
+
                 if (!Core.Instance.SaveManager.DataExists(slotId))
                 {
                     if (Core.Instance.Data.startingMovestyle == MoveStyle.SKATEBOARD)
@@ -110,16 +94,23 @@ namespace Archipelago
                         Core.Instance.Data.inlineUnlocked = false;
                         Core.Instance.Data.bmxUnlocked = true;
                     }
+
+                    if (Core.Instance.Data.limitedGraffiti) Core.Instance.Data.grafUses["metalHead"] = 0;
+
+                    Core.Instance.Data.damageMultiplier = int.Parse(success.SlotData["damage_multiplier"].ToString());
+                    Core.Instance.Data.scoreDifficulty = (ScoreDifficulty)int.Parse(success.SlotData["score_difficulty"].ToString());
+                    Core.Instance.Data.deathLink = bool.Parse(success.SlotData["death_link"].ToString());
                 }
 
-                Core.Instance.Data.limitedGraffiti = bool.Parse(success.SlotData["limited_graffiti"].ToString());
+                Core.Logger.LogInfo($"Skip intro is {Core.Instance.Data.skipIntro}");
+                Core.Logger.LogInfo($"Skip dreams is {Core.Instance.Data.skipDreams}");
+                Core.Logger.LogInfo($"Total REP is {Core.Instance.Data.totalRep}");
+                Core.Logger.LogInfo($"Starting movestyle is {Core.Instance.Data.startingMovestyle}");
                 Core.Logger.LogInfo($"Limited graffiti is {Core.Instance.Data.limitedGraffiti}");
-
-                Core.Instance.Data.scoreDifficulty = (ScoreDifficulty)int.Parse(success.SlotData["score_difficulty"].ToString());
                 Core.Logger.LogInfo($"Score difficulty is {Core.Instance.Data.scoreDifficulty}");
-
-                Core.Instance.Data.damageMultiplier = int.Parse(success.SlotData["damage_multiplier"].ToString());
                 Core.Logger.LogInfo($"Damage multiplier is {Core.Instance.Data.damageMultiplier}");
+                Core.Logger.LogInfo($"Death link is {Core.Instance.Data.deathLink}");
+
 
                 foreach (RawLocationData data in ((JArray)success.SlotData["locations"]).ToObject<RawLocationData[]>())
                 {
@@ -130,21 +121,16 @@ namespace Archipelago
                         {
                             item_name = data.item_name,
                             player_name = data.player_name,
-                            type = (BRCType)Enum.Parse(typeof(BRCType), data.item_type)
+                            type = (BRCType)int.Parse(data.item_type)
                         };
                     }
                     else
                     {
-                        ItemFlags flag = ItemFlags.None;
-                        if (data.item_type == "useful") flag = ItemFlags.NeverExclude;
-                        else if (data.item_type == "progression") flag = ItemFlags.Advancement;
-                        else if (data.item_type == "trap") flag = ItemFlags.Trap;
-
                         item = new APItem()
                         {
                             item_name = data.item_name,
                             player_name = data.player_name,
-                            type = flag
+                            type = (ItemFlags)int.Parse(data.item_type)
                         };
                     }
 
@@ -156,6 +142,8 @@ namespace Archipelago
                     });
                 }
 
+                Authenticated = true;
+                if (Core.Instance.Data.deathLink) EnableDeathLink();
                 messages.Clear();
                 Core.Instance.Data.slot_name = name;
                 Core.Instance.Data.host_name = address;
@@ -316,22 +304,33 @@ namespace Archipelago
             else Core.Logger.LogWarning("No locations available to hint.");
         }
 
-        /*
         public void EnableDeathLink()
         {
-
+            if (Session == null) return;
+            if (DeathLinkService == null)
+            {
+                DeathLinkService = Session.CreateDeathLinkService();
+                DeathLinkService.OnDeathLinkReceived += DeathLinkReceived;
+            }
+            DeathLinkService.EnableDeathLink();
         }
 
         public void DisableDeathLink()
         {
-
+            if (DeathLinkService != null) DeathLinkService.DisableDeathLink();
         }
 
         public void DeathLinkReceived(DeathLink dl)
         {
-
+            if (Reptile.Core.Instance.BaseModule.IsPlayingInStage && !Reptile.Core.Instance.BaseModule.IsLoading && !DeathLinkKilling)
+            {
+                DeathLinkKilling = true;
+                string reason = dl.Cause;
+                if (reason == null) reason = $"{dl.Source} has died.";
+                DeathLinkReason = reason;
+            }
+            else Core.Logger.LogWarning("Received DeathLink, but player cannot be killed right now.");
         }
-        */
 
         public void SendCompletion()
         {

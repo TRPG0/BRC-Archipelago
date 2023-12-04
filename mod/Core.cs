@@ -1,4 +1,5 @@
 ﻿using Archipelago.Patches;
+using Archipelago.Stages;
 using BepInEx;
 using BepInEx.Bootstrap;
 using BepInEx.Configuration;
@@ -11,7 +12,6 @@ namespace Archipelago
 {
     [BepInPlugin(PluginGUID, PluginName, PluginVersion)]
     [BepInDependency("com.yuril.brc_styleswapmod", BepInDependency.DependencyFlags.SoftDependency)]
-    [BepInDependency("dance.tari.bombrushcyberfunk.fasttravel", BepInDependency.DependencyFlags.SoftDependency)]
     public class Core : BaseUnityPlugin
     {
         public const string PluginGUID = "trpg.brc.archipelago";
@@ -42,6 +42,8 @@ namespace Archipelago
 
         public static bool isQuickStyleSwapLoaded = false;
 
+        public static bool FailScoreEncounters { get; private set; }
+
         internal static int forbiddenModsLoaded = 0;
         internal static string forbiddenGUIDs = string.Empty;
         private readonly List<string> forbiddenMods = new List<string>()
@@ -70,6 +72,7 @@ namespace Archipelago
         {
             Logger.LogInfo($"{PluginInfo.PLUGIN_GUID} is loaded.");
             Instance = this;
+            FailScoreEncounters = false;
 
             Harmony Harmony = new Harmony("Archipelago");
             Harmony.PatchAll(typeof(AppGraffiti_OnHoldDown_Patch));
@@ -85,20 +88,29 @@ namespace Archipelago
             Harmony.PatchAll(typeof(BaseModule_StartNewGame_Patch));
             Harmony.PatchAll(typeof(CharacterSelect_PopulateListOfSelectableCharacters_Patch));
             Harmony.PatchAll(typeof(Collectable_PickupCollectable_Patch));
+            Harmony.PatchAll(typeof(DieAbility_OnStartAbility_Patch));
             Harmony.PatchAll(typeof(DynamicPickup_PickupPickup_Patch));
+            Harmony.PatchAll(typeof(Encounter_SetEncounterState_Patch));
+            Harmony.PatchAll(typeof(GameplayEvent_UnlockCharacterImpl_Patch));
             Harmony.PatchAll(typeof(GraffitiGame_SetState_Patch));
             Harmony.PatchAll(typeof(GraffitiGame_SetStateVisual_Patch));
             Harmony.PatchAll(typeof(GraffitiSpot_GiveRep_Patch));
             Harmony.PatchAll(typeof(GraffitiSpot_SpawnRep_Patch));
             Harmony.PatchAll(typeof(LocalizationLookupTable_GetLocalizationValueFromSubgroup_Patch));
             Harmony.PatchAll(typeof(Player_ChangeHP_Patch));
+            Harmony.PatchAll(typeof(Player_CheckNPCTriggerForConversation_Patch));
+            Harmony.PatchAll(typeof(Player_OnTriggerEnter_Patch));
+            Harmony.PatchAll(typeof(Player_OnTriggerExit_Patch));
             Harmony.PatchAll(typeof(Player_StartGraffitiMode_Patch));
+            Harmony.PatchAll(typeof(ScoreEncounter_StartMainEvent_Patch));
             Harmony.PatchAll(typeof(SaveManager_SaveCurrentSaveSlot_Patch));
             Harmony.PatchAll(typeof(SaveSlotData_UnlockCharacter_Patch));
             Harmony.PatchAll(typeof(SaveSlotMenu_OnPressedPopupDeleteButton_Patch));
             Harmony.PatchAll(typeof(SaveSlotMenu_ShowDeleteSaveSlotPopup_Patch));
             Harmony.PatchAll(typeof(TextMeshProGameTextLocalizer_GetRawDialogueTextValue_Patch));
             Harmony.PatchAll(typeof(Type_GetType_Patch));
+            Harmony.PatchAll(typeof(UIManager_HideDieMenu_Patch));
+            Harmony.PatchAll(typeof(UIManager_ShowDieMenu_Patch));
             Harmony.PatchAll(typeof(VendingMachine_RewardIsValid_Patch));
 
             foreach (var plugin in Chainloader.PluginInfos)

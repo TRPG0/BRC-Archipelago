@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using Reptile;
+using System;
 using System.Collections.Generic;
 
 namespace Archipelago.Patches
@@ -15,53 +16,74 @@ namespace Archipelago.Patches
                 if (setState == GraffitiGame.GraffitiGameState.SHOW_PIECE)
                 {
                     GraffitiSpot gSpot = Traverse.Create(__instance).Field<GraffitiSpot>("gSpot").Value;
-                    if (gSpot.size != GraffitiSize.S && gSpot.attachedTo == GraffitiSpot.AttachType.DEFAULT)
+                    if (gSpot.attachedTo == GraffitiSpot.AttachType.DEFAULT)
                     {
                         if (gSpot.bottomCrew != gSpot.topCrew && (gSpot.topCrew == Crew.PLAYERS || gSpot.bottomCrew == Crew.ROGUE) && Reptile.Core.Instance.BaseModule.CurrentStage != Stage.Prelude)
                         {
                             GraffitiArt grafArt = Traverse.Create(__instance).Field<GraffitiArt>("grafArt").Value;
 
-                            int limit = 10;
-                            if (gSpot.size == GraffitiSize.XL) limit = 6;
+                            int limit = Requirements.grafSLimit;
+                            if (gSpot.size == GraffitiSize.M) limit = Requirements.grafMLimit;
+                            else if (gSpot.size == GraffitiSize.L) limit = Requirements.grafLLimit;
+                            else if (gSpot.size == GraffitiSize.XL) limit = Requirements.grafXLLimit;
 
-                            Core.Instance.Data.grafUses[grafArt.unlockable.Uid] += 1;
-                            if (Core.Instance.Data.grafUses[grafArt.unlockable.Uid] >= limit)
+                            string id = "";
+                            string title = "";
+                            if (gSpot.size == GraffitiSize.S)
                             {
-                                grafArt.unlockable.IsDefault = false;
-                                Core.Instance.SaveManager.CurrentSaveSlot.GetUnlockableDataByUid(grafArt.unlockable.Uid).IsUnlocked = false;
-                                Core.Instance.LocationManager.notifQueue.Add(new Structures.Notification("AppGraffiti", $"\"{grafArt.title}\" has been depleted.", null));
+                                Characters currentCharacter = Core.Instance.SaveManager.CurrentSaveSlot.currentCharacter;
+                                if (!Enum.IsDefined(typeof(Characters), currentCharacter) || currentCharacter == Characters.legendMetalHead || currentCharacter == Characters.legendFace) currentCharacter = Characters.metalHead;
+                                id = currentCharacter.ToString();
+                                title = Reptile.Core.Instance.Localizer.GetCharacterName(currentCharacter);
+                            }
+                            else
+                            {
+                                id = grafArt.unlockable.Uid;
+                                title = grafArt.title;
+                            }
 
-                                List<string> defaults = new List<string>()
+                            Core.Instance.Data.grafUses[id] += 1;
+                            if (Core.Instance.Data.grafUses[id] >= limit)
+                            {
+                                if (gSpot.size != GraffitiSize.S)
                                 {
+                                    grafArt.unlockable.IsDefault = false;
+                                    Core.Instance.SaveManager.CurrentSaveSlot.GetUnlockableDataByUid(grafArt.unlockable.Uid).IsUnlocked = false;
+                                    Core.Instance.LocationManager.notifQueue.Add(new Structures.Notification("AppGraffiti", $"\"{grafArt.title}\" has been depleted.", null));
+
+                                    List<string> defaults = new List<string>()
+                                    {
                                     "OVERWHELMME",
                                     "QUICK BING",
                                     "WHOLE SIXER",
                                     "Graffo Le Fou",
                                     "WILD STRUXXA",
                                     "Bombing by FireMan"
-                                };
+                                    };
 
-                                if (defaults.Contains(grafArt.title)) Core.Instance.Data.to_lock.Add(grafArt.title);
+                                    if (defaults.Contains(grafArt.title)) Core.Instance.Data.to_lock.Add(grafArt.title);
 
-                                if (!Core.Instance.SaveManager.IsAnyGraffitiUnlocked(GraffitiSize.M))
-                                {
-                                    Core.Instance.stageManager.NoGraffitiM();
+                                    /*
+                                    if (!Core.Instance.SaveManager.IsAnyGraffitiUnlocked(GraffitiSize.M))
+                                    {
+                                        Core.Instance.stageManager.NoGraffitiM();
+                                    }
+                                    if (!Core.Instance.SaveManager.IsAnyGraffitiUnlocked(GraffitiSize.L))
+                                    {
+                                        Core.Instance.stageManager.NoGraffitiL();
+                                    }
+                                    if (!Core.Instance.SaveManager.IsAnyGraffitiUnlocked(GraffitiSize.XL))
+                                    {
+                                        Core.Instance.stageManager.NoGraffitiXL();
+                                    }
+                                    */
+                                    if (!Core.Instance.SaveManager.IsAnyGraffitiUnlocked(gSpot.size)) Core.Instance.stageManager.NoGraffiti(gSpot.size);
                                 }
-                                if (!Core.Instance.SaveManager.IsAnyGraffitiUnlocked(GraffitiSize.L))
-                                {
-                                    Core.Instance.stageManager.NoGraffitiL();
-                                }
-                                if (!Core.Instance.SaveManager.IsAnyGraffitiUnlocked(GraffitiSize.XL))
-                                {
-                                    Core.Instance.stageManager.NoGraffitiXL();
-                                }
+                                else Core.Instance.LocationManager.notifQueue.Add(new Structures.Notification("AppGraffiti", $"{title}'s graffiti has been depleted.", null));
                             }
 
                             Core.Instance.SaveManager.SaveData();
-                            string usage = $"\"{grafArt.title}\" has been used {Core.Instance.Data.grafUses[grafArt.unlockable.Uid]}";
-                            if (Core.Instance.Data.grafUses[grafArt.unlockable.Uid] == 1) usage += " time.";
-                            else usage += " times.";
-                            Core.Logger.LogInfo(usage);
+                            Core.Logger.LogInfo($"\"{title}\" has been used {Core.Instance.Data.grafUses[id]} / {limit} times.");
                         }
                     }
                 }
@@ -82,18 +104,30 @@ namespace Archipelago.Patches
 
                 if (gSpot.bottomCrew != gSpot.topCrew && (gSpot.topCrew == Crew.PLAYERS || gSpot.bottomCrew == Crew.ROGUE))
                 {
-                    if (setState == GraffitiGame.GraffitiGameState.SHOW_PIECE && gSpot.size != GraffitiSize.S && gSpot.attachedTo == GraffitiSpot.AttachType.DEFAULT)
+                    if (setState == GraffitiGame.GraffitiGameState.SHOW_PIECE && gSpot.attachedTo == GraffitiSpot.AttachType.DEFAULT)
                     {
-                        GraffitiArt grafArt = traverse.Field<GraffitiArt>("grafArt").Value;
                         GameplayUI ui = traverse.Field("player").Field<GameplayUI>("ui").Value;
 
-                        int limit = 10;
-                        if (traverse.Field<GraffitiSpot>("gSpot").Value.size == GraffitiSize.XL) limit = 6;
-
-
-                        if (Core.Instance.Data.grafUses.ContainsKey(grafArt.unlockable.Uid))
+                        string id = "";
+                        if (gSpot.size == GraffitiSize.S)
                         {
-                            ui.graffitiTitle.text = $"{ui.graffitiTitle.text} ({limit - 1 - Core.Instance.Data.grafUses[grafArt.unlockable.Uid]} left)";
+                            Characters currentCharacter = Core.Instance.SaveManager.CurrentSaveSlot.currentCharacter;
+                            if (!Enum.IsDefined(typeof(Characters), currentCharacter) || currentCharacter == Characters.legendMetalHead || currentCharacter == Characters.legendFace) currentCharacter = Characters.metalHead;
+                            id = currentCharacter.ToString();
+                        }
+                        else
+                        {
+                            id = traverse.Field<GraffitiArt>("grafArt").Value.unlockable.Uid;
+                        }
+
+                        int limit = Requirements.grafSLimit;
+                        if (gSpot.size == GraffitiSize.M) limit = Requirements.grafMLimit;
+                        else if (gSpot.size == GraffitiSize.L) limit = Requirements.grafLLimit;
+                        else if (gSpot.size == GraffitiSize.XL) limit = Requirements.grafXLLimit;
+
+                        if (Core.Instance.Data.grafUses.ContainsKey(id))
+                        {
+                            ui.graffitiTitle.text = $"{ui.graffitiTitle.text} ({limit - 1 - Core.Instance.Data.grafUses[id]} left)";
                         }
                     }
                 }

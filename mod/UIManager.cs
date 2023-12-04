@@ -39,7 +39,7 @@ namespace Archipelago
 
         public TextMeshProUGUI APMenuStatus;
         public TextMeshProUGUI APMenuLocations;
-        public const int totalLocations = 216;
+        public const int totalLocations = 229;
         public TextMeshProUGUI APMenuResult;
         public TextMeshProUGUI APMenuChat;
         public int connectingSlot = -1;

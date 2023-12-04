@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using Reptile;
+using Archipelago.Stages;
 
 namespace Archipelago.Patches
 {
@@ -27,13 +28,18 @@ namespace Archipelago.Patches
                     Core.Instance.SaveManager.CurrentSaveSlot.CurrentStoryObjective = Story.ObjectiveID.JoinTheCrew;
                 }
                 else __instance.LoadStage(Stage.Prelude);
+
+                foreach (CharacterProgress progress in Traverse.Create(Core.Instance.SaveManager.CurrentSaveSlot).Field<CharacterProgress[]>("totalCharacterProgress").Value)
+                {
+                    progress.moveStyle = Core.Instance.Data.startingMovestyle;
+                }
                 Core.Instance.SaveManager.UnlockMaps();
                 Core.Instance.SaveManager.CurrentSaveSlot.LockCharacter(Characters.blockGuy);
                 Core.Instance.SaveManager.CurrentSaveSlot.LockCharacter(Characters.spaceGirl);
                 Core.Instance.SaveManager.CurrentSaveSlot.LockCharacter(Characters.girl1);
-                Core.Instance.SaveManager.CurrentSaveSlot.GetCharacterProgress(Characters.metalHead).moveStyle = Core.Instance.Data.startingMovestyle;
-                Core.Instance.SaveManager.CurrentSaveSlot.GetCharacterProgress(Characters.legendMetalHead).moveStyle = Core.Instance.Data.startingMovestyle;
-                Core.Instance.SaveManager.CurrentSaveSlot.GetCharacterProgress(Characters.legendFace).moveStyle = Core.Instance.Data.startingMovestyle;
+                //Core.Instance.SaveManager.CurrentSaveSlot.GetCharacterProgress(Characters.metalHead).moveStyle = Core.Instance.Data.startingMovestyle;
+                //Core.Instance.SaveManager.CurrentSaveSlot.GetCharacterProgress(Characters.legendMetalHead).moveStyle = Core.Instance.Data.startingMovestyle;
+                //Core.Instance.SaveManager.CurrentSaveSlot.GetCharacterProgress(Characters.legendFace).moveStyle = Core.Instance.Data.startingMovestyle;
                 Core.Instance.SaveManager.CurrentSaveSlot.characterSelectLocked = true;
                 Core.Instance.SaveManager.CurrentSaveSlot.cameraAppLocked = true;
                 Core.Instance.SaveManager.CurrentSaveSlot.taxiLocked = false;

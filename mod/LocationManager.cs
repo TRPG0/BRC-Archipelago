@@ -1,4 +1,5 @@
 ﻿using Archipelago.MultiClient.Net.Enums;
+using Archipelago.Stages;
 using Archipelago.Structures;
 using HarmonyLib;
 using Reptile;
@@ -51,6 +52,7 @@ namespace Archipelago
                         substring = brcitem.item_name.Substring(7, brcitem.item_name.Length-8);
                         MusicTrack track = GetMusicTrack(GetMusicAssetName(substring));
                         Core.Instance.SaveManager.CurrentSaveSlot.GetUnlockableDataByUid(track.Uid).IsUnlocked = true;
+                        Core.Instance.PhoneManager.Phone.GetAppInstance<AppMusicPlayer>().GameMusicPlayer.AddMusicTrack(track);
                         notifQueue.Add(new Notification("AppMusicPlayer", $"Music ({track.Title})", track));
                         break;
                     case BRCType.GraffitiM:
@@ -59,9 +61,14 @@ namespace Archipelago
                         if (brcitem.type == BRCType.GraffitiXL) substring = brcitem.item_name.Substring(15, brcitem.item_name.Length-16);
                         else substring = brcitem.item_name.Substring(14, brcitem.item_name.Length - 15);
 
+                        /*
                         if (brcitem.type == BRCType.GraffitiM) Core.Instance.stageManager.YesGraffitiM();
                         else if (brcitem.type == BRCType.GraffitiL) Core.Instance.stageManager.YesGraffitiL();
                         else if (brcitem.type == BRCType.GraffitiXL) Core.Instance.stageManager.YesGraffitiXL();
+                        */
+                        if (brcitem.type == BRCType.GraffitiM) Core.Instance.stageManager.YesGraffiti(GraffitiSize.M);
+                        else if (brcitem.type == BRCType.GraffitiL) Core.Instance.stageManager.YesGraffiti(GraffitiSize.L);
+                        else if (brcitem.type == BRCType.GraffitiXL) Core.Instance.stageManager.YesGraffiti(GraffitiSize.XL);
 
                         if (Core.Instance.Data.to_lock.Contains(substring)) Core.Instance.Data.to_lock.Remove(substring);
 
@@ -101,34 +108,17 @@ namespace Archipelago
                         Core.Instance.SaveManager.CurrentSaveSlot.GetUnlockableDataByUid(outfit.Uid).IsUnlocked = true;
                         notifQueue.Add(new Notification("AppArchipelago", brcitem.item_name, null));
                         break;
-                    case BRCType.CharacterSkateboard:
-                    case BRCType.CharacterInlineSkates:
-                    case BRCType.CharacterBMX:
-                        if (brcitem.type == BRCType.CharacterSkateboard)
-                        {
-                            Core.Instance.Data.skateboardUnlocked = true;
-                            if (Core.Instance.stageManager is HideoutManager) ((HideoutManager)Core.Instance.stageManager).SetSkateboardGarage(true);
-                        }
-                        if (brcitem.type == BRCType.CharacterInlineSkates)
-                        {
-                            Core.Instance.Data.inlineUnlocked = true;
-                            if (Core.Instance.stageManager is HideoutManager) ((HideoutManager)Core.Instance.stageManager).SetInlineGarage(true);
-                        }
-                        if (brcitem.type == BRCType.CharacterBMX)
-                        {
-                            Core.Instance.Data.bmxUnlocked = true;
-                            if (Core.Instance.stageManager is HideoutManager) ((HideoutManager)Core.Instance.stageManager).SetBMXGarage(true);
-                        }
+                    case BRCType.Character:
                         Core.Instance.SaveManager.CurrentSaveSlot.characterSelectLocked = false;
-
                         Characters character = NameToCharacter(brcitem.item_name);
                         if (Core.Instance.Data.firstCharacter == Characters.NONE) Core.Instance.Data.firstCharacter = character;
+                        if (Core.Instance.Data.limitedGraffiti) Core.Instance.Data.grafUses[character.ToString()] = 0;
                         if (character == Characters.dummy) Core.Instance.Data.dummyUnlocked = true;
                         Core.Instance.SaveManager.UnlockCharacter(character);
                         notifQueue.Add(new Notification("AppArchipelago", brcitem.item_name, null));
                         break;
                     case BRCType.REP:
-                        int rep = int.Parse(brcitem.item_name.Substring(0, 2));
+                        int rep = int.Parse(brcitem.item_name.Substring(0, brcitem.item_name.Length - 4));
                         Core.Instance.Data.fakeRep += rep;
                         if (Reptile.Core.Instance.BaseModule.IsPlayingInStage)
                         {
@@ -157,9 +147,9 @@ namespace Archipelago
 
         public void CountAndCheckSpray()
         {
-            if (Core.Instance.Data.sprayCount < 379) Core.Instance.Data.sprayCount++;
+            if (Core.Instance.Data.sprayCount < 389) Core.Instance.Data.sprayCount++;
             Core.Logger.LogInfo($"Spray count is {Core.Instance.Data.sprayCount}");
-            if (Core.Instance.Data.sprayCount == 379) CheckLocation("graf379");
+            if (Core.Instance.Data.sprayCount == 389) CheckLocation("graf379");
             else if (Core.Instance.Data.sprayCount % 5 == 0) CheckLocation($"graf{Core.Instance.Data.sprayCount}");
         }
 
@@ -174,33 +164,7 @@ namespace Archipelago
             else if (name.Contains("BMX (")) return BRCType.BMX;
             else if (name.Contains("Outfit (")) return BRCType.Outfit;
             else if (name.Contains(" REP")) return BRCType.REP;
-            else switch (name)
-                {
-                    case "Tryce":
-                    case "Rave":
-                    case "Shine":
-                    case "Coil":
-                    case "Frank":
-                        return BRCType.CharacterBMX;
-                    case "Bel":
-                    case "Solace":
-                    case "Mesh":
-                    case "Rise":
-                    case "Rietveld":
-                    case "Eclipse":
-                        return BRCType.CharacterInlineSkates;
-                    case "Vinyl":
-                    case "Felix":
-                    case "DJ Cyber":
-                    case "DOT.EXE":
-                    case "Devil Theory":
-                    case "Flesh Prince":
-                    case "Futurism":
-                    case "Oldhead":
-                        return BRCType.CharacterSkateboard;
-                    default:
-                        return BRCType.REP;
-                }
+            else return BRCType.Character;
         }
 
         public MusicTrack GetMusicTrack(string name)

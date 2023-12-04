@@ -5,16 +5,20 @@ namespace Archipelago
 {
     internal static class Requirements
     {
+        public const int grafSLimit = 5;
+        public const int grafMLimit = 9;
+        public const int grafLLimit = 8;
+        public const int grafXLLimit = 6;
+
         public static RepValues HideoutStoryRep = new RepValues(20, 20);
 
         public static RepValues DownhillChallenge1Rep = new RepValues(30, 50);
         public static RepValues DownhillChallenge2Rep = new RepValues(38, 58);
         public static RepValues DownhillChallenge3Rep = new RepValues(45, 65);
         public static RepValues DownhillCrewWallRep = new RepValues(70, 90);
-        public static ScoreValues DownhillCrewBattleScore = new ScoreValues(60000, 1500000, 2500000, 3500000);
+        public static ScoreValues DownhillCrewBattleScore = new ScoreValues(60000, 1500000, 2250000, 3000000);
         public static RepValues DownhillOldheadRep = new RepValues(100, 120);
-        public static ScoreValues DownhillRaveScore = new ScoreValues(50000, 500000, 1000000, 2000000);
-        public static ScoreValues DownhillFrankScore = new ScoreValues(0, 0, 0, 0); // to do
+        public static ScoreValues DownhillRaveScore = new ScoreValues(50000, 750000, 1500000, 3000000);
 
         public static RepValues SquareEclipseRep = new RepValues(60, 180);
         public static RepValues SquareOldheadRep = new RepValues(120, 380);
@@ -25,11 +29,10 @@ namespace Archipelago
         public static RepValues TowerChallenge3Rep = new RepValues(40, 220);
         public static RepValues TowerEscherRep = new RepValues(80, 260);
         public static RepValues TowerCrewWallRep = new RepValues(100, 280);
-        public static ScoreValues TowerCrewBattleScore = new ScoreValues(150000, 2500000, 4000000, 7500000);
+        public static ScoreValues TowerCrewBattleScore = new ScoreValues(150000, 2500000, 3500000, 5000000);
         public static RepValues TowerOldhead1Rep = new RepValues(70, 250);
         public static RepValues TowerOldhead2Rep = new RepValues(140, 320);
-        public static ScoreValues TowerMeshScore = new ScoreValues(70000, 250000, 500000, 750000);
-        public static ScoreValues TowerEclipseScore = new ScoreValues(0, 0, 0, 0); // to do
+        public static ScoreValues TowerMeshScore = new ScoreValues(70000, 250000, 500000, 700000);
 
         public static RepValues MallChallenge1Rep = new RepValues(54, 434);
         public static RepValues MallChallenge2Rep = new RepValues(62, 442);
@@ -37,22 +40,20 @@ namespace Archipelago
         public static RepValues MallChallenge4Rep = new RepValues(78, 458);
         public static ScoreValues MallChallenge4Score = new ScoreValues(100000, 750000, 1500000, 2500000);
         public static RepValues MallCrewWallRep = new RepValues(111, 491);
-        public static ScoreValues MallCrewBattleScore = new ScoreValues(300000, 3000000, 7000000, 12000000);
+        public static ScoreValues MallCrewBattleScore = new ScoreValues(300000, 3000000, 5000000, 6500000);
         public static RepValues MallOldhead1Rep = new RepValues(150, 530);
         public static RepValues MallOldhead2Rep = new RepValues(200, 580);
-        public static ScoreValues MallDotEXEScore = new ScoreValues(0, 0, 0, 0); // to do
 
         public static RepValues PyramidGateRep = new RepValues(40, 620);
         public static RepValues PyramidChallenge1Rep = new RepValues(50, 630);
-        public static ScoreValues PyramidChallenge1Score = new ScoreValues(70000, 200000, 400000, 600000);
+        public static ScoreValues PyramidChallenge1Score = new ScoreValues(70000, 400000, 700000, 900000);
         public static RepValues PyramidChallenge2Rep = new RepValues(60, 640);
         public static RepValues PyramidChallenge3Rep = new RepValues(70, 650);
-        public static ScoreValues PyramidChallenge3Score = new ScoreValues(100000, 500000, 750000, 1000000);
+        public static ScoreValues PyramidChallenge3Score = new ScoreValues(100000, 500000, 800000, 1100000);
         public static RepValues PyramidChallenge4Rep = new RepValues(80, 660);
         public static RepValues PyramidCrewRep = new RepValues(150, 730);
-        public static ScoreValues PyramidCrewBattleScore = new ScoreValues(450000, 3000000, 8000000, 15000000);
+        public static ScoreValues PyramidCrewBattleScore = new ScoreValues(450000, 3000000, 5000000, 7500000);
         public static RepValues PyramidOldheadRep = new RepValues(200, 780);
-        public static ScoreValues PyramidDevilTheoryScore = new ScoreValues(0, 0, 0, 0); // to do
 
         public static RepValues OsakaSmokeRep = new RepValues(70, 850);
         public static RepValues OsakaChallenge1Rep = new RepValues(84, 864);
@@ -60,9 +61,8 @@ namespace Archipelago
         public static RepValues OsakaChallenge3Rep = new RepValues(140, 920);
         public static ScoreValues OsakaChallenge3Score = new ScoreValues(60000, 200000, 350000, 500000);
         public static RepValues OsakaCrewRep = new RepValues(180, 960);
-        public static ScoreValues OsakaCrewBattleScore = new ScoreValues(600000, 4000000, 10000000, 18000000);
+        public static ScoreValues OsakaCrewBattleScore = new ScoreValues(600000, 4000000, 5500000, 7000000);
         public static RepValues OsakaOldheadRep = new RepValues(155, 935);
-        public static ScoreValues OsakaFuturismScore = new ScoreValues(0, 0, 0, 0); // to do
 
         public static int? GetNPCNewRep(Stage stage, NPC npc)
         {
@@ -213,7 +213,7 @@ namespace Archipelago
                             return TowerChallenge2Score;
                         case "Score_Challenge ":
                             return TowerMeshScore;
-                        case "ScoreEncounter_CrewBattle":
+                        case "Chapter2":
                             return TowerCrewBattleScore;
                         default:
                             return null;
@@ -255,7 +255,7 @@ namespace Archipelago
             }
         }
 
-        public static RepValues GetLocalizedTextRepValues(string key)
+        public static Values GetLocalizedTextRepValues(string key)
         {
             switch (key)
             {
@@ -271,8 +271,12 @@ namespace Archipelago
                 case "Dialogue_downhill_45": // ln 321
                 case "Dialogue_downhill_49": // ln 327
                     return DownhillCrewWallRep;
+                case "Dialogue_downhill_215": // ln 510
+                    return DownhillRaveScore;
                 case "Dialogue_downhill_254": // ln 559
                     return DownhillOldheadRep;
+                case "Dialogue_tower_72A": // ln 841
+                    return TowerChallenge2Score;
                 case "Dialogue_tower_82": // ln 858
                     return TowerCrewWallRep;
                 case "Dialogue_tower_205": // ln 1001
@@ -286,6 +290,14 @@ namespace Archipelago
                     return MallChallenge1Rep;
                 case "Dialogue_Mall_61": // ln 1289
                     return MallChallenge3Rep;
+                case "Dialogue_Mall_76": // ln 1310
+                case "Dialogue_Mall_86": // ln 1323
+                case "Dialogue_Mall_87": // ln 1324
+                case "Dialogue_Mall_88": // ln 1325
+                case "Dialogue_Mall_89": // ln 1326
+                case "Dialogue_Mall_91": // ln 1328
+                case "Dialogue_Mall_92": // ln 1329
+                    return MallChallenge4Score;
                 case "Dialogue_Mall_96": // ln 1334
                 case "Dialogue_Mall_103": // ln 1343
                     return MallCrewWallRep;
