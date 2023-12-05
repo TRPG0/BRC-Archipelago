@@ -16,14 +16,12 @@ Several changes have been made to the game for a better experience as a randomiz
 
 Items can be found by picking up any type of collectible, unlocking characters, and for every 5 graffiti spots tagged. The types of items that can be found are Music, Graffiti (M), Graffiti (L), Graffiti (XL), Skateboards, Inline Skates, BMX, Outfits, Characters, and REP.
 
-Movestyles will also be unlocked by finding a character that has that movestyle as their default. (ex. unlocking Shine will also unlock BMX)
-
 The mod adds two new apps to the phone, an "Encounter" app which lets you quit certain encounters early, and the "Archipelago" app which lets you view chat messages and item history while in game.
 
 
 ## Options
 
-There are several options that can be changed before generating a run:
+There are several options that can be changed before generating a run, and some options can be changed during one:
 
 - `skip_intro`: Skips escaping the police station. Graffiti spots tagged during the intro will not unlock items.
 - `skip_dreams`: Skips the dream sequences at the end of each chapter.
@@ -32,20 +30,19 @@ There are several options that can be changed before generating a run:
 	- Normal = 1792, Less = 1472, Much Less = 1184
 - `starting_movestyle`: Choose which movestyle to start with.
 - `limited_graffiti`: Each graffiti design can only be used a limited number of times before being removed from your inventory.
-	- M and L graffiti can be used 10 times, XL graffiti can be used 6 times.
-	- Small graffiti is not affected.
 	- In some cases, such as completing a dream, using graffiti to defeat enemies, or spraying over your own graffiti, uses will not be counted.
 	- If this option is enabled, spraying graffiti will be disabled during crew battles to prevent softlocking.
-- `harder_crew_battles`: Significantly increases the score requirements for each crew battle.
+- `score_difficulty`: Alters the score required to win score challenges and crew battles.
 - `damage_multiplier`: Multiplies all damage received.
 	- At 3x, most damage will OHKO the player, including falling into pits. At 6x, all damage will OHKO the player.
+- `death_link`: When you die, everyone dies. The reverse is also true.
 
 
 ## Setup (Server)
 
 **Note that only one player in the multiworld will need to complete these steps.**
 
-1. Download and install [Archipelago](https://github.com/ArchipelagoMW/Archipelago/releases). You can skip installing the games you don't plan on playing, but make sure that `Generator` is checked. Optionally, you can also check `Text, to !command and chat` under Clients if you would like to be able to send chat messages while playing.
+1. Download and install [Archipelago](https://github.com/ArchipelagoMW/Archipelago/releases). You can skip installing the games you don't plan on playing, but make sure that `Generator` is checked. Optionally, you can also check `Text, to !command and chat` under Clients if you would like to be able to send chat messages in a separate window while playing.
 
 2. Download `bomb_rush_cyberfunk.apworld` from the pins in Discord and add it to your worlds folder. (Default path: `C:\ProgramData\Archipelago\lib\worlds`)
 
