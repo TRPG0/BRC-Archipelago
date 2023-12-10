@@ -37,7 +37,7 @@ namespace Archipelago.Patches
                 if (graffitiSpot.size == GraffitiSize.S)
                 {
                     Characters currentCharacter = Core.Instance.SaveManager.CurrentSaveSlot.currentCharacter;
-                    if (!Enum.IsDefined(typeof(Characters), currentCharacter) || currentCharacter == Characters.legendMetalHead || currentCharacter == Characters.legendFace) currentCharacter = Characters.metalHead;
+                    Requirements.OverrideCharacterIfInvalid(ref currentCharacter);
                     if (Core.Instance.Data.grafUses[currentCharacter.ToString()] >= Requirements.grafSLimit)
                     {
                         Core.Instance.UIManager.PlaySfxGameplay(SfxCollectionID.MenuSfx, AudioClipID.cancel);

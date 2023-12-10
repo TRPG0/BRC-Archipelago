@@ -299,7 +299,7 @@ namespace Archipelago
                 var locationId = available[Random.Range(0, available.Length)];
 
                 Session.Locations.ScoutLocationsAsync(true, locationId);
-                Core.Instance.LocationManager.notifQueue.Add(new Notification("AppArchipelago", "Hint unlocked!", null));
+                Core.Instance.LocationManager.notifQueue.Add(new Notification("AppArchipelago", Core.Instance.RandoLocalizer.GetRawTextValue("APP_HINT"), null));
             }
             else Core.Logger.LogWarning("No locations available to hint.");
         }

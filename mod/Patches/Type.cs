@@ -1,5 +1,5 @@
 ﻿using HarmonyLib;
-using Reptile.Phone;
+using Archipelago.Apps;
 using System;
 
 namespace Archipelago.Patches

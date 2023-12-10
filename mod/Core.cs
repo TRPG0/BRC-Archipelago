@@ -1,12 +1,16 @@
 ﻿using Archipelago.Patches;
-using Archipelago.Stages;
+using StageManager = Archipelago.Stages.StageManager;
 using BepInEx;
 using BepInEx.Bootstrap;
 using BepInEx.Configuration;
 using BepInEx.Logging;
 using HarmonyLib;
+using Reptile;
 using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
 using UnityEngine;
+using System;
 
 namespace Archipelago
 {
@@ -18,6 +22,8 @@ namespace Archipelago
         public const string PluginName = "Archipelago";
         public const string PluginVersion = "1.0.0";
 
+        public static string AssemblyPath { get; private set; }
+
         public static Core Instance;
         public Data Data = new Data();
         public UIManager UIManager = new UIManager();
@@ -26,6 +32,7 @@ namespace Archipelago
         public LocationManager LocationManager = new LocationManager();
         public SaveManager SaveManager = new SaveManager();
         public StageManager stageManager = null;
+        public RandoLocalizer RandoLocalizer;
 
         public static new ManualLogSource Logger = BepInEx.Logging.Logger.CreateLogSource("Archipelago");
 
@@ -56,6 +63,8 @@ namespace Archipelago
 
         private void CheckForbiddenMods()
         {
+            forbiddenModsLoaded = 0;
+            forbiddenGUIDs = string.Empty;
             foreach (var plugin in Chainloader.PluginInfos)
             {
                 if (forbiddenMods.Contains(plugin.Value.Metadata.GUID))
@@ -68,11 +77,34 @@ namespace Archipelago
             }
         }
 
+        public static PlatformLanguages CheckAvailableLanguages()
+        {
+            PlatformLanguages platformLanguages = ScriptableObject.CreateInstance<PlatformLanguages>();
+            string[] files = Directory.GetFiles(Path.Combine(AssemblyPath, "Languages"), "*");
+            List<SystemLanguage> languages = new List<SystemLanguage>();
+            foreach (string file in files)
+            {
+                if (Path.GetExtension(file) == ".fods")
+                {
+                    string fileName = Path.GetFileNameWithoutExtension(file);
+                    SystemLanguage result;
+                    if (Enum.TryParse(fileName, out result))
+                    {
+                        languages.Add(result);
+                    }
+                }
+            }
+            platformLanguages.availableLanguages = languages.ToArray();
+            return platformLanguages;
+        }
+
         private void Awake()
         {
             Logger.LogInfo($"{PluginInfo.PLUGIN_GUID} is loaded.");
             Instance = this;
             FailScoreEncounters = false;
+
+            AssemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
             Harmony Harmony = new Harmony("Archipelago");
             Harmony.PatchAll(typeof(AppGraffiti_OnHoldDown_Patch));
@@ -81,6 +113,8 @@ namespace Archipelago
             Harmony.PatchAll(typeof(AppGraffiti_OnPressRight_Patch));
             Harmony.PatchAll(typeof(AppGraffiti_OnPressUp_Patch));
             Harmony.PatchAll(typeof(AppGraffiti_OnReleaseRight_Patch));
+            Harmony.PatchAll(typeof(AppGraffiti_OpenInfo_Patch));
+            Harmony.PatchAll(typeof(AppGraffiti_RefreshList_Patch));
             Harmony.PatchAll(typeof(BaseModule_HandleStageFullyLoaded_Patch));
             Harmony.PatchAll(typeof(BaseModule_SaveBeforeStageExit_Patch));
             Harmony.PatchAll(typeof(BaseModule_QuitCurrentGameSession_Patch));
@@ -92,11 +126,16 @@ namespace Archipelago
             Harmony.PatchAll(typeof(DynamicPickup_PickupPickup_Patch));
             Harmony.PatchAll(typeof(Encounter_SetEncounterState_Patch));
             Harmony.PatchAll(typeof(GameplayEvent_UnlockCharacterImpl_Patch));
+            Harmony.PatchAll(typeof(GraffitiGame_OnDestroy_Patch));
             Harmony.PatchAll(typeof(GraffitiGame_SetState_Patch));
             Harmony.PatchAll(typeof(GraffitiGame_SetStateVisual_Patch));
+            Harmony.PatchAll(typeof(GraffitiInfoPanel_Show_Patch));
+            Harmony.PatchAll(typeof(GraffitiScrollButton_SetContent_Patch));
             Harmony.PatchAll(typeof(GraffitiSpot_GiveRep_Patch));
             Harmony.PatchAll(typeof(GraffitiSpot_SpawnRep_Patch));
             Harmony.PatchAll(typeof(LocalizationLookupTable_GetLocalizationValueFromSubgroup_Patch));
+            Harmony.PatchAll(typeof(OptionsMenuGameTab_ApplyLanguage_Patch));
+            Harmony.PatchAll(typeof(PhoneScrollUnlockableButton_SetContent_Patch));
             Harmony.PatchAll(typeof(Player_ChangeHP_Patch));
             Harmony.PatchAll(typeof(Player_CheckNPCTriggerForConversation_Patch));
             Harmony.PatchAll(typeof(Player_OnTriggerEnter_Patch));

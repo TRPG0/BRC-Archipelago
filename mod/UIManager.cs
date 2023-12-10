@@ -66,7 +66,7 @@ namespace Archipelago
             if (APSlotThreeButton != null) return;
 
             GameObject version = Traverse.Create(Reptile.Core.Instance.UIManager).Field<MainMenuManager>("mainMenu").Value.GetFirstFocusGameObject().transform.parent.Find("VersionText").gameObject;
-            version.GetComponent<TextMeshProUGUI>().text = "ARCHIPELAGO: " + Core.PluginVersion + " (prerelease 3)\n" + version.GetComponent<TextMeshProUGUI>().text;
+            version.GetComponent<TextMeshProUGUI>().text = "ARCHIPELAGO: " + Core.PluginVersion + " (prerelease 4)\n" + version.GetComponent<TextMeshProUGUI>().text;
             version.GetComponent<TextMeshProUGUI>().verticalAlignment = VerticalAlignmentOptions.Bottom;
 
             FindSaveSlotMenu();
@@ -146,20 +146,20 @@ namespace Archipelago
             APMenuNameLabel = GameObject.Instantiate(APMenuHeaderText.gameObject, buttonsGroup.transform).GetComponent<TextMeshProUGUI>();
             APMenuNameLabel.fontStyle = FontStyles.LowerCase;
             APMenuNameLabel.color = menuOrange;
-            APMenuNameLabel.text = "Name";
+            APMenuNameLabel.text = Core.Instance.RandoLocalizer.GetRawTextValue("MENU_NAME");
             Vector3 pos6 = APMenuHeaderText.transform.localPosition;
             pos6.x = pos6.x + (APMenuNameLabel.GetComponent<RectTransform>().rect.height * 1.8f);
             pos6.y = pos6.y - (APMenuNameLabel.GetComponent<RectTransform>().rect.height * 1.3f);
             APMenuNameLabel.transform.localPosition = pos6;
 
             APMenuAddressLabel = GameObject.Instantiate(APMenuNameLabel.gameObject, buttonsGroup.transform).GetComponent<TextMeshProUGUI>();
-            APMenuAddressLabel.text = "Address";
+            APMenuAddressLabel.text = Core.Instance.RandoLocalizer.GetRawTextValue("MENU_ADDRESS");
             Vector3 pos7 = APMenuNameLabel.transform.localPosition;
             pos7.y = pos7.y - (APMenuAddressLabel.GetComponent<RectTransform>().rect.height * 1.3f);
             APMenuAddressLabel.transform.localPosition = pos7;
 
             APMenuPasswordLabel = GameObject.Instantiate(APMenuAddressLabel.gameObject, buttonsGroup.transform).GetComponent<TextMeshProUGUI>();
-            APMenuPasswordLabel.text = "Password";
+            APMenuPasswordLabel.text = Core.Instance.RandoLocalizer.GetRawTextValue("MENU_PASSWORD");
             Vector3 pos8 = APMenuAddressLabel.transform.localPosition;
             pos8.y = pos8.y - (APMenuPasswordLabel.GetComponent<RectTransform>().rect.height * 1.3f);
             APMenuPasswordLabel.transform.localPosition = pos8;
@@ -315,7 +315,7 @@ namespace Archipelago
         public void SetHeaderSlot(int num)
         {
             if (APMenuHeaderText == null) return;
-            APMenuHeaderText.text = $"Archipelago / Slate {num+1}";
+            APMenuHeaderText.text = string.Format(Core.Instance.RandoLocalizer.GetRawTextValue("MENU_HEADER"), num+1);
         }
 
 
@@ -328,19 +328,19 @@ namespace Archipelago
             {
                 default:
                 case APSlotButton.SlotState.Vanilla:
-                    status = "Slate is not randomized.";
+                    status = Core.Instance.RandoLocalizer.GetRawTextValue("MENU_STATUS_VANILLA");
                     break;
                 case APSlotButton.SlotState.NoData:
-                    status = "Status: No data.";
+                    status = Core.Instance.RandoLocalizer.GetRawTextValue("MENU_STATUS_NODATA");
                     break;
                 case APSlotButton.SlotState.YesData:
-                    status = "Status: Not connected.";
+                    status = Core.Instance.RandoLocalizer.GetRawTextValue("MENU_STATUS_YESDATA");
                     break;
                 case APSlotButton.SlotState.Connected:
-                    status = "Status: Connected.";
+                    status = Core.Instance.RandoLocalizer.GetRawTextValue("MENU_STATUS_CONNECTED");
                     break;
                 case APSlotButton.SlotState.Disconnected:
-                    status = "Status: Connection failed.";
+                    status = Core.Instance.RandoLocalizer.GetRawTextValue("MENU_STATUS_DISCONNECTED");
                     break;
             }
 
@@ -351,6 +351,18 @@ namespace Archipelago
         public void SetResult(string result)
         {
             APMenuResult.text = result;
+        }
+
+        public void UpdateLanguage()
+        {
+            if (connectingSlot != -1)
+            {
+                SetHeaderSlot(connectingSlot);
+                SetStatus(slotButtons[connectingSlot].CurrentState);
+            }
+            APMenuNameLabel.text = Core.Instance.RandoLocalizer.GetRawTextValue("MENU_NAME");
+            APMenuAddressLabel.text = Core.Instance.RandoLocalizer.GetRawTextValue("MENU_ADDRESS");
+            APMenuPasswordLabel.text = Core.Instance.RandoLocalizer.GetRawTextValue("MENU_PASSWORD");
         }
 
         public void CheckSlots()

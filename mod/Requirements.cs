@@ -1,5 +1,7 @@
 ﻿using Archipelago.Structures;
 using Reptile;
+using System;
+using System.Collections.Generic;
 
 namespace Archipelago
 {
@@ -63,6 +65,20 @@ namespace Archipelago
         public static RepValues OsakaCrewRep = new RepValues(180, 960);
         public static ScoreValues OsakaCrewBattleScore = new ScoreValues(600000, 4000000, 5500000, 7000000);
         public static RepValues OsakaOldheadRep = new RepValues(155, 935);
+
+        public static void OverrideCharacterIfInvalid(ref Characters character)
+        {
+            List<Characters> invalid = new List<Characters>()
+            {
+                Characters.legendMetalHead,
+                Characters.legendFace,
+                Characters.robot,
+                Characters.skate
+            };
+
+            if (!Enum.IsDefined(typeof(Characters), character)) character = Characters.metalHead;
+            else if (invalid.Contains(character)) character = Characters.metalHead;
+        }
 
         public static int? GetNPCNewRep(Stage stage, NPC npc)
         {

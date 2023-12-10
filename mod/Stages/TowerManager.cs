@@ -16,7 +16,7 @@ namespace Archipelago.Stages
             {
                 if (npc.name == "NPC_Crew_Tower")
                 {
-                    CreateNeedGraffitiCollider(npc.GetComponentInChildren<Collider>().gameObject, new List<GraffitiSize>() { GraffitiSize.L });
+                    CreateNeedGraffitiCollider(npc.GetComponentInChildren<Collider>(true).gameObject, new List<GraffitiSize>() { GraffitiSize.L });
                     Core.Logger.LogInfo("Found NPC_Crew_Tower");
                     break;
                 }

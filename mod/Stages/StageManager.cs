@@ -86,7 +86,7 @@ namespace Archipelago.Stages
             {
                 GraffitiAppEntry graffiti = WorldHandler.instance.graffitiArtInfo.FindByTitle(title).unlockable;
                 graffiti.IsDefault = false;
-                Traverse.Create(Reptile.Core.Instance.BaseModule).Field<AUser>("user").Value.GetUnlockableSaveDataFor(graffiti).IsUnlocked = false;
+                Reptile.Core.Instance.Platform.User.GetUnlockableSaveDataFor(graffiti).IsUnlocked = false;
             }
         }
 

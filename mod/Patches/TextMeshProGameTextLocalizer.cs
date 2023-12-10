@@ -30,7 +30,7 @@ namespace Archipelago.Patches
                     if (Core.Instance.Data.scoreDifficulty == ScoreDifficulty.Extreme) newValue = scoreValues.extremeValue;
 
                     CultureInfo info = new CultureInfo("en-US", false);
-                    SystemLanguage currentLanguage = Traverse.Create(Reptile.Core.Instance).Field<TextMeshProGameTextLocalizer>("gameTextLocalizer").Value.Language;
+                    SystemLanguage currentLanguage = Reptile.Core.Instance.Localizer.Language;
                     if (currentLanguage == SystemLanguage.French || currentLanguage == SystemLanguage.Russian || currentLanguage == SystemLanguage.Spanish) info.NumberFormat.NumberGroupSeparator = " ";
                     else if (currentLanguage == SystemLanguage.Japanese) info.NumberFormat.NumberGroupSeparator = ",";
                     else info.NumberFormat.NumberGroupSeparator = ".";

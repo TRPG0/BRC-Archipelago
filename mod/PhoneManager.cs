@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Archipelago.Apps;
 
 namespace Archipelago
 {
@@ -48,7 +49,7 @@ namespace Archipelago
             Component.Destroy(appArchipelago.Content.Find("Overlay").GetComponentInChildren<TMProFontLocalizer>());
             Component.Destroy(appArchipelago.Content.Find("Overlay").GetComponentInChildren<TMProLocalizationAddOn>());
             appArchipelago.title = appArchipelago.Content.Find("Overlay").GetComponentInChildren<TextMeshProUGUI>();
-            appArchipelago.title.text = "Archipelago";
+            appArchipelago.title.text = Core.Instance.RandoLocalizer.GetRawTextValue("APP_ARCHIPELAGO_HEADER_DEFAULT");
 
             Image icon = appArchipelago.Content.Find("Overlay").Find("Icons").Find("AppIcon").GetComponentInChildren<Image>();
             icon.sprite = UIManager.bundle.LoadAsset<Sprite>("assets/archipelago.png");
@@ -94,7 +95,8 @@ namespace Archipelago
             appET.Field<Phone>("<MyPhone>k__BackingField").Value = Phone;
             appET.Field<AUnlockable[]>("m_Unlockables").Value = new AUnlockable[] { };
             appEncounter.Content.Find("Overlay").Find("Icons").Find("AppIcon").GetComponent<Image>().sprite = UIManager.bundle.LoadAsset<Sprite>("assets/encounter.png");
-            appEncounter.Content.Find("Overlay").GetComponentInChildren<TextMeshProUGUI>().text = "Encounter";
+            appEncounter.headerText = appEncounter.Content.Find("Overlay").GetComponentInChildren<TextMeshProUGUI>();
+            appEncounter.headerText.text = Core.Instance.RandoLocalizer.GetRawTextValue("APP_ENCOUNTER_HEADER");
             GameObject.Destroy(appEncounter.Content.Find("Messages").gameObject);
             appEncounter.bottomLeftText = appEncounter.Content.Find("CancelText").GetComponent<TextMeshProUGUI>();
             appEncounter.bottomLeftGlyph = appEncounter.Content.Find("CancelGlyph").GetComponent<UIButtonGlyphComponent>();
@@ -172,6 +174,17 @@ namespace Archipelago
             appAT.Property("Notification").Field<GameObject>("appNotificationPanel_Outside").Value = outsideNotification;
             appAT.Property("Notification").Field<TextMeshProUGUI>("topBarText_Main").Value = mainNotification.GetComponentInChildren<TextMeshProUGUI>();
             appAT.Property("Notification").Field<TextMeshProUGUI>("topBarText_Outside").Value = outsideNotification.GetComponentInChildren<TextMeshProUGUI>();
+        }
+
+        public void UpdateLanguage()
+        {
+            appArchipelago.UpdateHeader();
+            appArchipelago.UpdateOptionText();
+            appArchipelago.UpdateGlyphs();
+            appEncounter.headerText.text = Core.Instance.RandoLocalizer.GetRawTextValue("APP_ENCOUNTER_HEADER");
+            appEncounter.SetTopText();
+            appEncounter.SetCenterText();
+            appEncounter.SetBottomText();
         }
     }
 }

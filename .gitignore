@@ -3,5 +3,5 @@ bin/
 obj/
 *.ai
 *.apworld
-package/*.dll
+package/plugins
 package/*.zip

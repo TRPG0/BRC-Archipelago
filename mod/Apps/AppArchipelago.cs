@@ -1,11 +1,12 @@
-﻿using Archipelago;
+﻿using Reptile;
+using Reptile.Phone;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine.UI;
 using UnityEngine;
 using Archipelago.Structures;
 
-namespace Reptile.Phone
+namespace Archipelago.Apps
 {
     public class AppArchipelago : App
     {
@@ -56,7 +57,7 @@ namespace Reptile.Phone
             text.text = string.Join("\n", Messages.ToArray());
         }
 
-        public void UpdateOptionText()
+        internal void UpdateOptionText()
         {
             AppArchipelagoOptions prev1Option = m_CurrentOption - 1;
             AppArchipelagoOptions prev2Option = m_CurrentOption - 2;
@@ -79,14 +80,14 @@ namespace Reptile.Phone
         {
             return option switch
             {
-                AppArchipelagoOptions.SkipIntro => "Skip Intro",
-                AppArchipelagoOptions.SkipDreams => "Skip Dreams",
-                AppArchipelagoOptions.TotalREP => "Total REP",
-                AppArchipelagoOptions.StartingMovestyle => "Starting Movestyle",
-                AppArchipelagoOptions.LimitedGraffiti => "Limited Graffiti",
-                AppArchipelagoOptions.ScoreDifficulty => "Score Difficulty",
-                AppArchipelagoOptions.DamageMultiplier => "Damage Multiplier",
-                AppArchipelagoOptions.DeathLink => "Death Link",
+                AppArchipelagoOptions.SkipIntro => Core.Instance.RandoLocalizer.GetRawTextValue("OPTION_SKIPINTRO"),
+                AppArchipelagoOptions.SkipDreams => Core.Instance.RandoLocalizer.GetRawTextValue("OPTION_SKIPDREAMS"),
+                AppArchipelagoOptions.TotalREP => Core.Instance.RandoLocalizer.GetRawTextValue("OPTION_TOTALREP"),
+                AppArchipelagoOptions.StartingMovestyle => Core.Instance.RandoLocalizer.GetRawTextValue("OPTION_STARTINGMOVESTYLE"),
+                AppArchipelagoOptions.LimitedGraffiti => Core.Instance.RandoLocalizer.GetRawTextValue("OPTION_LIMITEDGRAFFITI"),
+                AppArchipelagoOptions.ScoreDifficulty => Core.Instance.RandoLocalizer.GetRawTextValue("OPTION_SCOREDIFFICULTY"),
+                AppArchipelagoOptions.DamageMultiplier => Core.Instance.RandoLocalizer.GetRawTextValue("OPTION_DAMAGEMULTIPLIER"),
+                AppArchipelagoOptions.DeathLink => Core.Instance.RandoLocalizer.GetRawTextValue("OPTION_DEATHLINK"),
                 _ => "?"
             };
         }
@@ -95,14 +96,14 @@ namespace Reptile.Phone
         {
             return option switch
             {
-                AppArchipelagoOptions.SkipIntro => ValueToText(Archipelago.Core.Instance.Data.skipIntro),
-                AppArchipelagoOptions.SkipDreams => ValueToText(Archipelago.Core.Instance.Data.skipDreams),
-                AppArchipelagoOptions.TotalREP => ValueToText(Archipelago.Core.Instance.Data.totalRep),
-                AppArchipelagoOptions.StartingMovestyle => ValueToText(Archipelago.Core.Instance.Data.startingMovestyle),
-                AppArchipelagoOptions.LimitedGraffiti => ValueToText(Archipelago.Core.Instance.Data.limitedGraffiti),
-                AppArchipelagoOptions.ScoreDifficulty => ValueToText(Archipelago.Core.Instance.Data.scoreDifficulty),
-                AppArchipelagoOptions.DamageMultiplier => ValueToText(Archipelago.Core.Instance.Data.damageMultiplier),
-                AppArchipelagoOptions.DeathLink => ValueToText(Archipelago.Core.Instance.Data.deathLink),
+                AppArchipelagoOptions.SkipIntro => ValueToText(Core.Instance.Data.skipIntro),
+                AppArchipelagoOptions.SkipDreams => ValueToText(Core.Instance.Data.skipDreams),
+                AppArchipelagoOptions.TotalREP => ValueToText(Core.Instance.Data.totalRep),
+                AppArchipelagoOptions.StartingMovestyle => ValueToText(Core.Instance.Data.startingMovestyle),
+                AppArchipelagoOptions.LimitedGraffiti => ValueToText(Core.Instance.Data.limitedGraffiti),
+                AppArchipelagoOptions.ScoreDifficulty => ValueToText(Core.Instance.Data.scoreDifficulty),
+                AppArchipelagoOptions.DamageMultiplier => ValueToText(Core.Instance.Data.damageMultiplier),
+                AppArchipelagoOptions.DeathLink => ValueToText(Core.Instance.Data.deathLink),
                 _ => "?"
             };
         }
@@ -111,44 +112,59 @@ namespace Reptile.Phone
         {
             if (value is bool boolValue)
             {
-                if (boolValue) return "Yes";
-                else return "No";
+                if (boolValue) return Core.Instance.RandoLocalizer.GetRawTextValue("VALUE_BOOL_TRUE");
+                else return Core.Instance.RandoLocalizer.GetRawTextValue("VALUE_BOOL_FALSE");
             }
             else if (value is TotalRep repValue)
             {
-                if (repValue == TotalRep.MuchLess) return "Much Less";
-                else return repValue.ToString();
+                return repValue switch
+                {
+                    TotalRep.Normal => Core.Instance.RandoLocalizer.GetRawTextValue("VALUE_REPVALUE_NORMAL"),
+                    TotalRep.Less => Core.Instance.RandoLocalizer.GetRawTextValue("VALUE_REPVALUE_LESS"),
+                    TotalRep.MuchLess => Core.Instance.RandoLocalizer.GetRawTextValue("VALUE_REPVALUE_MUCHLESS"),
+                    _ => "?"
+                };
             }
             else if (value is MoveStyle styleValue)
             {
-                if (styleValue == MoveStyle.SKATEBOARD) return "Skateboard";
-                else if (styleValue == MoveStyle.INLINE) return "Inline Skates";
-                else return styleValue.ToString();
+                return styleValue switch
+                {
+                    MoveStyle.SKATEBOARD => Core.Instance.RandoLocalizer.GetRawTextValue("VALUE_MOVESTYLE_SKATEBOARD"),
+                    MoveStyle.INLINE => Core.Instance.RandoLocalizer.GetRawTextValue("VALUE_MOVESTYLE_INLINE"),
+                    MoveStyle.BMX => Core.Instance.RandoLocalizer.GetRawTextValue("VALUE_MOVESTYLE_BMX"),
+                    _ => "?"
+                };
             }
             else if (value is ScoreDifficulty scoreValue)
             {
-                if (scoreValue == ScoreDifficulty.VeryHard) return "Very Hard";
-                else return scoreValue.ToString();
+                return scoreValue switch
+                {
+                    ScoreDifficulty.Normal => Core.Instance.RandoLocalizer.GetRawTextValue("VALUE_SCOREDIFFICULTY_NORMAL"),
+                    ScoreDifficulty.Hard => Core.Instance.RandoLocalizer.GetRawTextValue("VALUE_SCOREDIFFICULTY_HARD"),
+                    ScoreDifficulty.VeryHard => Core.Instance.RandoLocalizer.GetRawTextValue("VALUE_SCOREDIFFICULTY_VERYHARD"),
+                    ScoreDifficulty.Extreme => Core.Instance.RandoLocalizer.GetRawTextValue("VALUE_SCOREDIFFICULTY_EXTREME"),
+                    _ => "?"
+                };
             }
             else if (value is int) return value.ToString();
             else return "?";
         }
 
-        private void UpdateGlyphs()
+        internal void UpdateGlyphs()
         {
             if (m_State == AppArchipelagoState.Chat)
             {
-                bottomLeftText.text = "Close app";
-                bottomRightText.text = "Options";
+                bottomLeftText.text = Core.Instance.RandoLocalizer.GetRawTextValue("APP_NAVIGATION_CLOSE");
+                bottomRightText.text = Core.Instance.RandoLocalizer.GetRawTextValue("APP_ARCHIPELAGO_NAVIGATION_OPTIONS");
                 bottomRightText.gameObject.SetActive(true);
                 bottomRightGlyph.gameObject.SetActive(true);
             }
             else if (m_State == AppArchipelagoState.Options)
             {
-                bottomLeftText.text = "Back";
+                bottomLeftText.text = Core.Instance.RandoLocalizer.GetRawTextValue("APP_NAVIGATION_BACK");
                 if (m_CurrentOption == AppArchipelagoOptions.ScoreDifficulty || m_CurrentOption == AppArchipelagoOptions.DamageMultiplier || m_CurrentOption == AppArchipelagoOptions.DeathLink)
                 {
-                    bottomRightText.text = "Change";
+                    bottomRightText.text = Core.Instance.RandoLocalizer.GetRawTextValue("APP_ARCHIPELAGO_NAVIGATION_CHANGE");
                     bottomRightText.gameObject.SetActive(true);
                     bottomRightGlyph.gameObject.SetActive(true);
                 }
@@ -160,12 +176,18 @@ namespace Reptile.Phone
             }
         }
 
+        internal void UpdateHeader()
+        {
+            if (m_State == AppArchipelagoState.Chat) title.text = Core.Instance.RandoLocalizer.GetRawTextValue("APP_ARCHIPELAGO_HEADER_DEFAULT");
+            else if (m_State == AppArchipelagoState.Options) title.text = Core.Instance.RandoLocalizer.GetRawTextValue("APP_ARCHIPELAGO_HEADER_OPTIONS");
+        }
+
         public void ChangeState(AppArchipelagoState state)
         {
             if (state == AppArchipelagoState.Chat)
             {
                 m_State = AppArchipelagoState.Chat;
-                title.text = "Archipelago";
+                UpdateHeader();
                 UpdateGlyphs();
                 text.gameObject.SetActive(true);
                 optionText.gameObject.SetActive(false);
@@ -175,7 +197,7 @@ namespace Reptile.Phone
             else if (state == AppArchipelagoState.Options)
             {
                 m_State = AppArchipelagoState.Options;
-                title.text = "Options";
+                UpdateHeader();
                 UpdateGlyphs();
                 UpdateOptionText();
                 text.gameObject.SetActive(false);
@@ -229,7 +251,7 @@ namespace Reptile.Phone
             if (m_State == AppArchipelagoState.Chat) MyPhone.CloseCurrentApp();
             else
             {
-                Archipelago.Core.Instance.UIManager.PlaySfxGameplay(SfxCollectionID.PhoneSfx, AudioClipID.FlipPhone_Select);
+                Core.Instance.UIManager.PlaySfxGameplay(SfxCollectionID.PhoneSfx, AudioClipID.FlipPhone_Select);
                 ChangeState(AppArchipelagoState.Chat);
             }
         }
@@ -238,32 +260,32 @@ namespace Reptile.Phone
         {
             if (m_State == AppArchipelagoState.Chat)
             {
-                Archipelago.Core.Instance.UIManager.PlaySfxGameplay(SfxCollectionID.PhoneSfx, AudioClipID.FlipPhone_Select);
+                Core.Instance.UIManager.PlaySfxGameplay(SfxCollectionID.PhoneSfx, AudioClipID.FlipPhone_Select);
                 ChangeState(AppArchipelagoState.Options);
             }
             else if (m_State == AppArchipelagoState.Options)
             {
                 if (m_CurrentOption == AppArchipelagoOptions.ScoreDifficulty)
                 {
-                    Archipelago.Core.Instance.UIManager.PlaySfxGameplay(SfxCollectionID.PhoneSfx, AudioClipID.FlipPhone_Select);
-                    Archipelago.Core.Instance.Data.scoreDifficulty += 1;
-                    if (Archipelago.Core.Instance.Data.scoreDifficulty > ScoreDifficulty.Extreme) Archipelago.Core.Instance.Data.scoreDifficulty = ScoreDifficulty.Normal;
-                    Archipelago.Core.Instance.stageManager.SetEncounterScores(WorldHandler.instance.StoryManager);
+                    Core.Instance.UIManager.PlaySfxGameplay(SfxCollectionID.PhoneSfx, AudioClipID.FlipPhone_Select);
+                    Core.Instance.Data.scoreDifficulty += 1;
+                    if (Core.Instance.Data.scoreDifficulty > ScoreDifficulty.Extreme) Core.Instance.Data.scoreDifficulty = ScoreDifficulty.Normal;
+                    Core.Instance.stageManager.SetEncounterScores(WorldHandler.instance.StoryManager);
                     UpdateOptionText();
                 }
                 else if (m_CurrentOption == AppArchipelagoOptions.DamageMultiplier)
                 {
-                    Archipelago.Core.Instance.UIManager.PlaySfxGameplay(SfxCollectionID.PhoneSfx, AudioClipID.FlipPhone_Select);
-                    Archipelago.Core.Instance.Data.damageMultiplier += 1;
-                    if (Archipelago.Core.Instance.Data.damageMultiplier > 6) Archipelago.Core.Instance.Data.damageMultiplier = 1;
+                    Core.Instance.UIManager.PlaySfxGameplay(SfxCollectionID.PhoneSfx, AudioClipID.FlipPhone_Select);
+                    Core.Instance.Data.damageMultiplier += 1;
+                    if (Core.Instance.Data.damageMultiplier > 6) Core.Instance.Data.damageMultiplier = 1;
                     UpdateOptionText();
                 }
                 else if (m_CurrentOption == AppArchipelagoOptions.DeathLink)
                 {
-                    Archipelago.Core.Instance.UIManager.PlaySfxGameplay(SfxCollectionID.PhoneSfx, AudioClipID.FlipPhone_Select);
-                    Archipelago.Core.Instance.Data.deathLink ^= true;
-                    if (Archipelago.Core.Instance.Data.deathLink) Archipelago.Core.Instance.Multiworld.EnableDeathLink();
-                    else Archipelago.Core.Instance.Multiworld.DisableDeathLink();
+                    Core.Instance.UIManager.PlaySfxGameplay(SfxCollectionID.PhoneSfx, AudioClipID.FlipPhone_Select);
+                    Core.Instance.Data.deathLink ^= true;
+                    if (Core.Instance.Data.deathLink) Core.Instance.Multiworld.EnableDeathLink();
+                    else Core.Instance.Multiworld.DisableDeathLink();
                     UpdateOptionText();
                 }
             }
@@ -273,7 +295,7 @@ namespace Reptile.Phone
         {
             if (m_State == AppArchipelagoState.Options)
             {
-                Archipelago.Core.Instance.UIManager.PlaySfxGameplay(SfxCollectionID.PhoneSfx, AudioClipID.FlipPhone_Select);
+                Core.Instance.UIManager.PlaySfxGameplay(SfxCollectionID.PhoneSfx, AudioClipID.FlipPhone_Select);
                 m_CurrentOption -= 1;
                 if ((int)m_CurrentOption < 0) m_CurrentOption = AppArchipelagoOptions.DeathLink;
 
@@ -286,7 +308,7 @@ namespace Reptile.Phone
         {
             if (m_State == AppArchipelagoState.Options)
             {
-                Archipelago.Core.Instance.UIManager.PlaySfxGameplay(SfxCollectionID.PhoneSfx, AudioClipID.FlipPhone_Select);
+                Core.Instance.UIManager.PlaySfxGameplay(SfxCollectionID.PhoneSfx, AudioClipID.FlipPhone_Select);
                 m_CurrentOption += 1;
                 if ((int)m_CurrentOption > 7) m_CurrentOption = AppArchipelagoOptions.SkipIntro;
 

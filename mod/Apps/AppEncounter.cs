@@ -1,10 +1,11 @@
 ﻿using HarmonyLib;
-using Rewired;
+using Reptile;
+using Reptile.Phone;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Reptile.Phone
+namespace Archipelago.Apps
 {
     public class AppEncounter : App
     {
@@ -19,6 +20,7 @@ namespace Reptile.Phone
 
         private Traverse whT;
 
+        public TextMeshProUGUI headerText;
         public TextMeshProUGUI topText;
         public TextMeshProUGUI centerText;
         public TextMeshProUGUI bottomLeftText;
@@ -61,7 +63,7 @@ namespace Reptile.Phone
         {
             whT = Traverse.Create(WorldHandler.instance);
             SetType();
-            bottomRightText.text = "Yes";
+            bottomRightText.text = Core.Instance.RandoLocalizer.GetRawTextValue("APP_ENCOUNTER_NAVIGATION_YES");
         }
 
         public void Start()
@@ -96,7 +98,7 @@ namespace Reptile.Phone
         {
             if (CanQuitCurrentEncounter)
             {
-                Archipelago.Core.Instance.UIManager.PlaySfxGameplay(SfxCollectionID.PhoneSfx, AudioClipID.FlipPhone_Confirm);
+                Core.Instance.UIManager.PlaySfxGameplay(SfxCollectionID.PhoneSfx, AudioClipID.FlipPhone_Confirm);
                 GiveUp();
             }
         }
@@ -122,20 +124,20 @@ namespace Reptile.Phone
 
         public void SetTopText()
         {
-            topText.text = $"Current Encounter Type:\n<b>{CurrentType}</b>";
+            topText.text = string.Format(Core.Instance.RandoLocalizer.GetRawTextValue("APP_ENCOUNTER_TYPE"), $"\n<b>{CurrentType}</b>");
         }
 
         public void SetCenterText()
         {
-            if (CanQuitCurrentEncounter) centerText.text = "Are you sure you want to give up on this encounter?";
-            else if (CurrentType == EncounterType.None) centerText.text = "There is no encounter active right now.";
-            else centerText.text = "This encounter cannot be ended early.";
+            if (CanQuitCurrentEncounter) centerText.text = Core.Instance.RandoLocalizer.GetRawTextValue("APP_ENCOUNTER_STATUS_CAN");
+            else if (CurrentType == EncounterType.None) centerText.text = Core.Instance.RandoLocalizer.GetRawTextValue("APP_ENCOUNTER_STATUS_NONE");
+            else centerText.text = Core.Instance.RandoLocalizer.GetRawTextValue("APP_ENCOUNTER_STATUS_CANNOT");
         }
 
         public void SetBottomText()
         {
-            if (CanQuitCurrentEncounter) bottomLeftText.text = "No";
-            else bottomLeftText.text = "Close app";
+            if (CanQuitCurrentEncounter) bottomLeftText.text = Core.Instance.RandoLocalizer.GetRawTextValue("APP_ENCOUNTER_NAVIGATION_NO");
+            else bottomLeftText.text = Core.Instance.RandoLocalizer.GetRawTextValue("APP_NAVIGATION_CLOSE");
         }
 
         public void GiveUp()

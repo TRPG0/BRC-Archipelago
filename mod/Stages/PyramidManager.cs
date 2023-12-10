@@ -22,7 +22,7 @@ namespace Archipelago.Stages
             {
                 if (npc.name == "NPC_Crew_CopterEncounter_Starter")
                 {
-                    CreateNeedGraffitiCollider(npc.GetComponentInChildren<Collider>().gameObject, new List<GraffitiSize>() { GraffitiSize.M });
+                    CreateNeedGraffitiCollider(npc.GetComponentInChildren<Collider>(true).gameObject, new List<GraffitiSize>() { GraffitiSize.M });
                     Core.Logger.LogInfo("Found NPC_Crew_CopterEncounter_Starter");
                     break;
                 }
@@ -31,7 +31,7 @@ namespace Archipelago.Stages
             {
                 if (obj.name == "DJBossEncounterPhase1")
                 {
-                    CreateNeedGraffitiCollider(obj.GetComponentInChildren<Collider>().gameObject, new List<GraffitiSize> { GraffitiSize.L });
+                    CreateNeedGraffitiCollider(obj.GetComponentInChildren<Collider>(true).gameObject, new List<GraffitiSize> { GraffitiSize.L });
                     Core.Logger.LogInfo("Found DJBossEncounterPhase1");
                     break;
                 }

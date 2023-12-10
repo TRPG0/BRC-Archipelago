@@ -1,5 +1,8 @@
 ﻿using HarmonyLib;
+using Reptile;
 using Reptile.Phone;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace Archipelago.Patches
 {
@@ -39,7 +42,9 @@ namespace Archipelago.Patches
     {
         public static bool Prefix(AppGraffiti __instance)
         {
+            Traverse traverse = Traverse.Create(__instance);
             if (__instance.GraffitiArt.Count == 0) return false;
+            else if (__instance.GraffitiArt[traverse.Field<GraffitiScrollView>("m_ScrollView").Value.GetContentIndex()].Size == GraffitiSize.S) return false;
             else return true;
         }
     }
@@ -61,6 +66,83 @@ namespace Archipelago.Patches
         {
             if (__instance.GraffitiArt.Count == 0) return false;
             else return true;
+        }
+    }
+
+    [HarmonyPatch(typeof(AppGraffiti), "OpenInfo")]
+    public class AppGraffiti_OpenInfo_Patch
+    {
+        public static bool Prefix(AppGraffiti __instance)
+        {
+            Traverse traverse = Traverse.Create(__instance);
+            if (__instance.GraffitiArt[traverse.Field<GraffitiScrollView>("m_ScrollView").Value.GetContentIndex()].Size == GraffitiSize.S) return false;
+            else return true;
+        }
+    }
+
+    [HarmonyPatch(typeof(AppGraffiti), "RefreshList")]
+    public class AppGraffiti_RefreshList_Patch
+    {
+        public static bool Prefix(AppGraffiti __instance)
+        {
+            if (Core.Instance.SaveManager.DataExists() && Core.Instance.Data.limitedGraffiti)
+            {
+                int num = 0;
+                if (__instance.GraffitiArt != null) num = __instance.GraffitiArt.Count;
+                Traverse traverse = Traverse.Create(__instance);
+                List<GraffitiAppEntry> graffitiArt = new List<GraffitiAppEntry>();
+                foreach (CharacterProgress progress in Traverse.Create(Core.Instance.SaveManager.CurrentSaveSlot).Field<CharacterProgress[]>("totalCharacterProgress").Value)
+                {
+                    if (progress.unlocked && Core.Instance.Data.grafUses.ContainsKey(progress.character.ToString()))
+                    {
+                        if (Core.Instance.Data.grafUses[progress.character.ToString()] < Requirements.grafSLimit)
+                        {
+                            GraffitiArt ga = WorldHandler.instance.graffitiArtInfo.FindByCharacter(progress.character);
+                            GraffitiAppEntry unlockable = ScriptableObject.CreateInstance<GraffitiAppEntry>();
+                            unlockable.name = "S";
+                            unlockable.Artist = ga.artistName;
+                            unlockable.Title = ga.title;
+                            unlockable.Size = ga.graffitiSize;
+                            unlockable.Combos = GraffitiArt.Combos.NONE;
+                            unlockable.Uid = progress.character.ToString();
+                            unlockable.GraffitiTexture = ga.graffitiMaterial.mainTexture;
+                            graffitiArt.Add(unlockable);
+                        }
+                    }
+                }
+                for (int i = 0; i < __instance.Unlockables.Length; i++)
+                {
+                    if (Reptile.Core.Instance.Platform.User.GetUnlockableSaveDataFor(__instance.Unlockables[i]).IsUnlocked)
+                    {
+                        graffitiArt.Add(__instance.Unlockables[i] as GraffitiAppEntry);
+                    }
+                }
+                graffitiArt.Sort(delegate (GraffitiAppEntry a, GraffitiAppEntry b)
+                {
+                    int num2 = a.Size.CompareTo(b.Size);
+                    if (num2 == 0) return a.Artist.CompareTo(b.Artist);
+                    return num2;
+                });
+                traverse.Field<List<GraffitiAppEntry>>("<GraffitiArt>k__BackingField").Value = graffitiArt;
+                if (num == 0)
+                {
+                    traverse.Field<GraffitiScrollView>("m_ScrollView").Value.SetListContent(__instance.GraffitiArt.Count);
+                    return false;
+                }
+                traverse.Field<GraffitiScrollView>("m_ScrollView").Value.UpdateListContent(__instance.GraffitiArt.Count);
+                return false;
+            }
+            else return true;
+        }
+
+        public static void Postfix(AppGraffiti __instance)
+        {
+            foreach (PhoneScrollButton button in Traverse.Create(__instance).Field<GraffitiScrollView>("m_ScrollView").Value.GetButtons())
+            {
+                PhoneScrollUnlockableButton ubutton = button as GraffitiScrollButton;
+                if (ubutton.AssignedContent == null) continue;
+                if (ubutton.AssignedContent.name == "S") Traverse.Create(ubutton).Method("SetIndicatorState", new object[] { false }).GetValue();
+            }
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using Reptile;
 using Archipelago.Stages;
+using UnityEngine;
 
 namespace Archipelago.Patches
 {
@@ -9,6 +10,11 @@ namespace Archipelago.Patches
     {
         public static void Postfix()
         {
+            if (Core.Instance.RandoLocalizer == null)
+            {
+                LocalizationData localizationData = Reptile.Core.Instance.localizerData;
+                Core.Instance.RandoLocalizer = new RandoLocalizer(Reptile.Core.Instance.Localizer.Language, SystemLanguage.English, Core.CheckAvailableLanguages(), localizationData);
+            }
             Core.Instance.UIManager.CreateAPButtons();
             Core.Instance.UIManager.CheckSlots();
         }

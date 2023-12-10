@@ -24,7 +24,7 @@ namespace Archipelago.Stages
                 }
                 else if (npc.name == "NPC_Crew_BattleStarter")
                 {
-                    CreateNeedGraffitiCollider(npc.GetComponentInChildren<Collider>().gameObject, new List<GraffitiSize>() { GraffitiSize.L });
+                    CreateNeedGraffitiCollider(npc.GetComponentInChildren<Collider>(true).gameObject, new List<GraffitiSize>() { GraffitiSize.L });
                     Core.Logger.LogInfo("Found NPC_Crew_BattleStarter");
                 }
             }
