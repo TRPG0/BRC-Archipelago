@@ -157,9 +157,9 @@ namespace Archipelago
                             if (npc.transform.name == "NPC_Crew_GUARDING") return MallCrewWallRep.newValue;
                             else return null;
                         case "Oldhead1":
-                            return MallOldhead1Rep.newValue;
-                        case "Oldhead2":
                             return MallOldhead2Rep.newValue;
+                        case "Oldhead2":
+                            return MallOldhead1Rep.newValue;
                         default:
                             return null;
                     }

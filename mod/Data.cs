@@ -12,8 +12,10 @@ namespace Archipelago
         public string password;
         public HashSet<string> @checked = new HashSet<string>();
 
+        public Logic logic = Logic.Glitchless;
         public bool skipIntro = true;
         public bool skipDreams = false;
+        public bool skipHands = false;
         public TotalRep totalRep = TotalRep.Normal;
         public ScoreDifficulty scoreDifficulty = ScoreDifficulty.Normal;
 
@@ -29,6 +31,8 @@ namespace Archipelago
 
         public bool limitedGraffiti = false;
         public Dictionary<string, int> grafUses = new Dictionary<string, int>();
+
+        public bool junkPhotos = false;
 
         public int fakeRep = 0;
         public int sprayCount = 0;

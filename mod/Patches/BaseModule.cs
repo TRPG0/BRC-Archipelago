@@ -10,10 +10,10 @@ namespace Archipelago.Patches
     {
         public static void Postfix()
         {
-            if (Core.Instance.RandoLocalizer == null)
+            if (Core.Instance.Localizer == null)
             {
                 LocalizationData localizationData = Reptile.Core.Instance.localizerData;
-                Core.Instance.RandoLocalizer = new RandoLocalizer(Reptile.Core.Instance.Localizer.Language, SystemLanguage.English, Core.CheckAvailableLanguages(), localizationData);
+                Core.Instance.Localizer = new RandoLocalizer(Reptile.Core.Instance.Localizer.Language, SystemLanguage.English, Core.CheckAvailableLanguages(), localizationData);
             }
             Core.Instance.UIManager.CreateAPButtons();
             Core.Instance.UIManager.CheckSlots();
@@ -64,6 +64,13 @@ namespace Archipelago.Patches
             if (Core.Instance.SaveManager.DataExists())
             {
                 Core.Instance.SaveManager.CurrentSaveSlot.GetCurrentStageProgress().reputation = 0;
+
+                // failsafe for speedrunners :slight_smile:
+                if (Core.Instance.LocationManager.locations.ContainsKey("camera") && !Core.Instance.LocationManager.locations["camera"].@checked
+                    && Reptile.Core.Instance.BaseModule.CurrentStage == Stage.hideout && Story.GetCurrentObjectiveInfo().chapter >= Story.Chapter.CHAPTER_2)
+                {
+                    Core.Instance.LocationManager.CheckLocation("camera");
+                }
             }
         }
     }

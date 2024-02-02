@@ -6,6 +6,12 @@ using System.Threading.Tasks;
 
 namespace Archipelago.Structures
 {
+    public enum Logic
+    {
+        Glitchless,
+        Glitched
+    }
+
     public enum TotalRep
     {
         Normal,

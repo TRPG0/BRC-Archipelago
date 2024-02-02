@@ -15,10 +15,10 @@ namespace Archipelago.Stages
         public override string Chapter6Object => "Chapter 6";
         public override Story.Chapter MinimumChapter => Story.Chapter.CHAPTER_5;
 
-        public override void FindStoryObjects(StoryManager sm)
+        public override void FindStoryObjects(SceneObjectsRegister sceneObjectsRegister)
         {
             if (Reptile.Core.Instance.BaseModule.CurrentStage != Stage.pyramid) return;
-            foreach (NPC npc in Traverse.Create(sm).Field<List<NPC>>("npcs").Value)
+            foreach (NPC npc in sceneObjectsRegister.NPCs)
             {
                 if (npc.name == "NPC_Crew_CopterEncounter_Starter")
                 {
@@ -27,7 +27,7 @@ namespace Archipelago.Stages
                     break;
                 }
             }
-            foreach (GameplayEvent obj in Traverse.Create(sm).Field<List<GameplayEvent>>("gameplayEvents").Value)
+            foreach (GameplayEvent obj in sceneObjectsRegister.gameplayEvents)
             {
                 if (obj.name == "DJBossEncounterPhase1")
                 {

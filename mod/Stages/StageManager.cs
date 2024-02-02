@@ -90,9 +90,9 @@ namespace Archipelago.Stages
             }
         }
 
-        public void SetNPCRep(StoryManager sm)
+        public void SetNPCRep(SceneObjectsRegister sceneObjectsRegister)
         {
-            foreach (NPC npc in Traverse.Create(sm).Field<List<NPC>>("npcs").Value)
+            foreach (NPC npc in sceneObjectsRegister.NPCs)
             {
                 if (npc != null && npc.requirement != 0)
                 {
@@ -105,9 +105,9 @@ namespace Archipelago.Stages
             }
         }
 
-        public void SetEncounterScores(StoryManager sm)
+        public void SetEncounterScores(SceneObjectsRegister sceneObjectsRegister)
         {
-            foreach (GameplayEvent ge in Traverse.Create(sm).Field<List<GameplayEvent>>("gameplayEvents").Value)
+            foreach (GameplayEvent ge in sceneObjectsRegister.gameplayEvents)
             {
                 if (ge is ScoreEncounter se)
                 {
@@ -125,10 +125,10 @@ namespace Archipelago.Stages
             }
         }
 
-        public virtual void SkipDream(StoryManager sm)
+        public virtual void SkipDream(SceneObjectsRegister sceneObjectsRegister)
         {
             if (!Core.Instance.Data.skipDreams) return;
-            foreach (GameplayEvent obj in Traverse.Create(sm).Field<List<GameplayEvent>>("gameplayEvents").Value)
+            foreach (GameplayEvent obj in sceneObjectsRegister.gameplayEvents)
             {
                 if (obj is DreamEncounter de)
                 {
@@ -159,15 +159,15 @@ namespace Archipelago.Stages
         {
             SetupChecker();
             SetupUI();
-            StoryManager sm = WorldHandler.instance.StoryManager;
-            if (ChangeNPCs) SetNPCRep(sm);
-            if (ChangeScores && Core.Instance.Data.scoreDifficulty > ScoreDifficulty.Normal) SetEncounterScores(sm);
-            if (HasDream) SkipDream(sm);
+            SceneObjectsRegister sor = WorldHandler.instance.SceneObjectsRegister;
+            if (ChangeNPCs) SetNPCRep(sor);
+            if (ChangeScores && Core.Instance.Data.scoreDifficulty > ScoreDifficulty.Normal) SetEncounterScores(sor);
+            if (HasDream) SkipDream(sor);
             if (HasChapter6Content) UnlockChapter6Content();
             SetPlayerRep();
             LockDefaultGraffiti(Core.Instance.Data.to_lock);
             Core.Instance.PhoneManager.DoAppSetup();
-            FindStoryObjects(sm);
+            FindStoryObjects(sor);
             if (!Core.Instance.SaveManager.IsAnyGraffitiUnlocked(GraffitiSize.M)) NoGraffiti(GraffitiSize.M);
             if (!Core.Instance.SaveManager.IsAnyGraffitiUnlocked(GraffitiSize.L)) NoGraffiti(GraffitiSize.L);
             if (!Core.Instance.SaveManager.IsAnyGraffitiUnlocked(GraffitiSize.XL)) NoGraffiti(GraffitiSize.XL);
@@ -217,6 +217,6 @@ namespace Archipelago.Stages
             }
         }
 
-        public virtual void FindStoryObjects(StoryManager sm) { }
+        public virtual void FindStoryObjects(SceneObjectsRegister sceneObjectsRegister) { }
     }
 }

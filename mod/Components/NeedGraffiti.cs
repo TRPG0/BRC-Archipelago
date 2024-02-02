@@ -56,7 +56,7 @@ namespace Archipelago.Components
 
         public void ShowContext()
         {
-            Core.Instance.stageManager.contextLabel.text = $"Needs Graffiti ({SizesToString()}).";
+            Core.Instance.stageManager.contextLabel.text = string.Format(Core.Instance.Localizer.GetRawTextValue("REQUIREMENT_GRAFFITI"), SizesToString());
             Core.Instance.stageManager.contextLabel.gameObject.SetActive(true);
             Core.Instance.stageManager.contextGraffitiIcon.SetActive(true);
         }

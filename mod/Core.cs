@@ -32,7 +32,7 @@ namespace Archipelago
         public LocationManager LocationManager = new LocationManager();
         public SaveManager SaveManager = new SaveManager();
         public StageManager stageManager = null;
-        public RandoLocalizer RandoLocalizer;
+        public RandoLocalizer Localizer { get; internal set; }
 
         public static new ManualLogSource Logger = BepInEx.Logging.Logger.CreateLogSource("Archipelago");
 
@@ -125,6 +125,7 @@ namespace Archipelago
             Harmony.PatchAll(typeof(DieAbility_OnStartAbility_Patch));
             Harmony.PatchAll(typeof(DynamicPickup_PickupPickup_Patch));
             Harmony.PatchAll(typeof(Encounter_SetEncounterState_Patch));
+            Harmony.PatchAll(typeof(GameplayEvent_UnlockCameraAppForPlayer_Patch));
             Harmony.PatchAll(typeof(GameplayEvent_UnlockCharacterImpl_Patch));
             Harmony.PatchAll(typeof(GraffitiGame_OnDestroy_Patch));
             Harmony.PatchAll(typeof(GraffitiGame_SetState_Patch));
@@ -133,9 +134,11 @@ namespace Archipelago
             Harmony.PatchAll(typeof(GraffitiScrollButton_SetContent_Patch));
             Harmony.PatchAll(typeof(GraffitiSpot_GiveRep_Patch));
             Harmony.PatchAll(typeof(GraffitiSpot_SpawnRep_Patch));
+            Harmony.PatchAll(typeof(HomescreenButton_SetContent_Patch));
             Harmony.PatchAll(typeof(LocalizationLookupTable_GetLocalizationValueFromSubgroup_Patch));
             Harmony.PatchAll(typeof(OptionsMenuGameTab_ApplyLanguage_Patch));
             Harmony.PatchAll(typeof(PhoneScrollUnlockableButton_SetContent_Patch));
+            Harmony.PatchAll(typeof(PhotoObjectiveProgressable_MadePhotograph_Patch));
             Harmony.PatchAll(typeof(Player_ChangeHP_Patch));
             Harmony.PatchAll(typeof(Player_CheckNPCTriggerForConversation_Patch));
             Harmony.PatchAll(typeof(Player_OnTriggerEnter_Patch));
@@ -151,6 +154,7 @@ namespace Archipelago
             Harmony.PatchAll(typeof(UIManager_HideDieMenu_Patch));
             Harmony.PatchAll(typeof(UIManager_ShowDieMenu_Patch));
             Harmony.PatchAll(typeof(VendingMachine_RewardIsValid_Patch));
+            Harmony.PatchAll(typeof(VersionUIHandler_SetVersionText_Patch));
 
             foreach (var plugin in Chainloader.PluginInfos)
             {

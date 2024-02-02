@@ -11,10 +11,14 @@ namespace Archipelago.Stages
         public override bool HasChapter6Content => false;
         public override string StoryPath => "storyOsaka";
 
+        public DreamEncounter dream;
+        public NPC lion;
+        public ProgressObject intro;
 
-        public override void FindStoryObjects(StoryManager sm)
+
+        public override void FindStoryObjects(SceneObjectsRegister sceneObjectsRegister)
         {
-            foreach (NPC npc in Traverse.Create(sm).Field<List<NPC>>("npcs").Value)
+            foreach (NPC npc in sceneObjectsRegister.NPCs)
             {
                 if (npc.name == "NPC_Crew_BattleStarter")
                 {
@@ -23,41 +27,66 @@ namespace Archipelago.Stages
                 }
                 else if (npc.name == "NPC_Lion")
                 {
+                    lion = npc;
+
                     if (Traverse.Create(npc).Field<int>("dialogueLevel").Value >= 8) UnlockChapter6Content();
                     else
                     {
-                        npc.dialogues[7].OnEndSequence.AddListener(delegate { UnlockChapter6Content(); });
-                        Core.Logger.LogInfo($"Added UnlockChapter6Content to OnEndSequence of {npc.name}");
+                        npc.dialogues[7].OnEndSequence.AddListener(UnlockChapter6Content);
+                        Core.Logger.LogInfo($"Added UnlockChapter6Content to OnEndSequence of dialogues[7] {npc.name}");
                     }
                 }
             }
-            foreach (ProgressObject po in Traverse.Create(sm).Field<List<ProgressObject>>("progressObjects").Value)
+            foreach (ProgressObject po in sceneObjectsRegister.progressObjects)
             {
                 if (po.name == "ProgressObject_ShowPathToFaux")
                 {
                     Core.Logger.LogInfo("Found ProgressObject_ShowPathToFaux");
                     CreateNeedGraffitiCollider(po.GetComponentInChildren<BoxCollider>(true).gameObject, new List<GraffitiSize>() { GraffitiSize.M }, NeedGraffiti.NeedGraffitiType.ProgressObject);
-                    break;
                 }
-            }
-            foreach (GameplayEvent obj in Traverse.Create(sm).Field<List<GameplayEvent>>("gameplayEvents").Value)
-            {
-                if (obj.name == "SnakeBossEncounter")
+                else if (po.name == "IntroSnakeBoss")
                 {
-                    ((CombatEncounter)obj).OnCompleted.AddListener(delegate { Core.Instance.Multiworld.SendCompletion(); });
-                    Core.Logger.LogInfo("Added SendCompletion call to SnakeBossEncounter");
-                    break;
+                    Core.Logger.LogInfo("Found IntroSnakeBoss");
+                    intro = po;
                 }
             }
+            foreach (GameplayEvent obj in sceneObjectsRegister.gameplayEvents)
+            {
+                if (obj.name == "TankwalkerCombatEncounter" && Core.Instance.Data.skipHands)
+                {
+                    ((CombatEncounter)obj).OnCompleted.AddListener(delegate 
+                    { 
+                        Traverse.Create(lion).Field<int>("dialogueLevel").Value = 8;
+                        for (int i = 0; i < 8; i++)
+                        {
+                            Core.Instance.LocationManager.CountAndCheckSpray();
+                        }
+                    });
+                    Core.Logger.LogInfo($"Added dialogue level change to OnCompleted of TankwalkerCombatEncounter");
+                }
+                else if (obj.name == "SnakeBossEncounter")
+                {
+                    ((CombatEncounter)obj).OnCompleted.AddListener(Core.Instance.Multiworld.SendCompletion);
+                    Core.Logger.LogInfo("Added SendCompletion call to SnakeBossEncounter");
+                }
+                else if (obj is DreamEncounter de)
+                {
+                    dream = de;
+                    Core.Logger.LogInfo("Found DreamEncounter");
+                }
+            }
+
+            if (!Traverse.Create(dream).Field<bool>("win").Value) DeactivateIntro();
         }
 
-        public override void SkipDream(StoryManager sm)
+        public override void SkipDream(SceneObjectsRegister sceneObjectsRegister)
         {
-            if (!Core.Instance.Data.skipDreams) return;
-            foreach (GameplayEvent obj in Traverse.Create(sm).Field<List<GameplayEvent>>("gameplayEvents").Value)
+            foreach (GameplayEvent obj in sceneObjectsRegister.gameplayEvents)
             {
                 if (obj is DreamEncounter de)
                 {
+                    de.OnCompleted.AddListener(ActivateIntro);
+                    if (!Core.Instance.Data.skipDreams) return;
                     Traverse traverse = Traverse.Create(de);
                     traverse.Field<bool>("startMusicAfterFirstCheckpoint").Value = false;
                     de.OnIntro.AddListener(delegate
@@ -66,7 +95,7 @@ namespace Archipelago.Stages
                         WorldHandler.instance.GetCurrentPlayer().SetCharacter(Characters.legendFace);
                     });
                     Core.Logger.LogInfo($"Added PlaceCurrentPlayerAt to OnIntro of {de.name}");
-                    break;
+                    return;
                 }
             }
         }
@@ -81,6 +110,18 @@ namespace Archipelago.Stages
             parts.transform.Find("BeforeFinalBossElephants").gameObject.SetActive(false);
             parts.transform.Find("ProgressObject_AdditionalGameplayAfterFinalBoss").gameObject.SetActive(true);
             Core.Logger.LogInfo("Chapter 6 content unlocked.");
+        }
+
+        public void DeactivateIntro()
+        {
+            if (intro == null) return;
+            intro.gameObject.SetActive(false);
+        }
+
+        public void ActivateIntro()
+        {
+            if (intro == null) return;
+            intro.gameObject.SetActive(true);
         }
     }
 }

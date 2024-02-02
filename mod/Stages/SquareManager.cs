@@ -12,9 +12,9 @@ namespace Archipelago.Stages
         public override string StoryPath => "story_Square";
         public override Story.Chapter MinimumChapter => Story.Chapter.CHAPTER_1;
 
-        public override void FindStoryObjects(StoryManager sm)
+        public override void FindStoryObjects(SceneObjectsRegister sceneObjectsRegister)
         {
-            foreach (ProgressObject obj in Traverse.Create(sm).Field<List<ProgressObject>>("progressObjects").Value)
+            foreach (ProgressObject obj in sceneObjectsRegister.progressObjects)
             {
                 if (obj.name == "ProgressObject_Phonecall_TeachCypher")
                 {

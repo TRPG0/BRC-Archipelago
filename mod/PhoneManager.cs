@@ -45,11 +45,9 @@ namespace Archipelago
             GameObject.DestroyImmediate(appArchipelago.Content.Find("EmailScroll").gameObject);
             GameObject.DestroyImmediate(appArchipelago.Content.Find("MessagePanel").gameObject);
 
-            appArchipelago.Content.Find("Overlay").GetComponentInChildren<TMProFontLocalizer>().UpdateTextMeshLanguageFont(SystemLanguage.English);
-            Component.Destroy(appArchipelago.Content.Find("Overlay").GetComponentInChildren<TMProFontLocalizer>());
             Component.Destroy(appArchipelago.Content.Find("Overlay").GetComponentInChildren<TMProLocalizationAddOn>());
             appArchipelago.title = appArchipelago.Content.Find("Overlay").GetComponentInChildren<TextMeshProUGUI>();
-            appArchipelago.title.text = Core.Instance.RandoLocalizer.GetRawTextValue("APP_ARCHIPELAGO_HEADER_DEFAULT");
+            appArchipelago.title.text = Core.Instance.Localizer.GetRawTextValue("APP_ARCHIPELAGO_HEADER_DEFAULT");
 
             Image icon = appArchipelago.Content.Find("Overlay").Find("Icons").Find("AppIcon").GetComponentInChildren<Image>();
             icon.sprite = UIManager.bundle.LoadAsset<Sprite>("assets/archipelago.png");
@@ -69,6 +67,10 @@ namespace Archipelago
             appArchipelago.text.alignment = TextAlignmentOptions.BottomLeft;
             appArchipelago.text.enableWordWrapping = true;
             appArchipelago.text.transform.localPosition = new Vector3(0, 215, 0);
+            TMProFontLocalizer fontLocalizer = appArchipelago.text.gameObject.AddComponent<TMProFontLocalizer>();
+            Traverse fontLocalizerT = Traverse.Create(fontLocalizer);
+            fontLocalizerT.Field<TextMeshProUGUI>("textMesh").Value = appArchipelago.text;
+            fontLocalizerT.Field<GameFontType>("gameFontType").Value = Core.Instance.Localizer.MainFont;
             GameObject.Instantiate(Phone.GetComponentInChildren<AppMusicPlayer>(true).Content.Find("Overlay").Find("OverlayBottom").gameObject, appArchipelago.Content.Find("Overlay")).transform.localPosition = new Vector3(0, -950, 0);
             appArchipelago.bottomLeftText = GameObject.Instantiate(appArchipelago.text.gameObject, appArchipelago.Content).GetComponent<TextMeshProUGUI>();
             appArchipelago.bottomLeftText.gameObject.name = "CancelText";
@@ -96,7 +98,7 @@ namespace Archipelago
             appET.Field<AUnlockable[]>("m_Unlockables").Value = new AUnlockable[] { };
             appEncounter.Content.Find("Overlay").Find("Icons").Find("AppIcon").GetComponent<Image>().sprite = UIManager.bundle.LoadAsset<Sprite>("assets/encounter.png");
             appEncounter.headerText = appEncounter.Content.Find("Overlay").GetComponentInChildren<TextMeshProUGUI>();
-            appEncounter.headerText.text = Core.Instance.RandoLocalizer.GetRawTextValue("APP_ENCOUNTER_HEADER");
+            appEncounter.headerText.text = Core.Instance.Localizer.GetRawTextValue("APP_ENCOUNTER_HEADER");
             GameObject.Destroy(appEncounter.Content.Find("Messages").gameObject);
             appEncounter.bottomLeftText = appEncounter.Content.Find("CancelText").GetComponent<TextMeshProUGUI>();
             appEncounter.bottomLeftGlyph = appEncounter.Content.Find("CancelGlyph").GetComponent<UIButtonGlyphComponent>();
@@ -132,12 +134,14 @@ namespace Archipelago
             downGlyphAT.Field<int>("inputActionID").Value = 56;
             downGlyphAT.Field<TextMeshProUGUI>("localizedGlyphTextComponent").Value = appArchipelago.downGlyph.GetComponent<TextMeshProUGUI>();
 
+            fontLocalizerT.Field<GameFontType>("gameFontType").Value = Core.Instance.Localizer.EnglishOnlyFont;
+
             HomeScreenApp homeScreenAppEncounter = ScriptableObject.CreateInstance<HomeScreenApp>();
             homeScreenAppEncounter.name = "AppEncounter";
             Traverse hsaEncounter = Traverse.Create(homeScreenAppEncounter);
             hsaEncounter.Field<HomeScreenApp.HomeScreenAppType>("appType").Value = HomeScreenApp.HomeScreenAppType.EMAIL;
             hsaEncounter.Field<string>("m_AppName").Value = "AppEncounter";
-            hsaEncounter.Field<string>("m_DisplayName").Value = "ENCOUNTER";
+            hsaEncounter.Field<string>("m_DisplayName").Value = "APP_ENCOUNTER_HEADER";
             hsaEncounter.Field<Sprite>("m_AppIcon").Value = UIManager.bundle.LoadAsset<Sprite>("assets/encounter.png");
 
             HomeScreenApp homeScreenAppArchipelago = ScriptableObject.CreateInstance<HomeScreenApp>();
@@ -145,7 +149,7 @@ namespace Archipelago
             Traverse hsaArchipelago = Traverse.Create(homeScreenAppArchipelago);
             hsaArchipelago.Field<HomeScreenApp.HomeScreenAppType>("appType").Value = HomeScreenApp.HomeScreenAppType.EMAIL;
             hsaArchipelago.Field<string>("m_AppName").Value = "AppArchipelago";
-            hsaArchipelago.Field<string>("m_DisplayName").Value = "ARCHIPELAGO";
+            hsaArchipelago.Field<string>("m_DisplayName").Value = "APP_ARCHIPELAGO_HEADER_DEFAULT";
             hsaArchipelago.Field<Sprite>("m_AppIcon").Value = UIManager.bundle.LoadAsset<Sprite>("assets/archipelago.png");
 
             Traverse.Create(Phone).Field<Dictionary<string, App>>("<AppInstances>k__BackingField").Value.Add("AppEncounter", appEncounter);
@@ -181,7 +185,7 @@ namespace Archipelago
             appArchipelago.UpdateHeader();
             appArchipelago.UpdateOptionText();
             appArchipelago.UpdateGlyphs();
-            appEncounter.headerText.text = Core.Instance.RandoLocalizer.GetRawTextValue("APP_ENCOUNTER_HEADER");
+            appEncounter.headerText.text = Core.Instance.Localizer.GetRawTextValue("APP_ENCOUNTER_HEADER");
             appEncounter.SetTopText();
             appEncounter.SetCenterText();
             appEncounter.SetBottomText();

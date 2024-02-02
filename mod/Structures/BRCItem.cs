@@ -16,6 +16,7 @@
         BMX,
         Character,
         Outfit,
-        REP
+        REP,
+        Camera
     }
 }

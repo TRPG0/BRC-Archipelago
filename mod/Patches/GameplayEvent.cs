@@ -18,4 +18,18 @@ namespace Archipelago.Patches
             else return true;
         }
     }
+
+    [HarmonyPatch(typeof(GameplayEvent), "UnlockCameraAppForPlayer")]
+    public class GameplayEvent_UnlockCameraAppForPlayer_Patch
+    {
+        public static bool Prefix()
+        {
+            if (Core.Instance.SaveManager.DataExists())
+            {
+                Core.Instance.LocationManager.CheckLocation("camera");
+                return false;
+            }
+            else return true;
+        }
+    }
 }

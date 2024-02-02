@@ -10,7 +10,7 @@ namespace Archipelago.Patches
         {
             if (Core.Instance.SaveManager.DataExists() && __instance.unlockableDrop != null)
             {
-                if (!Core.Instance.Data.@checked.Contains(__instance.unlockableDrop.name)) __result = true;
+                if (!Core.Instance.Data.@checked.Contains(__instance.unlockableDrop.GetComponent<DynamicPickup>().unlock.name)) __result = true;
                 else __result = false;
 
                 return false;

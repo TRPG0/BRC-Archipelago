@@ -13,7 +13,7 @@ namespace Archipelago.Stages
 
         public void SetSkateboardGarage(bool open)
         {
-            foreach (ProgressObject obj in Traverse.Create(WorldHandler.instance.StoryManager).Field<List<ProgressObject>>("progressObjects").Value)
+            foreach (ProgressObject obj in WorldHandler.instance.SceneObjectsRegister.progressObjects)
             {
                 if (obj.name == "GarageDoorSBClosed") obj.gameObject.SetActive(!open);
                 if (obj.name == "GarageDoorSBOpen") obj.gameObject.SetActive(open);
@@ -22,7 +22,7 @@ namespace Archipelago.Stages
 
         public void SetInlineGarage(bool open)
         {
-            foreach (ProgressObject obj in Traverse.Create(WorldHandler.instance.StoryManager).Field<List<ProgressObject>>("progressObjects").Value)
+            foreach (ProgressObject obj in WorldHandler.instance.SceneObjectsRegister.progressObjects)
             {
                 if (obj.name == "GarageDoorInlineClosed") obj.gameObject.SetActive(!open);
                 if (obj.name == "GarageDoorInlineOpen") obj.gameObject.SetActive(open);
@@ -31,17 +31,17 @@ namespace Archipelago.Stages
 
         public void SetBMXGarage(bool open)
         {
-            foreach (ProgressObject obj in Traverse.Create(WorldHandler.instance.StoryManager).Field<List<ProgressObject>>("progressObjects").Value)
+            foreach (ProgressObject obj in WorldHandler.instance.SceneObjectsRegister.progressObjects)
             {
                 if (obj.name == "GarageDoorBMXClosed") obj.gameObject.SetActive(!open);
                 if (obj.name == "GarageDoorBMXOpen") obj.gameObject.SetActive(open);
             }
         }
 
-        public override void FindStoryObjects(StoryManager sm)
+        public override void FindStoryObjects(SceneObjectsRegister sceneObjectsRegister)
         {
             if (Core.Instance.Data.firstCharacter == Characters.blockGuy) return;
-            foreach (ProgressObject obj in Traverse.Create(sm).Field<List<ProgressObject>>("progressObjects").Value)
+            foreach (ProgressObject obj in sceneObjectsRegister.progressObjects)
             {
                 if (obj.name == "ProgressObject_Exposition_HeadInsideHead")
                 {

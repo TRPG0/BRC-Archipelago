@@ -12,10 +12,10 @@ namespace Archipelago.Stages
 
         public NPC mallPoliceNPC;
 
-        public override void FindStoryObjects(StoryManager sm)
+        public override void FindStoryObjects(SceneObjectsRegister sceneObjectsRegister)
         {
             if (Reptile.Core.Instance.BaseModule.CurrentStage != Stage.Mall) return;
-            foreach (NPC npc in Traverse.Create(sm).Field<List<NPC>>("npcs").Value)
+            foreach (NPC npc in sceneObjectsRegister.NPCs)
             {
                 if (npc.name == "NPC_policeActivator")
                 {

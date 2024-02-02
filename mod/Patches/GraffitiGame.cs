@@ -43,7 +43,6 @@ namespace Archipelago.Patches
                             {
                                 Characters currentCharacter = Core.Instance.SaveManager.CurrentSaveSlot.currentCharacter;
                                 Requirements.OverrideCharacterIfInvalid(ref currentCharacter);
-                                //if (!Enum.IsDefined(typeof(Characters), currentCharacter) || currentCharacter == Characters.legendMetalHead || currentCharacter == Characters.legendFace) currentCharacter = Characters.metalHead;
                                 id = currentCharacter.ToString();
                                 title = Reptile.Core.Instance.Localizer.GetCharacterName(currentCharacter);
                             }
@@ -60,7 +59,7 @@ namespace Archipelago.Patches
                                 {
                                     grafArt.unlockable.IsDefault = false;
                                     Core.Instance.SaveManager.CurrentSaveSlot.GetUnlockableDataByUid(grafArt.unlockable.Uid).IsUnlocked = false;
-                                    Core.Instance.LocationManager.notifQueue.Add(new Structures.Notification("AppGraffiti", string.Format(Core.Instance.RandoLocalizer.GetRawTextValue("GRAFFITI_DEPLETED_COLLECTIBLE"), grafArt.title), null));
+                                    Core.Instance.LocationManager.notifQueue.Add(new Structures.Notification("AppGraffiti", string.Format(Core.Instance.Localizer.GetRawTextValue("GRAFFITI_DEPLETED_COLLECTIBLE"), grafArt.title), null));
 
                                     List<string> defaults = new List<string>()
                                     {
@@ -75,7 +74,7 @@ namespace Archipelago.Patches
                                     if (defaults.Contains(grafArt.title)) Core.Instance.Data.to_lock.Add(grafArt.title);
                                     if (!Core.Instance.SaveManager.IsAnyGraffitiUnlocked(gSpot.size)) Core.Instance.stageManager.NoGraffiti(gSpot.size);
                                 }
-                                else Core.Instance.LocationManager.notifQueue.Add(new Structures.Notification("AppGraffiti", string.Format(Core.Instance.RandoLocalizer.GetRawTextValue("GRAFFITI_DEPLETED_CHARACTER"), title), null));
+                                else Core.Instance.LocationManager.notifQueue.Add(new Structures.Notification("AppGraffiti", string.Format(Core.Instance.Localizer.GetRawTextValue("GRAFFITI_DEPLETED_CHARACTER"), title), null));
                             }
 
                             Core.Instance.SaveManager.SaveData();
@@ -109,7 +108,6 @@ namespace Archipelago.Patches
                         {
                             Characters currentCharacter = Core.Instance.SaveManager.CurrentSaveSlot.currentCharacter;
                             Requirements.OverrideCharacterIfInvalid(ref currentCharacter);
-                            //if (!Enum.IsDefined(typeof(Characters), currentCharacter) || currentCharacter == Characters.legendMetalHead || currentCharacter == Characters.legendFace) currentCharacter = Characters.metalHead;
                             id = currentCharacter.ToString();
                         }
                         else

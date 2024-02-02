@@ -63,7 +63,7 @@ namespace Archipelago.Apps
         {
             whT = Traverse.Create(WorldHandler.instance);
             SetType();
-            bottomRightText.text = Core.Instance.RandoLocalizer.GetRawTextValue("APP_ENCOUNTER_NAVIGATION_YES");
+            bottomRightText.text = Core.Instance.Localizer.GetRawTextValue("APP_ENCOUNTER_NAVIGATION_YES");
         }
 
         public void Start()
@@ -122,22 +122,29 @@ namespace Archipelago.Apps
             bottomRightGlyph.gameObject.SetActive(show);
         }
 
+        public string CurrentTypeToString()
+        {
+            if (CurrentType == EncounterType.None) return Core.Instance.Localizer.GetRawTextValue("APP_ENCOUNTER_TYPE_NONE");
+            else if (CurrentType == EncounterType.Unknown) return Core.Instance.Localizer.GetRawTextValue("APP_ENCOUNTER_TYPE_UNKNOWN");
+            else return CurrentType.ToString();
+        }
+
         public void SetTopText()
         {
-            topText.text = string.Format(Core.Instance.RandoLocalizer.GetRawTextValue("APP_ENCOUNTER_TYPE"), $"\n<b>{CurrentType}</b>");
+            topText.text = string.Format(Core.Instance.Localizer.GetRawTextValue("APP_ENCOUNTER_TYPE"), $"\n<b>{CurrentTypeToString()}</b>");
         }
 
         public void SetCenterText()
         {
-            if (CanQuitCurrentEncounter) centerText.text = Core.Instance.RandoLocalizer.GetRawTextValue("APP_ENCOUNTER_STATUS_CAN");
-            else if (CurrentType == EncounterType.None) centerText.text = Core.Instance.RandoLocalizer.GetRawTextValue("APP_ENCOUNTER_STATUS_NONE");
-            else centerText.text = Core.Instance.RandoLocalizer.GetRawTextValue("APP_ENCOUNTER_STATUS_CANNOT");
+            if (CanQuitCurrentEncounter) centerText.text = Core.Instance.Localizer.GetRawTextValue("APP_ENCOUNTER_STATUS_CAN");
+            else if (CurrentType == EncounterType.None) centerText.text = Core.Instance.Localizer.GetRawTextValue("APP_ENCOUNTER_STATUS_NONE");
+            else centerText.text = Core.Instance.Localizer.GetRawTextValue("APP_ENCOUNTER_STATUS_CANNOT");
         }
 
         public void SetBottomText()
         {
-            if (CanQuitCurrentEncounter) bottomLeftText.text = Core.Instance.RandoLocalizer.GetRawTextValue("APP_ENCOUNTER_NAVIGATION_NO");
-            else bottomLeftText.text = Core.Instance.RandoLocalizer.GetRawTextValue("APP_NAVIGATION_CLOSE");
+            if (CanQuitCurrentEncounter) bottomLeftText.text = Core.Instance.Localizer.GetRawTextValue("APP_ENCOUNTER_NAVIGATION_NO");
+            else bottomLeftText.text = Core.Instance.Localizer.GetRawTextValue("APP_NAVIGATION_CLOSE");
         }
 
         public void GiveUp()

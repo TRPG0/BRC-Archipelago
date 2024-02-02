@@ -8,7 +8,7 @@ namespace Archipelago.Patches
     {
         public static void Postfix()
         {
-            Core.Instance.RandoLocalizer.UpdateLocalization(Reptile.Core.Instance.Localizer.Language);
+            Core.Instance.Localizer.UpdateLocalization(Reptile.Core.Instance.Localizer.Language);
             Core.Instance.UIManager.UpdateLanguage();
             if (Core.Instance.stageManager != null) Core.Instance.PhoneManager.UpdateLanguage();
         }

@@ -10,9 +10,9 @@ namespace Archipelago.Stages
         public override string StoryPath => "Story_Tower";
         public override Story.Chapter MinimumChapter => Story.Chapter.CHAPTER_3;
 
-        public override void FindStoryObjects(StoryManager sm)
+        public override void FindStoryObjects(SceneObjectsRegister sceneObjectsRegister)
         {
-            foreach (NPC npc in Traverse.Create(sm).Field<List<NPC>>("npcs").Value)
+            foreach (NPC npc in sceneObjectsRegister.NPCs)
             {
                 if (npc.name == "NPC_Crew_Tower")
                 {

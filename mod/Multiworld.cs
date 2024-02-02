@@ -22,16 +22,71 @@ namespace Archipelago
         public bool Authenticated;
         public ArchipelagoSession Session;
 
-        public static List<string> messages = new List<string>()
-        {
-            "> Test message one",
-            "> Test msg 2",
-            "> A third test message"
-        };
+        public static List<string> messages = new List<string>();
 
         public DeathLinkService DeathLinkService = null;
         public bool DeathLinkKilling = false;
         public string DeathLinkReason { get; private set; }
+
+        public void TryGetSlotDataValue(ref int option, Dictionary<string, object> slotData, string key, int defaultValue)
+        {
+            try { option = int.Parse(slotData[key].ToString()); }
+            catch (KeyNotFoundException)
+            {
+                Core.Logger.LogWarning($"No key found for option \"{key}\". Using default value ({defaultValue})");
+                option = defaultValue;
+            }
+        }
+
+        public void TryGetSlotDataValue(ref bool option, Dictionary<string, object> slotData, string key, bool defaultValue)
+        {
+            try { option = bool.Parse(slotData[key].ToString()); }
+            catch (KeyNotFoundException)
+            {
+                Core.Logger.LogWarning($"No key found for option \"{key}\". Using default value ({defaultValue})");
+                option = defaultValue;
+            }
+        }
+
+        public void TryGetSlotDataValue(ref Logic option, Dictionary<string, object> slotData, string key, Logic defaultValue)
+        {
+            try { option = (Logic)int.Parse(slotData[key].ToString()); }
+            catch (KeyNotFoundException)
+            {
+                Core.Logger.LogWarning($"No key found for option \"{key}\". Using default value ({defaultValue})");
+                option = defaultValue;
+            }
+        }
+
+        public void TryGetSlotDataValue(ref TotalRep option, Dictionary<string, object> slotData, string key, TotalRep defaultValue)
+        {
+            try { option = (TotalRep)int.Parse(slotData[key].ToString()); }
+            catch (KeyNotFoundException)
+            {
+                Core.Logger.LogWarning($"No key found for option \"{key}\". Using default value ({defaultValue})");
+                option = defaultValue;
+            }
+        }
+
+        public void TryGetSlotDataValue(ref ScoreDifficulty option, Dictionary<string, object> slotData, string key, ScoreDifficulty defaultValue)
+        {
+            try { option = (ScoreDifficulty)int.Parse(slotData[key].ToString()); }
+            catch (KeyNotFoundException)
+            {
+                Core.Logger.LogWarning($"No key found for option \"{key}\". Using default value ({defaultValue})");
+                option = defaultValue;
+            }
+        }
+
+        public void TryGetSlotDataValue(ref MoveStyle option, Dictionary<string, object> slotData, string key, MoveStyle defaultValue)
+        {
+            try { option = (MoveStyle)int.Parse(slotData[key].ToString()); }
+            catch (KeyNotFoundException)
+            {
+                Core.Logger.LogWarning($"No key found for option \"{key}\". Using default value ({defaultValue})");
+                option = defaultValue;
+            }
+        }
 
         public bool Connect(int slotId, string name, string address, string password = null)
         {
@@ -68,11 +123,14 @@ namespace Archipelago
 
             if (loginResult is LoginSuccessful success)
             {
-                Core.Instance.Data.skipIntro = bool.Parse(success.SlotData["skip_intro"].ToString());
-                Core.Instance.Data.skipDreams = bool.Parse(success.SlotData["skip_dreams"].ToString());
-                Core.Instance.Data.totalRep = (TotalRep)int.Parse(success.SlotData["total_rep"].ToString());
-                Core.Instance.Data.startingMovestyle = (MoveStyle)int.Parse(success.SlotData["starting_movestyle"].ToString());
-                Core.Instance.Data.limitedGraffiti = bool.Parse(success.SlotData["limited_graffiti"].ToString());
+                TryGetSlotDataValue(ref Core.Instance.Data.logic, success.SlotData, "logic", Logic.Glitchless);
+                TryGetSlotDataValue(ref Core.Instance.Data.skipIntro, success.SlotData, "skip_intro", true);
+                TryGetSlotDataValue(ref Core.Instance.Data.skipDreams, success.SlotData, "skip_dreams", false);
+                TryGetSlotDataValue(ref Core.Instance.Data.skipHands, success.SlotData, "skip_statue_hands", false);
+                TryGetSlotDataValue(ref Core.Instance.Data.totalRep, success.SlotData, "total_rep", TotalRep.Normal);
+                TryGetSlotDataValue(ref Core.Instance.Data.startingMovestyle, success.SlotData, "starting_movestyle", MoveStyle.SKATEBOARD);
+                TryGetSlotDataValue(ref Core.Instance.Data.junkPhotos, success.SlotData, "exclude_photos", false);
+                TryGetSlotDataValue(ref Core.Instance.Data.limitedGraffiti, success.SlotData, "limited_graffiti", false);
 
                 if (!Core.Instance.SaveManager.DataExists(slotId))
                 {
@@ -95,22 +153,12 @@ namespace Archipelago
                         Core.Instance.Data.bmxUnlocked = true;
                     }
 
-                    if (Core.Instance.Data.limitedGraffiti) Core.Instance.Data.grafUses["metalHead"] = 0;
+                    if (Core.Instance.Data.limitedGraffiti) Core.Instance.Data.grafUses[Characters.metalHead.ToString()] = 0;
 
-                    Core.Instance.Data.damageMultiplier = int.Parse(success.SlotData["damage_multiplier"].ToString());
-                    Core.Instance.Data.scoreDifficulty = (ScoreDifficulty)int.Parse(success.SlotData["score_difficulty"].ToString());
-                    Core.Instance.Data.deathLink = bool.Parse(success.SlotData["death_link"].ToString());
+                    TryGetSlotDataValue(ref Core.Instance.Data.damageMultiplier, success.SlotData, "damage_multiplier", 1);
+                    TryGetSlotDataValue(ref Core.Instance.Data.scoreDifficulty, success.SlotData, "score_difficulty", ScoreDifficulty.Normal);
+                    TryGetSlotDataValue(ref Core.Instance.Data.deathLink, success.SlotData, "death_link", false);
                 }
-
-                Core.Logger.LogInfo($"Skip intro is {Core.Instance.Data.skipIntro}");
-                Core.Logger.LogInfo($"Skip dreams is {Core.Instance.Data.skipDreams}");
-                Core.Logger.LogInfo($"Total REP is {Core.Instance.Data.totalRep}");
-                Core.Logger.LogInfo($"Starting movestyle is {Core.Instance.Data.startingMovestyle}");
-                Core.Logger.LogInfo($"Limited graffiti is {Core.Instance.Data.limitedGraffiti}");
-                Core.Logger.LogInfo($"Score difficulty is {Core.Instance.Data.scoreDifficulty}");
-                Core.Logger.LogInfo($"Damage multiplier is {Core.Instance.Data.damageMultiplier}");
-                Core.Logger.LogInfo($"Death link is {Core.Instance.Data.deathLink}");
-
 
                 foreach (RawLocationData data in ((JArray)success.SlotData["locations"]).ToObject<RawLocationData[]>())
                 {
@@ -299,7 +347,7 @@ namespace Archipelago
                 var locationId = available[Random.Range(0, available.Length)];
 
                 Session.Locations.ScoutLocationsAsync(true, locationId);
-                Core.Instance.LocationManager.notifQueue.Add(new Notification("AppArchipelago", Core.Instance.RandoLocalizer.GetRawTextValue("APP_HINT"), null));
+                Core.Instance.LocationManager.notifQueue.Add(new Notification("AppArchipelago", Core.Instance.Localizer.GetRawTextValue("APP_HINT"), null));
             }
             else Core.Logger.LogWarning("No locations available to hint.");
         }
