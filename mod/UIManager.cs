@@ -7,13 +7,14 @@ using TMPro;
 using UnityEngine.UI;
 using System.IO;
 using System.Collections.Generic;
+using ModLocalizer;
 
 namespace Archipelago
 {
     public class UIManager
     {
         public static AssetBundle bundle = AssetBundle.LoadFromMemory(Properties.Resources.archipelago);
-        public static Color menuOrange = new(1, 0.54f, 0);
+        public static Color menuOrange => new(1, 0.54f, 0);
 
         public TextMeshProMenuButton SaveSlotOneButton;
         public TextMeshProMenuButton SaveSlotTwoButton;
@@ -127,7 +128,7 @@ namespace Archipelago
             SelectionBarImage.transform.SetSiblingIndex(1);
 
             APMenuHeaderText = GameObject.Instantiate(buttonsGroup.transform.Find("MenuSubHeaderText"), buttonsGroup.transform).GetComponent<TextMeshProUGUI>();
-            Traverse.Create(APMenuHeaderText.GetComponent<TMProFontLocalizer>()).Field<GameFontType>("gameFontType").Value = Core.Instance.Localizer.MainFont;
+            Traverse.Create(APMenuHeaderText.GetComponent<TMProFontLocalizer>()).Field<GameFontType>("gameFontType").Value = Core.MainFont;
             font = APMenuHeaderText.font;
             Component.Destroy(APMenuHeaderText.GetComponent<TMProLocalizationAddOn>());
             Color color = APMenuHeaderText.color;
@@ -141,20 +142,20 @@ namespace Archipelago
             APMenuNameLabel = GameObject.Instantiate(APMenuHeaderText.gameObject, buttonsGroup.transform).GetComponent<TextMeshProUGUI>();
             APMenuNameLabel.fontStyle = FontStyles.LowerCase;
             APMenuNameLabel.color = menuOrange;
-            APMenuNameLabel.text = Core.Instance.Localizer.GetRawTextValue("MENU_NAME");
+            APMenuNameLabel.text = Core.Instance.Localizer.GetRawTextValue(Subgroups.Text, "MENU_NAME");
             Vector3 pos6 = APMenuHeaderText.transform.localPosition;
             pos6.x = pos6.x + (APMenuNameLabel.GetComponent<RectTransform>().rect.height * 1.8f);
             pos6.y = pos6.y - (APMenuNameLabel.GetComponent<RectTransform>().rect.height * 1.3f);
             APMenuNameLabel.transform.localPosition = pos6;
 
             APMenuAddressLabel = GameObject.Instantiate(APMenuNameLabel.gameObject, buttonsGroup.transform).GetComponent<TextMeshProUGUI>();
-            APMenuAddressLabel.text = Core.Instance.Localizer.GetRawTextValue("MENU_ADDRESS");
+            APMenuAddressLabel.text = Core.Instance.Localizer.GetRawTextValue(Subgroups.Text, "MENU_ADDRESS");
             Vector3 pos7 = APMenuNameLabel.transform.localPosition;
             pos7.y = pos7.y - (APMenuAddressLabel.GetComponent<RectTransform>().rect.height * 1.3f);
             APMenuAddressLabel.transform.localPosition = pos7;
 
             APMenuPasswordLabel = GameObject.Instantiate(APMenuAddressLabel.gameObject, buttonsGroup.transform).GetComponent<TextMeshProUGUI>();
-            APMenuPasswordLabel.text = Core.Instance.Localizer.GetRawTextValue("MENU_PASSWORD");
+            APMenuPasswordLabel.text = Core.Instance.Localizer.GetRawTextValue(Subgroups.Text, "MENU_PASSWORD");
             Vector3 pos8 = APMenuAddressLabel.transform.localPosition;
             pos8.y = pos8.y - (APMenuPasswordLabel.GetComponent<RectTransform>().rect.height * 1.3f);
             APMenuPasswordLabel.transform.localPosition = pos8;
@@ -247,11 +248,11 @@ namespace Archipelago
 
             SelectionBarImage.AddComponent<LabelWidthChecker>().Init(APMenuNameLabel, APMenuAddressLabel, APMenuPasswordLabel, APMenuNameInput, APMenuAddressInput, APMenuPasswordInput);
 
-            Traverse.Create(APMenuNameInput.GetComponent<TMProFontLocalizer>()).Field<GameFontType>("gameFontType").Value = Core.Instance.Localizer.EnglishOnlyFont;
-            Traverse.Create(APMenuAddressInput.GetComponent<TMProFontLocalizer>()).Field<GameFontType>("gameFontType").Value = Core.Instance.Localizer.EnglishOnlyFont;
-            Traverse.Create(APMenuPasswordInput.GetComponent<TMProFontLocalizer>()).Field<GameFontType>("gameFontType").Value = Core.Instance.Localizer.EnglishOnlyFont;
-            Traverse.Create(APMenuResult.GetComponent<TMProFontLocalizer>()).Field<GameFontType>("gameFontType").Value = Core.Instance.Localizer.EnglishOnlyFont;
-            Traverse.Create(APMenuChat.GetComponent<TMProFontLocalizer>()).Field<GameFontType>("gameFontType").Value = Core.Instance.Localizer.EnglishOnlyFont;
+            Traverse.Create(APMenuNameInput.GetComponent<TMProFontLocalizer>()).Field<GameFontType>("gameFontType").Value = Core.MainFontEnglish;
+            Traverse.Create(APMenuAddressInput.GetComponent<TMProFontLocalizer>()).Field<GameFontType>("gameFontType").Value = Core.MainFontEnglish;
+            Traverse.Create(APMenuPasswordInput.GetComponent<TMProFontLocalizer>()).Field<GameFontType>("gameFontType").Value = Core.MainFontEnglish;
+            Traverse.Create(APMenuResult.GetComponent<TMProFontLocalizer>()).Field<GameFontType>("gameFontType").Value = Core.MainFontEnglish;
+            Traverse.Create(APMenuChat.GetComponent<TMProFontLocalizer>()).Field<GameFontType>("gameFontType").Value = Core.MainFontEnglish;
 
             HideMenu();
         }
@@ -318,7 +319,7 @@ namespace Archipelago
         public void SetHeaderSlot(int num)
         {
             if (APMenuHeaderText == null) return;
-            APMenuHeaderText.text = string.Format(Core.Instance.Localizer.GetRawTextValue("MENU_HEADER"), num+1);
+            APMenuHeaderText.text = string.Format(Core.Instance.Localizer.GetRawTextValue(Subgroups.Text, "MENU_HEADER"), num+1);
         }
 
 
@@ -331,19 +332,19 @@ namespace Archipelago
             {
                 default:
                 case APSlotButton.SlotState.Vanilla:
-                    status = Core.Instance.Localizer.GetRawTextValue("MENU_STATUS_VANILLA");
+                    status = Core.Instance.Localizer.GetRawTextValue(Subgroups.Text, "MENU_STATUS_VANILLA");
                     break;
                 case APSlotButton.SlotState.NoData:
-                    status = Core.Instance.Localizer.GetRawTextValue("MENU_STATUS_NODATA");
+                    status = Core.Instance.Localizer.GetRawTextValue(Subgroups.Text, "MENU_STATUS_NODATA");
                     break;
                 case APSlotButton.SlotState.YesData:
-                    status = Core.Instance.Localizer.GetRawTextValue("MENU_STATUS_YESDATA");
+                    status = Core.Instance.Localizer.GetRawTextValue(Subgroups.Text, "MENU_STATUS_YESDATA");
                     break;
                 case APSlotButton.SlotState.Connected:
-                    status = Core.Instance.Localizer.GetRawTextValue("MENU_STATUS_CONNECTED");
+                    status = Core.Instance.Localizer.GetRawTextValue(Subgroups.Text, "MENU_STATUS_CONNECTED");
                     break;
                 case APSlotButton.SlotState.Disconnected:
-                    status = Core.Instance.Localizer.GetRawTextValue("MENU_STATUS_DISCONNECTED");
+                    status = Core.Instance.Localizer.GetRawTextValue(Subgroups.Text, "MENU_STATUS_DISCONNECTED");
                     break;
             }
 
@@ -356,16 +357,17 @@ namespace Archipelago
             APMenuResult.text = result;
         }
 
-        public void UpdateLanguage()
+        public void UpdateLanguage(SystemLanguage language)
         {
+            if (APMenuConnectButton == null) return;
             if (connectingSlot != -1)
             {
                 SetHeaderSlot(connectingSlot);
                 SetStatus(slotButtons[connectingSlot].CurrentState);
             }
-            APMenuNameLabel.text = Core.Instance.Localizer.GetRawTextValue("MENU_NAME");
-            APMenuAddressLabel.text = Core.Instance.Localizer.GetRawTextValue("MENU_ADDRESS");
-            APMenuPasswordLabel.text = Core.Instance.Localizer.GetRawTextValue("MENU_PASSWORD");
+            APMenuNameLabel.text = Core.Instance.Localizer.GetRawTextValue(Subgroups.Text, "MENU_NAME");
+            APMenuAddressLabel.text = Core.Instance.Localizer.GetRawTextValue(Subgroups.Text, "MENU_ADDRESS");
+            APMenuPasswordLabel.text = Core.Instance.Localizer.GetRawTextValue(Subgroups.Text, "MENU_PASSWORD");
 
             APMenuNameLabel.outlineColor = menuOrange;
             APMenuAddressLabel.outlineColor = menuOrange;

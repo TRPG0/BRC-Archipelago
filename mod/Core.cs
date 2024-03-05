@@ -10,19 +10,19 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using UnityEngine;
-using System;
+using ModLocalizer;
 
 namespace Archipelago
 {
     [BepInPlugin(PluginGUID, PluginName, PluginVersion)]
     [BepInDependency("com.yuril.brc_styleswapmod", BepInDependency.DependencyFlags.SoftDependency)]
+    [BepInDependency("trpg.brc.modlocalizer")]
     public class Core : BaseUnityPlugin
     {
         public const string PluginGUID = "trpg.brc.archipelago";
         public const string PluginName = "Archipelago";
         public const string PluginVersion = "1.0.0";
-
-        public static string AssemblyPath { get; private set; }
+        internal static GameVersion TargetGameVersion;
 
         public static Core Instance;
         public Data Data = new Data();
@@ -32,7 +32,11 @@ namespace Archipelago
         public LocationManager LocationManager = new LocationManager();
         public SaveManager SaveManager = new SaveManager();
         public StageManager stageManager = null;
-        public RandoLocalizer Localizer { get; internal set; }
+
+        public PluginLocalizer Localizer { get; private set; }
+        public static GameFontType MainFont { get; private set; }
+        public static GameFontType MainFontEnglish { get; private set; }
+        public static GameFontType PhoneFont { get; private set; }
 
         public static new ManualLogSource Logger = BepInEx.Logging.Logger.CreateLogSource("Archipelago");
 
@@ -46,10 +50,11 @@ namespace Archipelago
         public static ConfigEntry<Color> configColorItemFiller;
         public static ConfigEntry<Color> configColorItemTrap;
         public static ConfigEntry<Color> configColorLocation;
+        public static ConfigEntry<bool> configDontSavePhotos;
 
         public static bool isQuickStyleSwapLoaded = false;
 
-        public static bool FailScoreEncounters { get; private set; }
+        public static bool FailScoreEncounters { get; private set; } = false;
 
         internal static int forbiddenModsLoaded = 0;
         internal static string forbiddenGUIDs = string.Empty;
@@ -77,36 +82,26 @@ namespace Archipelago
             }
         }
 
-        public static PlatformLanguages CheckAvailableLanguages()
-        {
-            PlatformLanguages platformLanguages = ScriptableObject.CreateInstance<PlatformLanguages>();
-            string[] files = Directory.GetFiles(Path.Combine(AssemblyPath, "Languages"), "*");
-            List<SystemLanguage> languages = new List<SystemLanguage>();
-            foreach (string file in files)
-            {
-                if (Path.GetExtension(file) == ".fods")
-                {
-                    string fileName = Path.GetFileNameWithoutExtension(file);
-                    SystemLanguage result;
-                    if (Enum.TryParse(fileName, out result))
-                    {
-                        languages.Add(result);
-                    }
-                }
-            }
-            platformLanguages.availableLanguages = languages.ToArray();
-            return platformLanguages;
-        }
-
         private void Awake()
         {
-            Logger.LogInfo($"{PluginInfo.PLUGIN_GUID} is loaded.");
+            if (Instance != null) Destroy(this);
             Instance = this;
-            FailScoreEncounters = false;
+            TargetGameVersion = ScriptableObject.CreateInstance<GameVersion>();
+            TargetGameVersion.major = 1;
+            TargetGameVersion.minor = 0;
+            TargetGameVersion.repositoryRevision = 20381;
 
-            AssemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            string assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            Localizer = new PluginLocalizer(PluginName, Path.Combine(assemblyPath, "Languages"));
+            Localizer.OnLanguageChanged += UIManager.UpdateLanguage;
+            Localizer.OnInitializationFinished += () => {
+                MainFont = Localizer.LoadFontTypeAndRemoveUnusedFonts(GameFontTypes.DefaultText);
+                MainFontEnglish = Localizer.LoadFontTypeEnglishOnly(GameFontTypes.DefaultText);
+                PhoneFont = Localizer.LoadFontTypeAndRemoveUnusedFonts(GameFontTypes.PhoneMainText);
+            };
 
             Harmony Harmony = new Harmony("Archipelago");
+            Harmony.PatchAll(typeof(AppCamera_WaitForPhotoSavingComplete));
             Harmony.PatchAll(typeof(AppGraffiti_OnHoldDown_Patch));
             Harmony.PatchAll(typeof(AppGraffiti_OnHoldUp_Patch));
             Harmony.PatchAll(typeof(AppGraffiti_OnPressDown_Patch));
@@ -118,7 +113,6 @@ namespace Archipelago
             Harmony.PatchAll(typeof(BaseModule_HandleStageFullyLoaded_Patch));
             Harmony.PatchAll(typeof(BaseModule_SaveBeforeStageExit_Patch));
             Harmony.PatchAll(typeof(BaseModule_QuitCurrentGameSession_Patch));
-            Harmony.PatchAll(typeof(BaseModule_ShowMainMenu_Patch));
             Harmony.PatchAll(typeof(BaseModule_StartNewGame_Patch));
             Harmony.PatchAll(typeof(CharacterSelect_PopulateListOfSelectableCharacters_Patch));
             Harmony.PatchAll(typeof(Collectable_PickupCollectable_Patch));
@@ -136,9 +130,9 @@ namespace Archipelago
             Harmony.PatchAll(typeof(GraffitiSpot_SpawnRep_Patch));
             Harmony.PatchAll(typeof(HomescreenButton_SetContent_Patch));
             Harmony.PatchAll(typeof(LocalizationLookupTable_GetLocalizationValueFromSubgroup_Patch));
-            Harmony.PatchAll(typeof(OptionsMenuGameTab_ApplyLanguage_Patch));
             Harmony.PatchAll(typeof(PhoneScrollUnlockableButton_SetContent_Patch));
             Harmony.PatchAll(typeof(PhotoObjectiveProgressable_MadePhotograph_Patch));
+            Harmony.PatchAll(typeof(PhotosManager_SavePhoto_Patch));
             Harmony.PatchAll(typeof(Player_ChangeHP_Patch));
             Harmony.PatchAll(typeof(Player_CheckNPCTriggerForConversation_Patch));
             Harmony.PatchAll(typeof(Player_OnTriggerEnter_Patch));
@@ -151,6 +145,7 @@ namespace Archipelago
             Harmony.PatchAll(typeof(SaveSlotMenu_ShowDeleteSaveSlotPopup_Patch));
             Harmony.PatchAll(typeof(TextMeshProGameTextLocalizer_GetRawDialogueTextValue_Patch));
             Harmony.PatchAll(typeof(Type_GetType_Patch));
+            Harmony.PatchAll(typeof(UIManager_InstantiateMainMenuSceneUI_Patch));
             Harmony.PatchAll(typeof(UIManager_HideDieMenu_Patch));
             Harmony.PatchAll(typeof(UIManager_ShowDieMenu_Patch));
             Harmony.PatchAll(typeof(VendingMachine_RewardIsValid_Patch));
@@ -219,6 +214,11 @@ namespace Archipelago
                 "colorLocation",
                 new Color(0, 1, 0.5f),
                 "The color used to represent locations.");
+
+            configDontSavePhotos = Config.Bind("Camera",
+                "dontSavePhotos",
+                false,
+                "Don't save photos taken with the Camera app. Only takes effect when playing randomizer.");
         }
     }
 }

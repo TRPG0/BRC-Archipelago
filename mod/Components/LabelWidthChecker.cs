@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 
@@ -29,8 +30,9 @@ namespace Archipelago.Components
             return array.Max();
         }
 
-        public void AdjustInputs()
+        public IEnumerator AdjustInputs()
         {
+            yield return new WaitForEndOfFrame();
             float newX = addressLabel.transform.localPosition.x + GetLargestLabelWidth() + addressLabel.renderedHeight;
 
             Vector3 pos = nameInput.transform.localPosition;
@@ -48,7 +50,7 @@ namespace Archipelago.Components
 
         public void OnEnable()
         {
-            Invoke("AdjustInputs", 0.01f);
+            StartCoroutine(AdjustInputs());
         }
     }
 }

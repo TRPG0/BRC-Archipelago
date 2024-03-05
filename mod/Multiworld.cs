@@ -12,12 +12,13 @@ using UnityEngine;
 using Reptile;
 using System.Linq;
 using Random = UnityEngine.Random;
+using ModLocalizer;
 
 namespace Archipelago
 {
     public class Multiworld
     {
-        public static int[] AP_VERSION = new int[] { 0, 4, 3 };
+        public static int[] AP_VERSION = new int[] { 0, 4, 4 };
 
         public bool Authenticated;
         public ArchipelagoSession Session;
@@ -58,9 +59,19 @@ namespace Archipelago
             }
         }
 
-        public void TryGetSlotDataValue(ref TotalRep option, Dictionary<string, object> slotData, string key, TotalRep defaultValue)
+        public void TryGetSlotDataValue(ref MoveStyle option, Dictionary<string, object> slotData, string key, MoveStyle defaultValue)
         {
-            try { option = (TotalRep)int.Parse(slotData[key].ToString()); }
+            try { option = (MoveStyle)int.Parse(slotData[key].ToString()); }
+            catch (KeyNotFoundException)
+            {
+                Core.Logger.LogWarning($"No key found for option \"{key}\". Using default value ({defaultValue})");
+                option = defaultValue;
+            }
+        }
+
+        public void TryGetSlotDataValue(ref SGraffiti option, Dictionary<string, object> slotData, string key, SGraffiti defaultValue)
+        {
+            try { option = (SGraffiti)int.Parse(slotData[key].ToString()); }
             catch (KeyNotFoundException)
             {
                 Core.Logger.LogWarning($"No key found for option \"{key}\". Using default value ({defaultValue})");
@@ -71,16 +82,6 @@ namespace Archipelago
         public void TryGetSlotDataValue(ref ScoreDifficulty option, Dictionary<string, object> slotData, string key, ScoreDifficulty defaultValue)
         {
             try { option = (ScoreDifficulty)int.Parse(slotData[key].ToString()); }
-            catch (KeyNotFoundException)
-            {
-                Core.Logger.LogWarning($"No key found for option \"{key}\". Using default value ({defaultValue})");
-                option = defaultValue;
-            }
-        }
-
-        public void TryGetSlotDataValue(ref MoveStyle option, Dictionary<string, object> slotData, string key, MoveStyle defaultValue)
-        {
-            try { option = (MoveStyle)int.Parse(slotData[key].ToString()); }
             catch (KeyNotFoundException)
             {
                 Core.Logger.LogWarning($"No key found for option \"{key}\". Using default value ({defaultValue})");
@@ -127,10 +128,12 @@ namespace Archipelago
                 TryGetSlotDataValue(ref Core.Instance.Data.skipIntro, success.SlotData, "skip_intro", true);
                 TryGetSlotDataValue(ref Core.Instance.Data.skipDreams, success.SlotData, "skip_dreams", false);
                 TryGetSlotDataValue(ref Core.Instance.Data.skipHands, success.SlotData, "skip_statue_hands", false);
-                TryGetSlotDataValue(ref Core.Instance.Data.totalRep, success.SlotData, "total_rep", TotalRep.Normal);
+                TryGetSlotDataValue(ref Core.Instance.Data.totalRep, success.SlotData, "total_rep", 1400);
+                TryGetSlotDataValue(ref Core.Instance.Data.endingRep, success.SlotData, "extra_rep_required", false);
                 TryGetSlotDataValue(ref Core.Instance.Data.startingMovestyle, success.SlotData, "starting_movestyle", MoveStyle.SKATEBOARD);
-                TryGetSlotDataValue(ref Core.Instance.Data.junkPhotos, success.SlotData, "exclude_photos", false);
+                TryGetSlotDataValue(ref Core.Instance.Data.junkPhotos, success.SlotData, "skip_polo_photos", false);
                 TryGetSlotDataValue(ref Core.Instance.Data.limitedGraffiti, success.SlotData, "limited_graffiti", false);
+                TryGetSlotDataValue(ref Core.Instance.Data.sGraffiti, success.SlotData, "small_graffiti_uses", SGraffiti.Separate);
 
                 if (!Core.Instance.SaveManager.DataExists(slotId))
                 {
@@ -153,10 +156,20 @@ namespace Archipelago
                         Core.Instance.Data.bmxUnlocked = true;
                     }
 
-                    if (Core.Instance.Data.limitedGraffiti) Core.Instance.Data.grafUses[Characters.metalHead.ToString()] = 0;
+                    if (Core.Instance.Data.limitedGraffiti)
+                    {
+                        if (Core.Instance.Data.sGraffiti == SGraffiti.Separate) Core.Instance.Data.grafUses[Characters.metalHead.ToString()] = 0;
+                        else Core.Instance.Data.grafUses["S"] = 0;
+                    }
 
                     TryGetSlotDataValue(ref Core.Instance.Data.damageMultiplier, success.SlotData, "damage_multiplier", 1);
                     TryGetSlotDataValue(ref Core.Instance.Data.scoreDifficulty, success.SlotData, "score_difficulty", ScoreDifficulty.Normal);
+                    // can't use properties in ref methods 
+                    try { Core.configDontSavePhotos.Value = bool.Parse(success.SlotData["dont_save_photos"].ToString()); }
+                    catch (KeyNotFoundException)
+                    {
+                        Core.Logger.LogWarning($"No key found for option \"dont_save_photos\". Ignored.");
+                    }
                     TryGetSlotDataValue(ref Core.Instance.Data.deathLink, success.SlotData, "death_link", false);
                 }
 
@@ -282,7 +295,7 @@ namespace Archipelago
                                     color = $"<color=#{ColorUtility.ToHtmlStringRGBA(Core.configColorItemFiller.Value)}>";
                                     break;
                             }
-                            if (int.TryParse(messagePart.Text, out int itemId))
+                            if (long.TryParse(messagePart.Text, out long itemId))
                             {
                                 string itemName = Session.Items.GetItemName(itemId) ?? $"Item: {itemId}";
                                 text += color + itemName + "</color>";
@@ -291,7 +304,7 @@ namespace Archipelago
                             break;
                         case JsonMessagePartType.LocationId:
                             color = $"<color=#{ColorUtility.ToHtmlStringRGBA(Core.configColorLocation.Value)}>";
-                            if (int.TryParse(messagePart.Text, out int locationId))
+                            if (long.TryParse(messagePart.Text, out long locationId))
                             {
                                 string locationName = Session.Locations.GetLocationNameFromId(locationId) ?? $"Location: {locationId}";
                                 text += color + locationName + "</color>";
@@ -347,7 +360,7 @@ namespace Archipelago
                 var locationId = available[Random.Range(0, available.Length)];
 
                 Session.Locations.ScoutLocationsAsync(true, locationId);
-                Core.Instance.LocationManager.notifQueue.Add(new Notification("AppArchipelago", Core.Instance.Localizer.GetRawTextValue("APP_HINT"), null));
+                Core.Instance.LocationManager.notifQueue.Add(new Notification("AppArchipelago", Core.Instance.Localizer.GetRawTextValue(Subgroups.Text, "APP_HINT"), null));
             }
             else Core.Logger.LogWarning("No locations available to hint.");
         }

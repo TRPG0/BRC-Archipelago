@@ -4,6 +4,7 @@ using Reptile.Phone;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Archipelago.Structures;
 
 namespace Archipelago.Patches
 {
@@ -21,7 +22,8 @@ namespace Archipelago.Patches
                 {
                     case GraffitiSize.S:
                         traverse.Field<RawImage>("m_GraffitiImage").Value.rectTransform.sizeDelta = new Vector2(256f, 256f);
-                        uses = Requirements.grafSLimit - Core.Instance.Data.grafUses[graffiti.Uid];
+                        if (Core.Instance.Data.sGraffiti == SGraffiti.Separate) uses = Requirements.grafSLimit - Core.Instance.Data.grafUses[graffiti.Uid];
+                        else uses = Core.Instance.Data.sMax - Core.Instance.Data.grafUses["S"];
                         break;
                     case GraffitiSize.M:
                         uses = Requirements.grafMLimit - Core.Instance.Data.grafUses[graffiti.Uid];

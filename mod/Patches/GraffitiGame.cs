@@ -1,7 +1,8 @@
-﻿using HarmonyLib;
+﻿using Archipelago.Structures;
+using HarmonyLib;
+using ModLocalizer;
 using Reptile;
 using Reptile.Phone;
-using System;
 using System.Collections.Generic;
 
 namespace Archipelago.Patches
@@ -11,7 +12,7 @@ namespace Archipelago.Patches
     {
         public static void Postfix()
         {
-            Core.Instance.PhoneManager.Phone.GetAppInstance<AppGraffiti>().OnAppRefresh();
+            if (Core.Instance.PhoneManager.Phone != null) Core.Instance.PhoneManager.Phone.GetAppInstance<AppGraffiti>().OnAppRefresh();
         }
     }
 
@@ -33,7 +34,8 @@ namespace Archipelago.Patches
                             GraffitiArt grafArt = Traverse.Create(__instance).Field<GraffitiArt>("grafArt").Value;
 
                             int limit = Requirements.grafSLimit;
-                            if (gSpot.size == GraffitiSize.M) limit = Requirements.grafMLimit;
+                            if (gSpot.size == GraffitiSize.S && Core.Instance.Data.sGraffiti == SGraffiti.Combined) limit = Core.Instance.Data.sMax;
+                            else if (gSpot.size == GraffitiSize.M) limit = Requirements.grafMLimit;
                             else if (gSpot.size == GraffitiSize.L) limit = Requirements.grafLLimit;
                             else if (gSpot.size == GraffitiSize.XL) limit = Requirements.grafXLLimit;
 
@@ -41,10 +43,18 @@ namespace Archipelago.Patches
                             string title = "";
                             if (gSpot.size == GraffitiSize.S)
                             {
-                                Characters currentCharacter = Core.Instance.SaveManager.CurrentSaveSlot.currentCharacter;
-                                Requirements.OverrideCharacterIfInvalid(ref currentCharacter);
-                                id = currentCharacter.ToString();
-                                title = Reptile.Core.Instance.Localizer.GetCharacterName(currentCharacter);
+                                if (Core.Instance.Data.sGraffiti == SGraffiti.Separate)
+                                {
+                                    Characters currentCharacter = Core.Instance.SaveManager.CurrentSaveSlot.currentCharacter;
+                                    Requirements.OverrideCharacterIfInvalid(ref currentCharacter);
+                                    id = currentCharacter.ToString();
+                                    title = Reptile.Core.Instance.Localizer.GetCharacterName(Core.Instance.SaveManager.CurrentSaveSlot.currentCharacter);
+                                }
+                                else
+                                {
+                                    id = "S";
+                                    title = Reptile.Core.Instance.Localizer.GetCharacterName(Core.Instance.SaveManager.CurrentSaveSlot.currentCharacter);
+                                }
                             }
                             else
                             {
@@ -59,7 +69,7 @@ namespace Archipelago.Patches
                                 {
                                     grafArt.unlockable.IsDefault = false;
                                     Core.Instance.SaveManager.CurrentSaveSlot.GetUnlockableDataByUid(grafArt.unlockable.Uid).IsUnlocked = false;
-                                    Core.Instance.LocationManager.notifQueue.Add(new Structures.Notification("AppGraffiti", string.Format(Core.Instance.Localizer.GetRawTextValue("GRAFFITI_DEPLETED_COLLECTIBLE"), grafArt.title), null));
+                                    Core.Instance.LocationManager.notifQueue.Add(new Structures.Notification("AppGraffiti", string.Format(Core.Instance.Localizer.GetRawTextValue(Subgroups.Text, "GRAFFITI_DEPLETED_COLLECTIBLE"), grafArt.title), null));
 
                                     List<string> defaults = new List<string>()
                                     {
@@ -74,7 +84,7 @@ namespace Archipelago.Patches
                                     if (defaults.Contains(grafArt.title)) Core.Instance.Data.to_lock.Add(grafArt.title);
                                     if (!Core.Instance.SaveManager.IsAnyGraffitiUnlocked(gSpot.size)) Core.Instance.stageManager.NoGraffiti(gSpot.size);
                                 }
-                                else Core.Instance.LocationManager.notifQueue.Add(new Structures.Notification("AppGraffiti", string.Format(Core.Instance.Localizer.GetRawTextValue("GRAFFITI_DEPLETED_CHARACTER"), title), null));
+                                else Core.Instance.LocationManager.notifQueue.Add(new Structures.Notification("AppGraffiti", string.Format(Core.Instance.Localizer.GetRawTextValue(Subgroups.Text, "GRAFFITI_DEPLETED_CHARACTER"), title), null));
                             }
 
                             Core.Instance.SaveManager.SaveData();
@@ -106,9 +116,13 @@ namespace Archipelago.Patches
                         string id = "";
                         if (gSpot.size == GraffitiSize.S)
                         {
-                            Characters currentCharacter = Core.Instance.SaveManager.CurrentSaveSlot.currentCharacter;
-                            Requirements.OverrideCharacterIfInvalid(ref currentCharacter);
-                            id = currentCharacter.ToString();
+                            if (Core.Instance.Data.sGraffiti == SGraffiti.Separate)
+                            {
+                                Characters currentCharacter = Core.Instance.SaveManager.CurrentSaveSlot.currentCharacter;
+                                Requirements.OverrideCharacterIfInvalid(ref currentCharacter);
+                                id = currentCharacter.ToString();
+                            }
+                            else id = "S";
                         }
                         else
                         {
@@ -116,7 +130,8 @@ namespace Archipelago.Patches
                         }
 
                         int limit = Requirements.grafSLimit;
-                        if (gSpot.size == GraffitiSize.M) limit = Requirements.grafMLimit;
+                        if (gSpot.size == GraffitiSize.S && Core.Instance.Data.sGraffiti == SGraffiti.Combined) limit = Core.Instance.Data.sMax;
+                        else if (gSpot.size == GraffitiSize.M) limit = Requirements.grafMLimit;
                         else if (gSpot.size == GraffitiSize.L) limit = Requirements.grafLLimit;
                         else if (gSpot.size == GraffitiSize.XL) limit = Requirements.grafXLLimit;
 

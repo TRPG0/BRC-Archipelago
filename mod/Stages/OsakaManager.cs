@@ -22,7 +22,7 @@ namespace Archipelago.Stages
             {
                 if (npc.name == "NPC_Crew_BattleStarter")
                 {
-                    CreateNeedGraffitiCollider(npc.GetComponentInChildren<Collider>(true).gameObject, new List<GraffitiSize>() { GraffitiSize.M, GraffitiSize.XL });
+                    CreateRequirementGraffiti(npc.GetComponentInChildren<Collider>(true).gameObject, new List<GraffitiSize>() { GraffitiSize.M, GraffitiSize.XL });
                     Core.Logger.LogInfo("Found NPC_Crew_BattleStarter");
                 }
                 else if (npc.name == "NPC_Lion")
@@ -42,7 +42,8 @@ namespace Archipelago.Stages
                 if (po.name == "ProgressObject_ShowPathToFaux")
                 {
                     Core.Logger.LogInfo("Found ProgressObject_ShowPathToFaux");
-                    CreateNeedGraffitiCollider(po.GetComponentInChildren<BoxCollider>(true).gameObject, new List<GraffitiSize>() { GraffitiSize.M }, NeedGraffiti.NeedGraffitiType.ProgressObject);
+                    if (Core.Instance.Data.endingRep) CreateRequirementBoth(po.GetComponentInChildren<BoxCollider>(true).gameObject, new List<GraffitiSize>() { GraffitiSize.M }, 1000, RequirementLinkType.ProgressObject);
+                    else CreateRequirementGraffiti(po.GetComponentInChildren<BoxCollider>(true).gameObject, new List<GraffitiSize>() { GraffitiSize.M }, RequirementLinkType.ProgressObject);
                 }
                 else if (po.name == "IntroSnakeBoss")
                 {

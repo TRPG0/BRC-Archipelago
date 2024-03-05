@@ -6,6 +6,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Archipelago.Apps;
+using ModLocalizer;
 
 namespace Archipelago
 {
@@ -24,6 +25,10 @@ namespace Archipelago
         }
 
         public static int maxMessages = 8;
+
+        public static Color PhoneBlue => new Color(0.224f, 0.302f, 0.624f);
+        public static Color PhoneYellow => new Color(0.882f, 0.953f, 0.345f);
+        public static Color PhoneOrange => new Color(0.978f, 0.424f, 0.216f);
 
         public AppArchipelago appArchipelago;
         public AppEncounter appEncounter;
@@ -47,7 +52,7 @@ namespace Archipelago
 
             Component.Destroy(appArchipelago.Content.Find("Overlay").GetComponentInChildren<TMProLocalizationAddOn>());
             appArchipelago.title = appArchipelago.Content.Find("Overlay").GetComponentInChildren<TextMeshProUGUI>();
-            appArchipelago.title.text = Core.Instance.Localizer.GetRawTextValue("APP_ARCHIPELAGO_HEADER_DEFAULT");
+            appArchipelago.title.text = Core.Instance.Localizer.GetRawTextValue(Subgroups.Text, "APP_ARCHIPELAGO_HEADER_DEFAULT");
 
             Image icon = appArchipelago.Content.Find("Overlay").Find("Icons").Find("AppIcon").GetComponentInChildren<Image>();
             icon.sprite = UIManager.bundle.LoadAsset<Sprite>("assets/archipelago.png");
@@ -62,33 +67,23 @@ namespace Archipelago
             textObject.transform.SetAsFirstSibling();
             appArchipelago.text = textObject.AddComponent<TextMeshProUGUI>();
             appArchipelago.UpdateText();
-            appArchipelago.text.fontSize = 24;
+            appArchipelago.text.fontSize = 68;
             appArchipelago.text.font = UIManager.font;
             appArchipelago.text.alignment = TextAlignmentOptions.BottomLeft;
             appArchipelago.text.enableWordWrapping = true;
-            appArchipelago.text.transform.localPosition = new Vector3(0, 215, 0);
+            appArchipelago.text.transform.localPosition = new Vector3(0, 250, 0);
+            appArchipelago.text.transform.localScale = Vector3.one;
+            appArchipelago.text.GetComponent<RectTransform>().sizeDelta = new Vector2(1000, 1560);
             TMProFontLocalizer fontLocalizer = appArchipelago.text.gameObject.AddComponent<TMProFontLocalizer>();
             Traverse fontLocalizerT = Traverse.Create(fontLocalizer);
             fontLocalizerT.Field<TextMeshProUGUI>("textMesh").Value = appArchipelago.text;
-            fontLocalizerT.Field<GameFontType>("gameFontType").Value = Core.Instance.Localizer.MainFont;
-            GameObject.Instantiate(Phone.GetComponentInChildren<AppMusicPlayer>(true).Content.Find("Overlay").Find("OverlayBottom").gameObject, appArchipelago.Content.Find("Overlay")).transform.localPosition = new Vector3(0, -950, 0);
-            appArchipelago.bottomLeftText = GameObject.Instantiate(appArchipelago.text.gameObject, appArchipelago.Content).GetComponent<TextMeshProUGUI>();
-            appArchipelago.bottomLeftText.gameObject.name = "CancelText";
-            appArchipelago.bottomLeftText.alignment = TextAlignmentOptions.BottomLeft;
-            appArchipelago.bottomLeftGlyph = GameObject.Instantiate(appArchipelago.bottomLeftText.gameObject, appArchipelago.Content).AddComponent<UIButtonGlyphComponent>();
-            appArchipelago.bottomLeftGlyph.gameObject.name = "CancelGlyph";
-            Traverse leftGlyphAT = Traverse.Create(appArchipelago.bottomLeftGlyph);
-            leftGlyphAT.Field<int>("inputActionID").Value = 57;
-            leftGlyphAT.Field<TextMeshProUGUI>("localizedGlyphTextComponent").Value = appArchipelago.bottomLeftGlyph.GetComponent<TextMeshProUGUI>();
-            appArchipelago.bottomRightText = GameObject.Instantiate(appArchipelago.bottomLeftText.gameObject, appArchipelago.Content).GetComponent<TextMeshProUGUI>();
-            appArchipelago.bottomRightText.gameObject.name = "AcceptText";
-            appArchipelago.bottomRightText.alignment = TextAlignmentOptions.BottomRight;
-            appArchipelago.bottomRightGlyph = GameObject.Instantiate(appArchipelago.bottomRightText.gameObject, appArchipelago.Content).AddComponent<UIButtonGlyphComponent>();
-            appArchipelago.bottomRightGlyph.gameObject.name = "AcceptGlyph";
-            Traverse rightGlyphAT = Traverse.Create(appArchipelago.bottomRightGlyph);
-            rightGlyphAT.Field<int>("inputActionID").Value = 29;
-            rightGlyphAT.Field<TextMeshProUGUI>("localizedGlyphTextComponent").Value = appArchipelago.bottomRightGlyph.GetComponent<TextMeshProUGUI>();
+            fontLocalizerT.Field<GameFontType>("gameFontType").Value = Core.MainFont;
 
+            appArchipelago.chatBackground = GameObject.Instantiate(Phone.GetAppInstance<AppHomeScreen>().Content.Find("BottomView").Find("ButtonContainer").Find("Selector").Find("Background").gameObject, appArchipelago.Content);
+            appArchipelago.chatBackground.transform.localPosition = new Vector3(100, -650, 0);
+            appArchipelago.chatBackground.name = "Chat Bottom";
+
+            // do encounter setup now instead of deleting all objects later
             appEncounter = GameObject.Instantiate(appArchipelago.gameObject, appArchipelago.transform.parent).AddComponent<AppEncounter>();
             appEncounter.gameObject.name = "AppEncounter";
             Component.Destroy(appEncounter.GetComponent<AppArchipelago>());
@@ -98,7 +93,154 @@ namespace Archipelago
             appET.Field<AUnlockable[]>("m_Unlockables").Value = new AUnlockable[] { };
             appEncounter.Content.Find("Overlay").Find("Icons").Find("AppIcon").GetComponent<Image>().sprite = UIManager.bundle.LoadAsset<Sprite>("assets/encounter.png");
             appEncounter.headerText = appEncounter.Content.Find("Overlay").GetComponentInChildren<TextMeshProUGUI>();
-            appEncounter.headerText.text = Core.Instance.Localizer.GetRawTextValue("APP_ENCOUNTER_HEADER");
+            appEncounter.headerText.text = Core.Instance.Localizer.GetRawTextValue(Subgroups.Text, "APP_ENCOUNTER_HEADER");
+            appEncounter.Init();
+            GameObject.Destroy(appEncounter.Content.Find("Messages").gameObject);
+
+            GameObject encBackground = appEncounter.Content.Find("Chat Bottom").gameObject;
+            encBackground.name = "Text Background";
+            encBackground.transform.Rotate(0, 0, 180);
+            encBackground.transform.localPosition = new Vector3(-100, 500, 0);
+
+            GameObject encImage = new GameObject()
+            {
+                name = "Background Image",
+                layer = 24
+            };
+            encImage.transform.SetParent(appEncounter.Content);
+            encImage.transform.localPosition = new Vector3(250, -250, 0);
+            encImage.transform.localScale = new Vector3(12, 12, 12);
+            encImage.AddComponent<Image>().sprite = UIManager.bundle.LoadAsset<Sprite>("assets/encounter_large.png");
+            encImage.GetComponent<Image>().color = PhoneBlue;
+
+            GameObject encTop = GameObject.Instantiate(appArchipelago.chatBackground, appEncounter.Content);
+            Component.DestroyImmediate(encTop.GetComponent<Image>());
+            encTop.transform.localPosition = new Vector3(75, 500, 0);
+            encTop.name = "Current Encounter";
+            appEncounter.currentText = encTop.AddComponent<TextMeshProUGUI>();
+            Traverse tmpfl = Traverse.Create(appEncounter.currentText.gameObject.AddComponent<TMProFontLocalizer>());
+            tmpfl.Field<GameFontType>("gameFontType").Value = Core.PhoneFont;
+            tmpfl.Field<TextMeshProUGUI>("textMesh").Value = appEncounter.currentText;
+            appEncounter.currentText.alignment = TextAlignmentOptions.Left;
+            appEncounter.currentText.fontSize = 80;
+            appEncounter.currentText.color = PhoneYellow;
+            appEncounter.currentText.text = Core.Instance.Localizer.GetRawTextValue(Subgroups.Text, "APP_ENCOUNTER_TOP");
+
+            appEncounter.messageText = GameObject.Instantiate(appEncounter.currentText.gameObject, appEncounter.Content).GetComponent<TextMeshProUGUI>();
+            appEncounter.messageText.GetComponent<RectTransform>().sizeDelta = new Vector2(-200, 1);
+            appEncounter.messageText.alignment = TextAlignmentOptions.TopLeft;
+            appEncounter.messageText.color = Color.white;
+            appEncounter.messageText.enableWordWrapping = true;
+            appEncounter.messageText.transform.localPosition = new Vector3(0, -550, 0);
+
+            appEncounter.confirmText = GameObject.Instantiate(appEncounter.currentText.gameObject, appEncounter.Content).GetComponent<TextMeshProUGUI>();
+            appEncounter.confirmText.alignment = TextAlignmentOptions.Right;
+            appEncounter.confirmText.color = PhoneOrange;
+            appEncounter.confirmText.text = Core.Instance.Localizer.GetRawTextValue(Subgroups.Text, "APP_ENCOUNTER_CONFIRM");
+
+            appEncounter.confirmArrow = GameObject.Instantiate(appEncounter.Content.Find("Overlay").Find("Icons").Find("Arrow").gameObject, appEncounter.Content);
+            appEncounter.confirmArrow.transform.Rotate(0, 0, 180);
+            appEncounter.confirmArrow.name = "Arrow Right";
+
+            // back to main app
+            appArchipelago.headerArrow = appArchipelago.Content.Find("Overlay").Find("Icons").Find("Arrow").gameObject;
+
+            appArchipelago.arrowRight = GameObject.Instantiate(appArchipelago.headerArrow, appArchipelago.Content);
+            appArchipelago.arrowRight.transform.Rotate(0, 0, 180);
+            appArchipelago.arrowRight.transform.localPosition = new Vector3(450, -650, 0);
+            appArchipelago.arrowRight.name = "Arrow Right";
+
+            GameObject swapText = GameObject.Instantiate(appArchipelago.chatBackground, appArchipelago.Content);
+            Component.DestroyImmediate(swapText.GetComponent<Image>());
+            swapText.transform.localPosition = new Vector3(-180, -650, 0);
+            swapText.name = "Chat Swap Text";
+            appArchipelago.chatSwap = swapText.AddComponent<TextMeshProUGUI>();
+            tmpfl = Traverse.Create(appArchipelago.chatSwap.gameObject.AddComponent<TMProFontLocalizer>());
+            tmpfl.Field<GameFontType>("gameFontType").Value = Core.PhoneFont;
+            tmpfl.Field<TextMeshProUGUI>("textMesh").Value = appArchipelago.chatSwap;
+            appArchipelago.chatSwap.alignment = TextAlignmentOptions.Right;
+            appArchipelago.chatSwap.fontSize = 70;
+            appArchipelago.chatSwap.text = Core.Instance.Localizer.GetRawTextValue(Subgroups.Text, "APP_ARCHIPELAGO_NAVIGATION_OPTIONS");
+
+            appArchipelago.optionsBackground = GameObject.Instantiate(appArchipelago.chatBackground.gameObject, appArchipelago.Content);
+            appArchipelago.optionsBackground.transform.Rotate(0, 0, 180);
+            appArchipelago.optionsBackground.transform.localPosition = new Vector3(-90, -650, 0);
+            appArchipelago.optionsBackground.name = "Options Bottom";
+            appArchipelago.optionsBackground.SetActive(false);
+
+            appArchipelago.arrowLeft = GameObject.Instantiate(appArchipelago.headerArrow, appArchipelago.Content);
+            appArchipelago.arrowLeft.transform.localPosition = new Vector3(-440, -650, 0);
+            appArchipelago.arrowLeft.name = "Arrow Left";
+            appArchipelago.arrowLeft.SetActive(false);
+
+            appArchipelago.optionsSwap = GameObject.Instantiate(appArchipelago.chatSwap.gameObject, appArchipelago.Content).GetComponent<TextMeshProUGUI>();
+            appArchipelago.optionsSwap.alignment = TextAlignmentOptions.Left;
+            appArchipelago.optionsSwap.transform.localPosition = new Vector3(200, -650, 0);
+            appArchipelago.optionsSwap.text = "Chat";
+            appArchipelago.optionsSwap.gameObject.name = "Options Swap Text";
+            appArchipelago.optionsSwap.gameObject.SetActive(false);
+
+            appArchipelago.optionCurrentText = GameObject.Instantiate(appArchipelago.text.gameObject, appArchipelago.Content).GetComponent<TextMeshProUGUI>();
+            appArchipelago.optionCurrentText.alignment = TextAlignmentOptions.Left;
+            appArchipelago.optionCurrentText.enableAutoSizing = true;
+            appArchipelago.optionCurrentText.fontSizeMax = 90;
+            appArchipelago.optionCurrentText.fontSizeMin = 70;
+            appArchipelago.optionCurrentText.lineSpacing = 24;
+            appArchipelago.optionCurrentText.transform.localPosition = new Vector3(0, 50, 0);
+            Traverse.Create(appArchipelago.optionCurrentText.GetComponent<TMProFontLocalizer>()).Field<GameFontType>("gameFontType").Value = Core.PhoneFont;
+            appArchipelago.optionCurrentText.GetComponent<RectTransform>().sizeDelta = new Vector2(900, 1560);
+            appArchipelago.optionCurrentText.gameObject.name = "Current Option";
+            appArchipelago.optionCurrentText.gameObject.SetActive(false);
+
+            appArchipelago.optionPrevText = GameObject.Instantiate(appArchipelago.optionCurrentText.gameObject, appArchipelago.Content).GetComponent<TextMeshProUGUI>();
+            appArchipelago.optionPrevText.alignment = TextAlignmentOptions.Capline;
+            appArchipelago.optionPrevText.enableAutoSizing = false;
+            appArchipelago.optionPrevText.fontSize = 60;
+            appArchipelago.optionPrevText.color = PhoneBlue;
+            appArchipelago.optionPrevText.transform.localPosition = new Vector3(0, 500, 0);
+            appArchipelago.optionPrevText.gameObject.name = "Prev Option";
+            appArchipelago.optionPrevText.gameObject.SetActive(false);
+
+            appArchipelago.optionNextText = GameObject.Instantiate(appArchipelago.optionPrevText.gameObject, appArchipelago.Content).GetComponent<TextMeshProUGUI>();
+            appArchipelago.optionNextText.alignment = TextAlignmentOptions.Bottom;
+            appArchipelago.optionNextText.transform.localPosition = new Vector3(0, 350, 0);
+            appArchipelago.optionNextText.gameObject.name = "Next Option";
+            appArchipelago.optionNextText.gameObject.SetActive(false);
+
+            appArchipelago.optionChangeText = GameObject.Instantiate(appArchipelago.chatSwap.gameObject, appArchipelago.Content).GetComponent<TextMeshProUGUI>();
+            appArchipelago.optionChangeText.text = Core.Instance.Localizer.GetRawTextValue(Subgroups.Text, "APP_ARCHIPELAGO_NAVIGATION_CHANGE");
+            appArchipelago.optionChangeText.color = PhoneOrange;
+            appArchipelago.optionChangeText.fontSize = 65;
+            appArchipelago.optionChangeText.gameObject.name = "Option Change Text";
+            appArchipelago.optionChangeText.gameObject.SetActive(false);
+
+            appArchipelago.optionChangeArrow = GameObject.Instantiate(appArchipelago.arrowRight.gameObject, appArchipelago.Content);
+            appArchipelago.optionChangeArrow.transform.localScale = new Vector3(0.75f, 0.75f, 0.75f);
+            appArchipelago.optionChangeArrow.gameObject.name = "Option Change Arrow";
+            appArchipelago.optionChangeArrow.gameObject.SetActive(false);
+
+            appArchipelago.optionDownArrow = GameObject.Instantiate(Phone.GetAppInstance<AppHomeScreen>().Content.Find("BottomView").Find("OtherElements").Find("ArrowsContainer").Find("ArrowDown").gameObject, appArchipelago.Content);
+            appArchipelago.optionDownArrow.transform.localPosition = new Vector3(0, -500, 0);
+            appArchipelago.optionDownArrow.name = "Arrow Down";
+            appArchipelago.optionDownArrow.gameObject.SetActive(false);
+
+            appArchipelago.optionUpArrow = GameObject.Instantiate(appArchipelago.optionDownArrow, appArchipelago.Content);
+            appArchipelago.optionUpArrow.transform.Rotate(0, 0, 180);
+            appArchipelago.optionUpArrow.transform.localPosition = new Vector3(0, 600, 0);
+            appArchipelago.optionUpArrow.name = "Arrow Up";
+            appArchipelago.optionUpArrow.gameObject.SetActive(false);
+
+            /*
+            appEncounter = GameObject.Instantiate(appArchipelago.gameObject, appArchipelago.transform.parent).AddComponent<AppEncounter>();
+            appEncounter.gameObject.name = "AppEncounter";
+            Component.Destroy(appEncounter.GetComponent<AppArchipelago>());
+            Traverse appET = Traverse.Create(appEncounter);
+            appET.Method("Awake").GetValue();
+            appET.Field<Phone>("<MyPhone>k__BackingField").Value = Phone;
+            appET.Field<AUnlockable[]>("m_Unlockables").Value = new AUnlockable[] { };
+            appEncounter.Content.Find("Overlay").Find("Icons").Find("AppIcon").GetComponent<Image>().sprite = UIManager.bundle.LoadAsset<Sprite>("assets/encounter.png");
+            appEncounter.headerText = appEncounter.Content.Find("Overlay").GetComponentInChildren<TextMeshProUGUI>();
+            appEncounter.headerText.text = Core.Instance.Localizer.GetRawTextValue(Subgroups.Text, "APP_ENCOUNTER_HEADER");
             GameObject.Destroy(appEncounter.Content.Find("Messages").gameObject);
             appEncounter.bottomLeftText = appEncounter.Content.Find("CancelText").GetComponent<TextMeshProUGUI>();
             appEncounter.bottomLeftGlyph = appEncounter.Content.Find("CancelGlyph").GetComponent<UIButtonGlyphComponent>();
@@ -115,26 +257,7 @@ namespace Archipelago
             appEncounter.topText.transform.localPosition = new Vector3(0, -160, 0);
             appEncounter.Content.Find("Overlay").Find("OverlayBottom(Clone)").localPosition = new Vector3(0, -950, 0);
             appEncounter.Init();
-
-            appArchipelago.optionText = GameObject.Instantiate(appArchipelago.text.gameObject, appArchipelago.Content).GetComponent<TextMeshProUGUI>();
-            appArchipelago.optionText.alignment = TextAlignmentOptions.Center;
-            appArchipelago.optionText.lineSpacing = 50;
-            appArchipelago.optionText.transform.localPosition = new Vector3(0, 50, 0);
-            appArchipelago.optionText.gameObject.SetActive(false);
-            appArchipelago.upGlyph = GameObject.Instantiate(appArchipelago.optionText.gameObject, appArchipelago.Content).AddComponent<UIButtonGlyphComponent>();
-            appArchipelago.upGlyph.gameObject.name = "UpGlyph";
-            appArchipelago.upGlyph.transform.localPosition = new Vector3(0, 450, 0);
-            Traverse upGlyphAT = Traverse.Create(appArchipelago.upGlyph);
-            upGlyphAT.Field<int>("inputActionID").Value = 21;
-            upGlyphAT.Field<TextMeshProUGUI>("localizedGlyphTextComponent").Value = appArchipelago.upGlyph.GetComponent<TextMeshProUGUI>();
-            appArchipelago.downGlyph = GameObject.Instantiate(appArchipelago.optionText.gameObject, appArchipelago.Content).AddComponent<UIButtonGlyphComponent>();
-            appArchipelago.downGlyph.gameObject.name = "DownGlyph";
-            appArchipelago.downGlyph.transform.localPosition = new Vector3(0, -350, 0);
-            Traverse downGlyphAT = Traverse.Create(appArchipelago.downGlyph);
-            downGlyphAT.Field<int>("inputActionID").Value = 56;
-            downGlyphAT.Field<TextMeshProUGUI>("localizedGlyphTextComponent").Value = appArchipelago.downGlyph.GetComponent<TextMeshProUGUI>();
-
-            fontLocalizerT.Field<GameFontType>("gameFontType").Value = Core.Instance.Localizer.EnglishOnlyFont;
+            */
 
             HomeScreenApp homeScreenAppEncounter = ScriptableObject.CreateInstance<HomeScreenApp>();
             homeScreenAppEncounter.name = "AppEncounter";
@@ -164,31 +287,13 @@ namespace Archipelago
             GameObject mainNotification = GameObject.Instantiate(mainGroup.transform.Find("GraffitiNotification").gameObject, mainGroup.transform);
             GameObject outsideNotification = GameObject.Instantiate(outsideGroup.transform.Find("GraffitiNotification").gameObject, outsideGroup.transform);
 
-            mainNotification.GetComponentInChildren<TMProFontLocalizer>().UpdateTextMeshLanguageFont(SystemLanguage.English);
-            Component.Destroy(mainNotification.GetComponentInChildren<TMProFontLocalizer>());
             mainNotification.GetComponentInChildren<Image>().sprite = UIManager.bundle.LoadAsset<Sprite>("assets/notification.png");
-            mainNotification.GetComponentInChildren<TextMeshProUGUI>().richText = true;
-
-            outsideNotification.GetComponentInChildren<TMProFontLocalizer>().UpdateTextMeshLanguageFont(SystemLanguage.English);
-            Component.Destroy(outsideNotification.GetComponentInChildren<TMProFontLocalizer>());
             outsideNotification.transform.Find("ActionImage").GetComponent<Image>().sprite = UIManager.bundle.LoadAsset<Sprite>("assets/notification.png");
-            outsideNotification.GetComponentInChildren<TextMeshProUGUI>().richText = true;
 
             appAT.Property("Notification").Field<GameObject>("appNotificationPanel_Main").Value = mainNotification;
             appAT.Property("Notification").Field<GameObject>("appNotificationPanel_Outside").Value = outsideNotification;
             appAT.Property("Notification").Field<TextMeshProUGUI>("topBarText_Main").Value = mainNotification.GetComponentInChildren<TextMeshProUGUI>();
             appAT.Property("Notification").Field<TextMeshProUGUI>("topBarText_Outside").Value = outsideNotification.GetComponentInChildren<TextMeshProUGUI>();
-        }
-
-        public void UpdateLanguage()
-        {
-            appArchipelago.UpdateHeader();
-            appArchipelago.UpdateOptionText();
-            appArchipelago.UpdateGlyphs();
-            appEncounter.headerText.text = Core.Instance.Localizer.GetRawTextValue("APP_ENCOUNTER_HEADER");
-            appEncounter.SetTopText();
-            appEncounter.SetCenterText();
-            appEncounter.SetBottomText();
         }
     }
 }

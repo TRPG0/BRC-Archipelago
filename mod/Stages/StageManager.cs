@@ -4,10 +4,8 @@ using Reptile;
 using System.Collections.Generic;
 using Archipelago.Components;
 using Archipelago.Structures;
-using Rewired;
 using UnityEngine;
 using TMPro;
-using System;
 
 namespace Archipelago.Stages
 {
@@ -19,7 +17,7 @@ namespace Archipelago.Stages
         public TextMeshProUGUI contextLabel;
         public TextMeshProUGUI dieMenuReasonLabel;
 
-        public List<NeedGraffiti> graffitiColliders = new List<NeedGraffiti>();
+        public List<RandoRequirement> requirementColliders = new List<RandoRequirement>();
 
         public virtual bool ChangeNPCs => true;
         public virtual bool ChangeScores => true;
@@ -63,11 +61,25 @@ namespace Archipelago.Stages
             dieMenuReasonLabel.gameObject.SetActive(false);
         }
 
-        public void CreateNeedGraffitiCollider(GameObject original, List<GraffitiSize> sizes, NeedGraffiti.NeedGraffitiType type = NeedGraffiti.NeedGraffitiType.Trigger)
+        public void CreateRequirementGraffiti(GameObject original, List<GraffitiSize> sizes, RequirementLinkType type = RequirementLinkType.Trigger)
         {
             GameObject clone = GameObject.Instantiate(original, original.transform.parent);
-            clone.AddComponent<NeedGraffiti>().Init(sizes, original, type);
-            graffitiColliders.Add(clone.GetComponent<NeedGraffiti>());
+            clone.AddComponent<RandoRequirement>().InitGraffiti(sizes, original, type);
+            requirementColliders.Add(clone.GetComponent<RandoRequirement>());
+        }
+
+        public void CreateRequirementRep(GameObject original, int rep, RequirementLinkType type = RequirementLinkType.Trigger)
+        {
+            GameObject clone = GameObject.Instantiate(original, original.transform.parent);
+            clone.AddComponent<RandoRequirement>().InitREP(rep, original, type);
+            requirementColliders.Add(clone.GetComponent<RandoRequirement>());
+        }
+
+        public void CreateRequirementBoth(GameObject original, List<GraffitiSize> sizes, int rep, RequirementLinkType type = RequirementLinkType.Trigger)
+        {
+            GameObject clone = GameObject.Instantiate(original, original.transform.parent);
+            clone.AddComponent<RandoRequirement>().InitBoth(sizes, rep, original, type);
+            requirementColliders.Add(clone.GetComponent<RandoRequirement>());
         }
 
         public void SetPlayerRep()
@@ -75,9 +87,7 @@ namespace Archipelago.Stages
             Traverse.Create(WorldHandler.instance.GetCurrentPlayer()).Field<float>("rep").Value = Core.Instance.Data.fakeRep;
             Core.Instance.SaveManager.CurrentSaveSlot.GetCurrentStageProgress().reputation = Core.Instance.Data.fakeRep;
 
-            if (Core.Instance.Data.totalRep == TotalRep.Normal) Traverse.Create(WorldHandler.instance).Field<int>("totalREPInCurrentStage").Value = 1792;
-            else if (Core.Instance.Data.totalRep == TotalRep.Less) Traverse.Create(WorldHandler.instance).Field<int>("totalREPInCurrentStage").Value = 1472;
-            else if (Core.Instance.Data.totalRep == TotalRep.MuchLess) Traverse.Create(WorldHandler.instance).Field<int>("totalREPInCurrentStage").Value = 1184;
+            Traverse.Create(WorldHandler.instance).Field<int>("totalREPInCurrentStage").Value = Core.Instance.Data.totalRep;
         }
 
         public void LockDefaultGraffiti(HashSet<string> list)
@@ -115,6 +125,7 @@ namespace Archipelago.Stages
                     if (values == null) continue;
 
                     int target = values.oldValue;
+                    if (Core.Instance.Data.scoreDifficulty == ScoreDifficulty.Medium) target = values.mediumValue;
                     if (Core.Instance.Data.scoreDifficulty == ScoreDifficulty.Hard) target = values.hardValue;
                     if (Core.Instance.Data.scoreDifficulty == ScoreDifficulty.VeryHard) target = values.veryHardValue;
                     if (Core.Instance.Data.scoreDifficulty == ScoreDifficulty.Extreme) target = values.extremeValue;
@@ -132,7 +143,7 @@ namespace Archipelago.Stages
             {
                 if (obj is DreamEncounter de)
                 {
-                    de.OnIntro.AddListener(delegate { de.CheatComplete(); });
+                    de.OnIntro.AddListener(de.CheatComplete);
                     Core.Logger.LogInfo($"Added CheatComplete to OnIntro of {de.name}");
                     break;
                 }
@@ -171,48 +182,33 @@ namespace Archipelago.Stages
             if (!Core.Instance.SaveManager.IsAnyGraffitiUnlocked(GraffitiSize.M)) NoGraffiti(GraffitiSize.M);
             if (!Core.Instance.SaveManager.IsAnyGraffitiUnlocked(GraffitiSize.L)) NoGraffiti(GraffitiSize.L);
             if (!Core.Instance.SaveManager.IsAnyGraffitiUnlocked(GraffitiSize.XL)) NoGraffiti(GraffitiSize.XL);
+            foreach (RandoRequirement rr in requirementColliders)
+            {
+                if ((rr.Needs == RequirementNeeds.REP || rr.Needs == RequirementNeeds.Both) && Core.Instance.Data.fakeRep < rr.Rep)
+                {
+                    rr.DisableTrigger();
+                }
+            }
         }
 
         public virtual void NoGraffiti(GraffitiSize size) 
         {
-            foreach (NeedGraffiti ngc in graffitiColliders)
+            foreach (RandoRequirement rr in requirementColliders)
             {
-                if (ngc.Sizes.Contains(size))
+                if (rr.Sizes.Contains(size))
                 {
-                    ngc.DisableTrigger();
-                    Core.Logger.LogInfo($"Disabled trigger of object {ngc.transform.parent.name}");
+                    rr.DisableTrigger();
                 }
             }
         }
 
         public virtual void YesGraffiti(GraffitiSize size) 
         {
-            foreach (NeedGraffiti ngc in graffitiColliders)
+            foreach (RandoRequirement rr in requirementColliders)
             {
-                if (ngc.Sizes.Contains(size))
+                if (rr.Sizes.Contains(size))
                 {
-                    if (ngc.Sizes.Count == 1 && ngc.Sizes[0] == size)
-                    {
-                        ngc.EnableTrigger();
-                        Core.Logger.LogInfo($"Enabled trigger of object {ngc.transform.parent.name}");
-                    }
-                    else if (ngc.Sizes.Count > 1)
-                    {
-                        bool hasGraffiti = true;
-                        foreach (GraffitiSize s in ngc.Sizes)
-                        {
-                            if (!Core.Instance.SaveManager.IsAnyGraffitiUnlocked(s))
-                            {
-                                hasGraffiti = false;
-                                break;
-                            }
-                        }
-                        if (hasGraffiti)
-                        {
-                            ngc.EnableTrigger();
-                            Core.Logger.LogInfo($"Enabled trigger of object {ngc.transform.parent.name}");
-                        }
-                    }
+                    rr.EnableTrigger(RequirementNeeds.Graffiti);
                 }
             }
         }

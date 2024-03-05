@@ -1,9 +1,10 @@
 {
-    "name": "Archipelago (prerelease 5)",
+    "name": "Archipelago (prerelease 6)",
     "version_number": "1.0.0",
     "website_url": "https://github.com/TRPG0/BRC-Archipelago",
     "description": "Connect to an Archipelago server to play Bomb Rush Cyberfunk randomizer.",
     "dependencies": [
-        "BepInEx-BepInExPack-5.4.2100"
+        "BepInEx-BepInExPack-5.4.2100",
+		"TRPG-ModLocalizer-1.0.1"
     ]
 }

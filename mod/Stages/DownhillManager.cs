@@ -18,12 +18,12 @@ namespace Archipelago.Stages
             {
                 if (obj.name == "ProgressObject_Bel")
                 {
-                    CreateNeedGraffitiCollider(obj.GetComponentInChildren<Collider>(true).gameObject, new List<GraffitiSize>() { GraffitiSize.M });
+                    CreateRequirementGraffiti(obj.GetComponentInChildren<Collider>(true).gameObject, new List<GraffitiSize>() { GraffitiSize.M });
                     Core.Logger.LogInfo("Found ProgressObject_Bel");
                 }
                 else if (obj.name == "BackToPrinceTrigger")
                 {
-                    CreateNeedGraffitiCollider(obj.GetComponentInChildren<Collider>(true).gameObject, new List<GraffitiSize>() { GraffitiSize.M });
+                    CreateRequirementGraffiti(obj.GetComponentInChildren<Collider>(true).gameObject, new List<GraffitiSize>() { GraffitiSize.M });
                     Core.Logger.LogInfo("Found BackToPrinceTrigger");
                 }
                 else if (obj.name == "PrinceIntroTrigger")

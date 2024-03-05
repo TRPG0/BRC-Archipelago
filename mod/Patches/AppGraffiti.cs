@@ -3,6 +3,8 @@ using Reptile;
 using Reptile.Phone;
 using System.Collections.Generic;
 using UnityEngine;
+using Archipelago.Structures;
+using System;
 
 namespace Archipelago.Patches
 {
@@ -91,25 +93,46 @@ namespace Archipelago.Patches
                 if (__instance.GraffitiArt != null) num = __instance.GraffitiArt.Count;
                 Traverse traverse = Traverse.Create(__instance);
                 List<GraffitiAppEntry> graffitiArt = new List<GraffitiAppEntry>();
-                foreach (CharacterProgress progress in Traverse.Create(Core.Instance.SaveManager.CurrentSaveSlot).Field<CharacterProgress[]>("totalCharacterProgress").Value)
+
+                if (Core.Instance.Data.sGraffiti == SGraffiti.Separate)
                 {
-                    if (progress.unlocked && Core.Instance.Data.grafUses.ContainsKey(progress.character.ToString()))
+                    foreach (CharacterProgress progress in Traverse.Create(Core.Instance.SaveManager.CurrentSaveSlot).Field<CharacterProgress[]>("totalCharacterProgress").Value)
                     {
-                        if (Core.Instance.Data.grafUses[progress.character.ToString()] < Requirements.grafSLimit)
+                        if (progress.unlocked && Core.Instance.Data.grafUses.ContainsKey(progress.character.ToString()))
                         {
-                            GraffitiArt ga = WorldHandler.instance.graffitiArtInfo.FindByCharacter(progress.character);
-                            GraffitiAppEntry unlockable = ScriptableObject.CreateInstance<GraffitiAppEntry>();
-                            unlockable.name = "S";
-                            unlockable.Artist = ga.artistName;
-                            unlockable.Title = ga.title;
-                            unlockable.Size = ga.graffitiSize;
-                            unlockable.Combos = GraffitiArt.Combos.NONE;
-                            unlockable.Uid = progress.character.ToString();
-                            unlockable.GraffitiTexture = ga.graffitiMaterial.mainTexture;
-                            graffitiArt.Add(unlockable);
+                            if (Core.Instance.Data.grafUses[progress.character.ToString()] < Requirements.grafSLimit)
+                            {
+                                GraffitiArt ga = WorldHandler.instance.graffitiArtInfo.FindByCharacter(progress.character);
+                                GraffitiAppEntry unlockable = ScriptableObject.CreateInstance<GraffitiAppEntry>();
+                                unlockable.name = "S";
+                                unlockable.Artist = ga.artistName;
+                                unlockable.Title = ga.title;
+                                unlockable.Size = ga.graffitiSize;
+                                unlockable.Combos = GraffitiArt.Combos.NONE;
+                                unlockable.Uid = progress.character.ToString();
+                                unlockable.GraffitiTexture = ga.graffitiMaterial.mainTexture;
+                                graffitiArt.Add(unlockable);
+                            }
                         }
                     }
                 }
+                else
+                {
+                    if (Core.Instance.Data.sMax - Core.Instance.Data.grafUses["S"] > 0)
+                    {
+                        GraffitiArt ga = WorldHandler.instance.graffitiArtInfo.FindByCharacter(Core.Instance.SaveManager.CurrentSaveSlot.currentCharacter);
+                        GraffitiAppEntry unlockable = ScriptableObject.CreateInstance<GraffitiAppEntry>();
+                        unlockable.name = "S";
+                        unlockable.Artist = ga.artistName;
+                        unlockable.Title = ga.title;
+                        unlockable.Size = ga.graffitiSize;
+                        unlockable.Combos = GraffitiArt.Combos.NONE;
+                        unlockable.Uid = "S";
+                        unlockable.GraffitiTexture = ga.graffitiMaterial.mainTexture;
+                        graffitiArt.Add(unlockable);
+                    }
+                }
+                
                 for (int i = 0; i < __instance.Unlockables.Length; i++)
                 {
                     if (Reptile.Core.Instance.Platform.User.GetUnlockableSaveDataFor(__instance.Unlockables[i]).IsUnlocked)

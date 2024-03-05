@@ -1,7 +1,9 @@
-﻿using Archipelago.MultiClient.Net.Enums;
+﻿using Archipelago.Components;
+using Archipelago.MultiClient.Net.Enums;
 using Archipelago.Stages;
 using Archipelago.Structures;
 using HarmonyLib;
+using ModLocalizer;
 using Reptile;
 using Reptile.Phone;
 using System.Collections.Generic;
@@ -18,7 +20,7 @@ namespace Archipelago
         public List<AItem> itemQueue = new List<AItem>();
         public List<Notification> notifQueue = new List<Notification>();
 
-        public void CheckLocation(string loc)
+        public void CheckLocation(string loc, bool playSound = true)
         {
             Core.Logger.LogInfo($"Checking location \"{loc}\"");
             if (!Core.Instance.Data.@checked.Contains(loc)) Core.Instance.Data.@checked.Add(loc);
@@ -32,7 +34,7 @@ namespace Archipelago
                     {
                         Core.Logger.LogInfo($"Item at location {loc}: {locations[loc].item.item_name} | Type: {((BRCItem)locations[loc].item).type}");
                     }
-                    GetItem(locations[loc].item);
+                    GetItem(locations[loc].item, playSound);
                 }
                 locations[loc].@checked = true;
             }
@@ -53,7 +55,7 @@ namespace Archipelago
                         MusicTrack track = GetMusicTrack(GetMusicAssetName(substring));
                         Core.Instance.SaveManager.CurrentSaveSlot.GetUnlockableDataByUid(track.Uid).IsUnlocked = true;
                         Core.Instance.PhoneManager.Phone.GetAppInstance<AppMusicPlayer>().GameMusicPlayer.AddMusicTrack(track);
-                        notifQueue.Add(new Notification("AppMusicPlayer", $"{Core.Instance.Localizer.GetRawTextValue("COLLECTIBLE_MUSIC")} ({track.Title})", track));
+                        notifQueue.Add(new Notification("AppMusicPlayer", $"{Core.Instance.Localizer.GetRawTextValue(Subgroups.Text, "COLLECTIBLE_MUSIC")} ({track.Title})", track));
                         break;
                     case BRCType.GraffitiM:
                     case BRCType.GraffitiL:
@@ -71,7 +73,7 @@ namespace Archipelago
                         Core.Instance.SaveManager.CurrentSaveSlot.GetUnlockableDataByUid(graffiti.Uid).IsUnlocked = true;
 
                         if (Core.Instance.Data.limitedGraffiti) Core.Instance.Data.grafUses[graffiti.Uid] = 0;
-                        notifQueue.Add(new Notification("AppGraffiti", $"{Core.Instance.Localizer.GetRawTextValue("COLLECTIBLE_GRAFFITI")} ({graffiti.Size} - {graffiti.Title})", graffiti));
+                        notifQueue.Add(new Notification("AppGraffiti", $"{Core.Instance.Localizer.GetRawTextValue(Subgroups.Text, "COLLECTIBLE_GRAFFITI")} ({graffiti.Size} - {graffiti.Title})", graffiti));
                         break;
                     case BRCType.Skateboard:
                         substring = brcitem.item_name.Substring(12, brcitem.item_name.Length - 13);
@@ -79,7 +81,7 @@ namespace Archipelago
                         if (Core.Instance.stageManager is HideoutManager) ((HideoutManager)Core.Instance.stageManager).SetSkateboardGarage(true);
                         MoveStyleSkin skateboard = GetSkateboardSkin(GetSkateboardAssetName(substring));
                         Core.Instance.SaveManager.CurrentSaveSlot.GetUnlockableDataByUid(skateboard.Uid).IsUnlocked = true;
-                        notifQueue.Add(new Notification("AppArchipelago", $"{Core.Instance.Localizer.GetRawTextValue("VALUE_MOVESTYLE_SKATEBOARD")} {brcitem.item_name.Substring(11)}", null));
+                        notifQueue.Add(new Notification("AppArchipelago", $"{Core.Instance.Localizer.GetRawTextValue(Subgroups.Text, "VALUE_MOVESTYLE_SKATEBOARD")} {brcitem.item_name.Substring(11)}", null));
                         break;
                     case BRCType.InlineSkates:
                         substring = brcitem.item_name.Substring(15, brcitem.item_name.Length - 16);
@@ -87,7 +89,7 @@ namespace Archipelago
                         if (Core.Instance.stageManager is HideoutManager) ((HideoutManager)Core.Instance.stageManager).SetInlineGarage(true);
                         MoveStyleSkin inlineskates = GetInlineSkin(GetInlineAssetName(substring));
                         Core.Instance.SaveManager.CurrentSaveSlot.GetUnlockableDataByUid(inlineskates.Uid).IsUnlocked = true;
-                        notifQueue.Add(new Notification("AppArchipelago", $"{Core.Instance.Localizer.GetRawTextValue("VALUE_MOVESTYLE_INLINE")} {brcitem.item_name.Substring(14)}", null));
+                        notifQueue.Add(new Notification("AppArchipelago", $"{Core.Instance.Localizer.GetRawTextValue(Subgroups.Text, "VALUE_MOVESTYLE_INLINE")} {brcitem.item_name.Substring(14)}", null));
                         break;
                     case BRCType.BMX:
                         substring = brcitem.item_name.Substring(5, brcitem.item_name.Length - 6);
@@ -95,23 +97,27 @@ namespace Archipelago
                         if (Core.Instance.stageManager is HideoutManager) ((HideoutManager)Core.Instance.stageManager).SetBMXGarage(true);
                         MoveStyleSkin bmx = GetBMXSkin(GetBMXAssetName(substring));
                         Core.Instance.SaveManager.CurrentSaveSlot.GetUnlockableDataByUid(bmx.Uid).IsUnlocked = true;
-                        notifQueue.Add(new Notification("AppArchipelago", $"{Core.Instance.Localizer.GetRawTextValue("VALUE_MOVESTYLE_BMX")} {brcitem.item_name.Substring(4)}", null));
+                        notifQueue.Add(new Notification("AppArchipelago", $"{Core.Instance.Localizer.GetRawTextValue(Subgroups.Text, "VALUE_MOVESTYLE_BMX")} {brcitem.item_name.Substring(4)}", null));
                         break;
                     case BRCType.Outfit:
                         substring = brcitem.item_name.Substring(8, brcitem.item_name.Length - 9);
                         OutfitUnlockable outfit = GetOutfitUnlockable(GetOutfitAssetName(substring));
                         Core.Instance.SaveManager.CurrentSaveSlot.GetUnlockableDataByUid(outfit.Uid).IsUnlocked = true;
-                        notifQueue.Add(new Notification("AppArchipelago", $"{Core.Instance.Localizer.GetRawTextValue("COLLECTIBLE_OUTFIT")} {brcitem.item_name.Substring(7)}", null));
+                        notifQueue.Add(new Notification("AppArchipelago", $"{Core.Instance.Localizer.GetRawTextValue(Subgroups.Text, "COLLECTIBLE_OUTFIT")} {brcitem.item_name.Substring(7)}", null));
                         break;
                     case BRCType.Character:
                         Core.Instance.SaveManager.CurrentSaveSlot.characterSelectLocked = false;
                         Characters character = NameToCharacter(brcitem.item_name);
                         if (Core.Instance.Data.firstCharacter == Characters.NONE) Core.Instance.Data.firstCharacter = character;
-                        if (Core.Instance.Data.limitedGraffiti) Core.Instance.Data.grafUses[character.ToString()] = 0;
+                        if (Core.Instance.Data.limitedGraffiti)
+                        {
+                            if (Core.Instance.Data.sGraffiti == SGraffiti.Separate) Core.Instance.Data.grafUses[character.ToString()] = 0;
+                            else Core.Instance.Data.sMax += Requirements.grafSLimit;
+                        }
                         if (character == Characters.dummy) Core.Instance.Data.dummyUnlocked = true;
                         Core.Instance.SaveManager.UnlockCharacter(character);
                         Core.Instance.PhoneManager.Phone.GetAppInstance<AppGraffiti>().OnAppRefresh();
-                        notifQueue.Add(new Notification("AppArchipelago", brcitem.item_name, null));
+                        notifQueue.Add(new Notification("AppArchipelago", Reptile.Core.Instance.Localizer.GetCharacterName(character), null));
                         break;
                     case BRCType.REP:
                         int rep = int.Parse(brcitem.item_name.Substring(0, brcitem.item_name.Length - 4));
@@ -120,7 +126,13 @@ namespace Archipelago
                         {
                             Traverse.Create(WorldHandler.instance.GetCurrentPlayer()).Field<float>("rep").Value = Core.Instance.Data.fakeRep;
                             Core.Instance.SaveManager.CurrentSaveSlot.GetCurrentStageProgress().reputation = Core.Instance.Data.fakeRep;
-                            //WorldHandler.instance.GetCurrentPlayer().ShowAddRep(rep);
+                            foreach (RandoRequirement requirement in Core.Instance.stageManager.requirementColliders)
+                            {
+                                if ((requirement.Needs == RequirementNeeds.REP || requirement.Needs == RequirementNeeds.Both) && Core.Instance.Data.fakeRep >= requirement.Rep)
+                                {
+                                    requirement.EnableTrigger(RequirementNeeds.REP);
+                                }
+                            }
                         }
                         notifQueue.Add(new Notification("AppArchipelago", brcitem.item_name, null));
                         break;

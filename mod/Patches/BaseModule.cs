@@ -5,21 +5,6 @@ using UnityEngine;
 
 namespace Archipelago.Patches
 {
-    [HarmonyPatch(typeof(BaseModule), "ShowMainMenu")]
-    public class BaseModule_ShowMainMenu_Patch
-    {
-        public static void Postfix()
-        {
-            if (Core.Instance.Localizer == null)
-            {
-                LocalizationData localizationData = Reptile.Core.Instance.localizerData;
-                Core.Instance.Localizer = new RandoLocalizer(Reptile.Core.Instance.Localizer.Language, SystemLanguage.English, Core.CheckAvailableLanguages(), localizationData);
-            }
-            Core.Instance.UIManager.CreateAPButtons();
-            Core.Instance.UIManager.CheckSlots();
-        }
-    }
-
     [HarmonyPatch(typeof(BaseModule), "StartNewGame")]
     public class BaseModule_StartNewGame_Patch
     {

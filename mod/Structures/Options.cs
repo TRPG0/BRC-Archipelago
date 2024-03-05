@@ -12,16 +12,16 @@ namespace Archipelago.Structures
         Glitched
     }
 
-    public enum TotalRep
+    public enum SGraffiti
     {
-        Normal,
-        Less,
-        MuchLess
+        Separate,
+        Combined
     }
 
     public enum ScoreDifficulty
     {
         Normal,
+        Medium,
         Hard,
         VeryHard,
         Extreme

@@ -2,6 +2,16 @@
 
 namespace Archipelago.Patches
 {
+    [HarmonyPatch(typeof(Reptile.UIManager), "InstantiateMainMenuSceneUI")]
+    public class UIManager_InstantiateMainMenuSceneUI_Patch
+    {
+        public static void Postfix()
+        {
+            Core.Instance.UIManager.CreateAPButtons();
+            Core.Instance.UIManager.CheckSlots();
+        }
+    }
+
     [HarmonyPatch(typeof(Reptile.UIManager), "HideDieMenu")]
     public class UIManager_HideDieMenu_Patch
     {

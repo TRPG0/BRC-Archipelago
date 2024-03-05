@@ -18,7 +18,7 @@ namespace Archipelago.Patches
                     Core.Instance.PhoneManager.Phone.CloseCurrentApp();
                 }
 
-                Core.Instance.LocationManager.CheckLocation(loc);
+                Core.Instance.LocationManager.CheckLocation(loc, false);
             }
         }
     }

@@ -25,6 +25,7 @@ namespace Archipelago.Patches
                     int oldValue = scoreValues.oldValue;
                     int newValue = scoreValues.oldValue;
 
+                    if (Core.Instance.Data.scoreDifficulty == ScoreDifficulty.Medium) newValue = scoreValues.mediumValue;
                     if (Core.Instance.Data.scoreDifficulty == ScoreDifficulty.Hard) newValue = scoreValues.hardValue;
                     if (Core.Instance.Data.scoreDifficulty == ScoreDifficulty.VeryHard) newValue = scoreValues.veryHardValue;
                     if (Core.Instance.Data.scoreDifficulty == ScoreDifficulty.Extreme) newValue = scoreValues.extremeValue;

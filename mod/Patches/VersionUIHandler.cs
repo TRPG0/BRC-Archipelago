@@ -10,7 +10,13 @@ namespace Archipelago.Patches
     {
         public static void Postfix(VersionUIHandler __instance)
         {
-            __instance.versionText.text = "ARCHIPELAGO: " + Core.PluginVersion + " (prerelease 5)\n" + __instance.versionText.text;
+            if (Core.TargetGameVersion.ToString() != Reptile.Core.Instance.GameVersion.ToString())
+            {
+                Core.Logger.LogWarning($"The current game version ({Reptile.Core.Instance.GameVersion}) does not match the target version. ({Core.TargetGameVersion})");
+                Core.Logger.LogWarning($"Some things may not work properly.");
+            }
+
+            __instance.versionText.text = "ARCHIPELAGO: " + Core.PluginVersion + " (prerelease 6)\n" + __instance.versionText.text;
             __instance.versionText.alignment = TextAlignmentOptions.BottomLeft;
         }
     }

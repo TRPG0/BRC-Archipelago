@@ -16,7 +16,8 @@ namespace Archipelago
         public bool skipIntro = true;
         public bool skipDreams = false;
         public bool skipHands = false;
-        public TotalRep totalRep = TotalRep.Normal;
+        public int totalRep = 1400;
+        public bool endingRep = false;
         public ScoreDifficulty scoreDifficulty = ScoreDifficulty.Normal;
 
         public HashSet<string> to_lock = new HashSet<string>()
@@ -30,7 +31,9 @@ namespace Archipelago
         };
 
         public bool limitedGraffiti = false;
+        public SGraffiti sGraffiti = SGraffiti.Separate;
         public Dictionary<string, int> grafUses = new Dictionary<string, int>();
+        public int sMax = 5;
 
         public bool junkPhotos = false;
 

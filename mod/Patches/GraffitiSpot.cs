@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using Reptile;
+using System;
 
 namespace Archipelago.Patches
 {
@@ -10,7 +11,10 @@ namespace Archipelago.Patches
         {
             if (Core.Instance.SaveManager.DataExists())
             {
-                if (__instance.bottomCrew != __instance.topCrew && (__instance.topCrew == Crew.PLAYERS || __instance.topCrew == Crew.ROGUE) && Reptile.Core.Instance.BaseModule.CurrentStage != Stage.Prelude)
+                if (__instance.bottomCrew != __instance.topCrew 
+                    && (__instance.topCrew == Crew.PLAYERS || __instance.topCrew == Crew.ROGUE) 
+                    && Reptile.Core.Instance.BaseModule.CurrentStage != Stage.Prelude
+                    && Enum.IsDefined(typeof(Stage), Reptile.Core.Instance.BaseModule.CurrentStage))
                 {
                     Core.Instance.LocationManager.CountAndCheckSpray();
                     return false;
