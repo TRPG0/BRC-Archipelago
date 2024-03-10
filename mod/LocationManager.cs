@@ -1,42 +1,34 @@
-﻿using Archipelago.Components;
+﻿using Archipelago.BRC.Components;
 using Archipelago.MultiClient.Net.Enums;
-using Archipelago.Stages;
-using Archipelago.Structures;
+using Archipelago.BRC.Stages;
+using Archipelago.BRC.Structures;
 using HarmonyLib;
 using ModLocalizer;
 using Reptile;
 using Reptile.Phone;
 using System.Collections.Generic;
-using UnityEngine;
 using Color = UnityEngine.Color;
-using Notification = Archipelago.Structures.Notification;
+using Notification = Archipelago.BRC.Structures.Notification;
 
-namespace Archipelago
+namespace Archipelago.BRC
 {
     public class LocationManager
     {
-        public Dictionary<string, Location> locations = new Dictionary<string, Location>();
+        //public Dictionary<string, Location> locations = new Dictionary<string, Location>();
+        public Dictionary<string, long> locations = new Dictionary<string, long>();
 
         public List<AItem> itemQueue = new List<AItem>();
         public List<Notification> notifQueue = new List<Notification>();
 
         public void CheckLocation(string loc, bool playSound = true)
         {
-            Core.Logger.LogInfo($"Checking location \"{loc}\"");
             if (!Core.Instance.Data.@checked.Contains(loc)) Core.Instance.Data.@checked.Add(loc);
 
-            if (locations.ContainsKey(loc))
+            if (locations.ContainsKey(loc) && Core.Instance.Multiworld.Authenticated)
             {
-                if (Core.Instance.Multiworld.Authenticated) Core.Instance.Multiworld.Session.Locations.CompleteLocationChecks(locations[loc].ap_id);
-                if (!locations[loc].@checked)
-                {
-                    if (locations[loc].item is BRCItem && locations[loc].item.player_name == Core.Instance.Data.slot_name)
-                    {
-                        Core.Logger.LogInfo($"Item at location {loc}: {locations[loc].item.item_name} | Type: {((BRCItem)locations[loc].item).type}");
-                    }
-                    GetItem(locations[loc].item, playSound);
-                }
-                locations[loc].@checked = true;
+                Core.Logger.LogInfo($"Checking location \"{loc}\" | {locations[loc]}");
+                Core.Instance.Multiworld.Session.Locations.CompleteLocationChecks(locations[loc]);
+                if (playSound) Core.Instance.UIManager.PlaySfxGameplay(SfxCollectionID.MenuSfx, AudioClipID.unlockNotification);
             }
             else Core.Logger.LogWarning($"Location \"{loc}\" does not exist.");
         }
@@ -161,7 +153,7 @@ namespace Archipelago
         {
             if (Core.Instance.Data.sprayCount < 389) Core.Instance.Data.sprayCount++;
             Core.Logger.LogInfo($"Spray count is {Core.Instance.Data.sprayCount}");
-            if (Core.Instance.Data.sprayCount == 389) CheckLocation("graf379");
+            if (Core.Instance.Data.sprayCount == 389) CheckLocation("graf389");
             else if (Core.Instance.Data.sprayCount % 5 == 0) CheckLocation($"graf{Core.Instance.Data.sprayCount}");
         }
 

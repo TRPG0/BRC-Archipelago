@@ -1,9 +1,8 @@
 ﻿using HarmonyLib;
 using Reptile;
-using Archipelago.Stages;
-using UnityEngine;
+using Archipelago.BRC.Stages;
 
-namespace Archipelago.Patches
+namespace Archipelago.BRC.Patches
 {
     [HarmonyPatch(typeof(BaseModule), "StartNewGame")]
     public class BaseModule_StartNewGame_Patch
@@ -51,7 +50,7 @@ namespace Archipelago.Patches
                 Core.Instance.SaveManager.CurrentSaveSlot.GetCurrentStageProgress().reputation = 0;
 
                 // failsafe for speedrunners :slight_smile:
-                if (Core.Instance.LocationManager.locations.ContainsKey("camera") && !Core.Instance.LocationManager.locations["camera"].@checked
+                if (Core.Instance.LocationManager.locations.ContainsKey("camera") && !Core.Instance.Data.@checked.Contains("camera")
                     && Reptile.Core.Instance.BaseModule.CurrentStage == Stage.hideout && Story.GetCurrentObjectiveInfo().chapter >= Story.Chapter.CHAPTER_2)
                 {
                     Core.Instance.LocationManager.CheckLocation("camera");

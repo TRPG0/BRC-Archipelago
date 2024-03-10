@@ -1,6 +1,6 @@
 ﻿using HarmonyLib;
 
-namespace Archipelago.Patches
+namespace Archipelago.BRC.Patches
 {
     [HarmonyPatch(typeof(Reptile.UIManager), "InstantiateMainMenuSceneUI")]
     public class UIManager_InstantiateMainMenuSceneUI_Patch

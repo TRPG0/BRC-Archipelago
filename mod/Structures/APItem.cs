@@ -1,6 +1,6 @@
 ﻿using Archipelago.MultiClient.Net.Enums;
 
-namespace Archipelago.Structures
+namespace Archipelago.BRC.Structures
 {
     public class APItem : AItem
     {

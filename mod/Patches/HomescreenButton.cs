@@ -3,7 +3,7 @@ using ModLocalizer;
 using Reptile.Phone;
 using TMPro;
 
-namespace Archipelago.Patches
+namespace Archipelago.BRC.Patches
 {
     [HarmonyPatch(typeof(HomescreenButton), "SetContent")]
     public class HomescreenButton_SetContent_Patch

@@ -1,7 +1,7 @@
 ﻿using HarmonyLib;
 using Reptile;
 
-namespace Archipelago.Patches
+namespace Archipelago.BRC.Patches
 {
     [HarmonyPatch(typeof(DynamicPickup), "PickupPickup")]
     public class DynamicPickup_PickupPickup_Patch

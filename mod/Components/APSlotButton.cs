@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Archipelago.Components
+namespace Archipelago.BRC.Components
 {
     public class APSlotButton : MonoBehaviour
     {

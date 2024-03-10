@@ -3,11 +3,11 @@ using Reptile.Phone;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using Archipelago.Structures;
+using Archipelago.BRC.Structures;
 using ModLocalizer;
 using System.Collections;
 
-namespace Archipelago.Apps
+namespace Archipelago.BRC.Apps
 {
     public class AppArchipelago : App
     {

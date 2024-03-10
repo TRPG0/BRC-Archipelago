@@ -1,7 +1,7 @@
 ﻿using HarmonyLib;
 using Reptile;
 
-namespace Archipelago.Patches
+namespace Archipelago.BRC.Patches
 {
     [HarmonyPatch(typeof(Encounter), "SetEncounterState")]
     public class Encounter_SetEncounterState_Patch

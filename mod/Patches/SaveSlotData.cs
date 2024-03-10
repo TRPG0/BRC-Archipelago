@@ -1,7 +1,7 @@
 ﻿using HarmonyLib;
 using Reptile;
 
-namespace Archipelago.Patches
+namespace Archipelago.BRC.Patches
 {
     [HarmonyPatch(typeof(SaveSlotData), "UnlockCharacter")]
     public class SaveSlotData_UnlockCharacter_Patch

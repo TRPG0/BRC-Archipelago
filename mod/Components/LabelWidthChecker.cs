@@ -3,7 +3,7 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 
-namespace Archipelago.Components
+namespace Archipelago.BRC.Components
 {
     public class LabelWidthChecker : MonoBehaviour
     {

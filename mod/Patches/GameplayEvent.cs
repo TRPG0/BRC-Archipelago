@@ -2,7 +2,7 @@
 using Reptile;
 using System;
 
-namespace Archipelago.Patches
+namespace Archipelago.BRC.Patches
 {
     [HarmonyPatch(typeof(GameplayEvent), "UnlockCharacterImpl")]
     public class GameplayEvent_UnlockCharacterImpl_Patch

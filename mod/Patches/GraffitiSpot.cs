@@ -2,7 +2,7 @@
 using Reptile;
 using System;
 
-namespace Archipelago.Patches
+namespace Archipelago.BRC.Patches
 {
     [HarmonyPatch(typeof(GraffitiSpot), "GiveRep")]
     public class GraffitiSpot_GiveRep_Patch
@@ -13,8 +13,7 @@ namespace Archipelago.Patches
             {
                 if (__instance.bottomCrew != __instance.topCrew 
                     && (__instance.topCrew == Crew.PLAYERS || __instance.topCrew == Crew.ROGUE) 
-                    && Reptile.Core.Instance.BaseModule.CurrentStage != Stage.Prelude
-                    && Enum.IsDefined(typeof(Stage), Reptile.Core.Instance.BaseModule.CurrentStage))
+                    && Core.Instance.stageManager != null)
                 {
                     Core.Instance.LocationManager.CountAndCheckSpray();
                     return false;

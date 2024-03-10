@@ -1,7 +1,7 @@
 ﻿using TMPro;
 using UnityEngine;
 
-namespace Archipelago.Components
+namespace Archipelago.BRC.Components
 {
     public class DeathLinkText : MonoBehaviour
     {

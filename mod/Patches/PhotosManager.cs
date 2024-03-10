@@ -2,7 +2,7 @@
 using Reptile;
 using UnityEngine;
 
-namespace Archipelago.Patches
+namespace Archipelago.BRC.Patches
 {
     [HarmonyPatch(typeof(PhotosManager), "SavePhoto")]
     public class PhotosManager_SavePhoto_Patch

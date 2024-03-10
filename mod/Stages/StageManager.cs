@@ -2,12 +2,12 @@
 using Reptile.Phone;
 using Reptile;
 using System.Collections.Generic;
-using Archipelago.Components;
-using Archipelago.Structures;
+using Archipelago.BRC.Components;
+using Archipelago.BRC.Structures;
 using UnityEngine;
 using TMPro;
 
-namespace Archipelago.Stages
+namespace Archipelago.BRC.Stages
 {
     public class StageManager
     {

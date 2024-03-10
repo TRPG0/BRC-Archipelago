@@ -1,4 +1,4 @@
-﻿namespace Archipelago.Structures
+﻿namespace Archipelago.BRC.Structures
 {
     public class RawLocationData
     {

@@ -5,10 +5,10 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using Archipelago.Apps;
+using Archipelago.BRC.Apps;
 using ModLocalizer;
 
-namespace Archipelago
+namespace Archipelago.BRC
 {
     public class PhoneManager
     {

@@ -1,5 +1,5 @@
-﻿using Archipelago.Patches;
-using StageManager = Archipelago.Stages.StageManager;
+﻿using Archipelago.BRC.Patches;
+using StageManager = Archipelago.BRC.Stages.StageManager;
 using BepInEx;
 using BepInEx.Bootstrap;
 using BepInEx.Configuration;
@@ -12,7 +12,7 @@ using System.Reflection;
 using UnityEngine;
 using ModLocalizer;
 
-namespace Archipelago
+namespace Archipelago.BRC
 {
     [BepInPlugin(PluginGUID, PluginName, PluginVersion)]
     [BepInDependency("com.yuril.brc_styleswapmod", BepInDependency.DependencyFlags.SoftDependency)]

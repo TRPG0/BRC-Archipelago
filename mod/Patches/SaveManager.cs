@@ -1,6 +1,6 @@
 ﻿using HarmonyLib;
 
-namespace Archipelago.Patches
+namespace Archipelago.BRC.Patches
 {
     [HarmonyPatch(typeof(Reptile.SaveManager), "SaveCurrentSaveSlot")]
     public class SaveManager_SaveCurrentSaveSlot_Patch

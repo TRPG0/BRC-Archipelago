@@ -1,9 +1,8 @@
 ﻿using HarmonyLib;
 using Reptile;
-using System.Collections.Generic;
 using UnityEngine.Events;
 
-namespace Archipelago.Stages
+namespace Archipelago.BRC.Stages
 {
     public class SquareManager : StageManager
     {

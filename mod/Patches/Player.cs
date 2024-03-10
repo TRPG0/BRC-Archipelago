@@ -1,10 +1,10 @@
-﻿using Archipelago.Components;
-using Archipelago.Structures;
+﻿using Archipelago.BRC.Components;
+using Archipelago.BRC.Structures;
 using HarmonyLib;
 using Reptile;
 using UnityEngine;
 
-namespace Archipelago.Patches
+namespace Archipelago.BRC.Patches
 {
     [HarmonyPatch(typeof(Player), "ChangeHP")]
     public class Player_ChangeHP_Patch

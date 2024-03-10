@@ -2,23 +2,23 @@
 using Reptile;
 using UnityEngine;
 
-namespace Archipelago.Components
+namespace Archipelago.BRC.Components
 {
     public class PlayerChecker : MonoBehaviour
     {
         private Player player;
         private Traverse playerT;
         private Traverse whT;
-        public bool canGetItem => !playerT.Field<bool>("isDisabled").Value && !playerT.Field<bool>("inGraffitiGame").Value && !player.IsDead();
-        public bool canGetNotif
+        public bool CanGetItem => !playerT.Field<bool>("isDisabled").Value && !playerT.Field<bool>("inGraffitiGame").Value && !player.IsDead();
+        public bool CanGetNotif
         {
             get
             {
                 if (whT.Field<Encounter>("currentEncounter").Value != null)
                 {
-                    return canGetItem && whT.Field<Encounter>("currentEncounter").Value.allowPhone;
+                    return CanGetItem && whT.Field<Encounter>("currentEncounter").Value.allowPhone;
                 }
-                else return canGetItem;
+                else return CanGetItem;
             }
         }
 
@@ -34,11 +34,11 @@ namespace Archipelago.Components
             if (player == null) return;
             if (Core.Instance.Multiworld.DeathLinkKilling)
             {
-                if (canGetItem) player.ChangeHP(6);
+                if (CanGetItem) player.ChangeHP(6);
             }
             if (Core.Instance.LocationManager.itemQueue.Count > 0)
             {
-                if (canGetItem)
+                if (CanGetItem)
                 {
                     Core.Instance.LocationManager.GetItem(Core.Instance.LocationManager.itemQueue[0], false);
                     Core.Instance.LocationManager.itemQueue.RemoveAt(0);
@@ -46,7 +46,7 @@ namespace Archipelago.Components
             }
             if (Core.Instance.LocationManager.notifQueue.Count > 0)
             {
-                if (canGetNotif)
+                if (CanGetNotif)
                 {
                     string app = Core.Instance.LocationManager.notifQueue[0].app;
                     string message = Core.Instance.LocationManager.notifQueue[0].message;

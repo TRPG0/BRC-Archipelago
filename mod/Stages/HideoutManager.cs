@@ -1,8 +1,6 @@
-﻿using HarmonyLib;
-using Reptile;
-using System.Collections.Generic;
+﻿using Reptile;
 
-namespace Archipelago.Stages
+namespace Archipelago.BRC.Stages
 {
     public class HideoutManager : StageManager
     {

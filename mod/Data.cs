@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using Archipelago.Structures;
+using Archipelago.BRC.Structures;
 using Reptile;
 
-namespace Archipelago
+namespace Archipelago.BRC
 {
     public class Data
     {

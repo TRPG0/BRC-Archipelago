@@ -1,7 +1,7 @@
 ﻿using HarmonyLib;
 using Reptile;
 
-namespace Archipelago.Patches
+namespace Archipelago.BRC.Patches
 {
     [HarmonyPatch(typeof(VendingMachine), "RewardIsValid")]
     public class VendingMachine_RewardIsValid_Patch

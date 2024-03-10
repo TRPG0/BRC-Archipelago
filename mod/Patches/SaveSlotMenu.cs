@@ -1,7 +1,7 @@
 ﻿using HarmonyLib;
 using Reptile;
 
-namespace Archipelago.Patches
+namespace Archipelago.BRC.Patches
 {
     [HarmonyPatch(typeof(SaveSlotMenu), "OnPressedPopupDeleteButton")]
     public class SaveSlotMenu_OnPressedPopupDeleteButton_Patch

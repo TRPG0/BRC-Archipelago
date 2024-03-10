@@ -3,10 +3,8 @@ using Reptile;
 using Newtonsoft.Json;
 using System.IO;
 using System.Text;
-using System.Collections.Generic;
-using Reptile.Phone;
 
-namespace Archipelago
+namespace Archipelago.BRC
 {
     public class SaveManager
     {

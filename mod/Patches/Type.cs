@@ -1,8 +1,8 @@
 ﻿using HarmonyLib;
-using Archipelago.Apps;
+using Archipelago.BRC.Apps;
 using System;
 
-namespace Archipelago.Patches
+namespace Archipelago.BRC.Patches
 {
     [HarmonyPatch(typeof(Type))]
     public class Type_GetType_Patch

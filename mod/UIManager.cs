@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using Reptile;
 using HarmonyLib;
-using Archipelago.Components;
+using Archipelago.BRC.Components;
 using DG.Tweening;
 using TMPro;
 using UnityEngine.UI;
@@ -9,7 +9,7 @@ using System.IO;
 using System.Collections.Generic;
 using ModLocalizer;
 
-namespace Archipelago
+namespace Archipelago.BRC
 {
     public class UIManager
     {

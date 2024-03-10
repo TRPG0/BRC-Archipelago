@@ -2,7 +2,7 @@
 using Reptile.Phone;
 using System.Collections;
 
-namespace Archipelago.Patches
+namespace Archipelago.BRC.Patches
 {
     [HarmonyPatch(typeof(AppCamera), "WaitForPhotoSavingComplete")]
     public class AppCamera_WaitForPhotoSavingComplete

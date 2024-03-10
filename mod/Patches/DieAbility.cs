@@ -2,7 +2,7 @@
 using Reptile;
 using Archipelago.MultiClient.Net.BounceFeatures.DeathLink;
 
-namespace Archipelago.Patches
+namespace Archipelago.BRC.Patches
 {
     [HarmonyPatch(typeof(DieAbility), "OnStartAbility")]
     public class DieAbility_OnStartAbility_Patch

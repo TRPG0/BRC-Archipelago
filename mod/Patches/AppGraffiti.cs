@@ -3,10 +3,9 @@ using Reptile;
 using Reptile.Phone;
 using System.Collections.Generic;
 using UnityEngine;
-using Archipelago.Structures;
-using System;
+using Archipelago.BRC.Structures;
 
-namespace Archipelago.Patches
+namespace Archipelago.BRC.Patches
 {
     // prevent crashes when graffiti list is empty
     [HarmonyPatch(typeof(AppGraffiti), "OnHoldDown")]

@@ -4,9 +4,9 @@ using Reptile.Phone;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using Archipelago.Structures;
+using Archipelago.BRC.Structures;
 
-namespace Archipelago.Patches
+namespace Archipelago.BRC.Patches
 {
     [HarmonyPatch(typeof(GraffitiScrollButton), "SetContent")]
     public class GraffitiScrollButton_SetContent_Patch

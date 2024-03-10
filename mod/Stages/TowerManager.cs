@@ -1,9 +1,8 @@
-﻿using HarmonyLib;
-using Reptile;
+﻿using Reptile;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Archipelago.Stages
+namespace Archipelago.BRC.Stages
 {
     public class TowerManager : StageManager
     {

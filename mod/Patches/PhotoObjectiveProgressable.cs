@@ -2,7 +2,7 @@
 using Reptile;
 using Reptile.Phone;
 
-namespace Archipelago.Patches
+namespace Archipelago.BRC.Patches
 {
     [HarmonyPatch(typeof(PhotoObjectiveProgressable), "MadePhotograph")]
     public class PhotoObjectiveProgressable_MadePhotograph_Patch
@@ -13,7 +13,7 @@ namespace Archipelago.Patches
             {
                 string loc = $"{__instance.transform.parent.name}/{__instance.name}";
 
-                if (!Core.Instance.LocationManager.locations[loc].@checked && Traverse.Create(Core.Instance.PhoneManager.Phone).Method("IsCurrentAppAndOpen", new object[] { typeof(AppCamera) }).GetValue<bool>())
+                if (!Core.Instance.Data.@checked.Contains(loc) && Traverse.Create(Core.Instance.PhoneManager.Phone).Method("IsCurrentAppAndOpen", new object[] { typeof(AppCamera) }).GetValue<bool>())
                 {
                     Core.Instance.PhoneManager.Phone.CloseCurrentApp();
                 }

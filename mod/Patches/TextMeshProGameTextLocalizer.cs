@@ -1,10 +1,10 @@
-﻿using Archipelago.Structures;
+﻿using Archipelago.BRC.Structures;
 using HarmonyLib;
 using Reptile;
 using System.Globalization;
 using UnityEngine;
 
-namespace Archipelago.Patches
+namespace Archipelago.BRC.Patches
 {
     [HarmonyPatch(typeof(TextMeshProGameTextLocalizer), "GetRawDialogueTextValue")]
     public class TextMeshProGameTextLocalizer_GetRawDialogueTextValue_Patch

@@ -1,8 +1,8 @@
-﻿using Archipelago.Structures;
+﻿using Archipelago.BRC.Structures;
 using HarmonyLib;
 using Reptile;
 
-namespace Archipelago.Patches
+namespace Archipelago.BRC.Patches
 {
     [HarmonyPatch(typeof(LocalizationLookupTable), "GetLocalizationValueFromSubgroup")]
     public class LocalizationLookupTable_GetLocalizationValueFromSubgroup_Patch

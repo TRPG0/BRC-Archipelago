@@ -5,16 +5,17 @@ using Archipelago.MultiClient.Net.Enums;
 using Archipelago.MultiClient.Net.BounceFeatures.DeathLink;
 using Archipelago.MultiClient.Net.Helpers;
 using Archipelago.MultiClient.Net.Packets;
-using Archipelago.Structures;
+using Archipelago.BRC.Structures;
 using Newtonsoft.Json.Linq;
-using Archipelago.Components;
+using Archipelago.BRC.Components;
 using UnityEngine;
 using Reptile;
 using System.Linq;
 using Random = UnityEngine.Random;
 using ModLocalizer;
+using Newtonsoft.Json;
 
-namespace Archipelago
+namespace Archipelago.BRC
 {
     public class Multiworld
     {
@@ -114,7 +115,7 @@ namespace Archipelago
             LoginResult loginResult = Session.TryConnectAndLogin(
                 "Bomb Rush Cyberfunk",
                 name,
-                ItemsHandlingFlags.IncludeStartingInventory,
+                ItemsHandlingFlags.AllItems,
                 new Version(AP_VERSION[0], AP_VERSION[1], AP_VERSION[2]),
                 null,
                 null,
@@ -173,35 +174,7 @@ namespace Archipelago
                     TryGetSlotDataValue(ref Core.Instance.Data.deathLink, success.SlotData, "death_link", false);
                 }
 
-                foreach (RawLocationData data in ((JArray)success.SlotData["locations"]).ToObject<RawLocationData[]>())
-                {
-                    AItem item = null;
-                    if (data.brcitem)
-                    {
-                        item = new BRCItem()
-                        {
-                            item_name = data.item_name,
-                            player_name = data.player_name,
-                            type = (BRCType)int.Parse(data.item_type)
-                        };
-                    }
-                    else
-                    {
-                        item = new APItem()
-                        {
-                            item_name = data.item_name,
-                            player_name = data.player_name,
-                            type = (ItemFlags)int.Parse(data.item_type)
-                        };
-                    }
-
-                    Core.Instance.LocationManager.locations.Add(data.id, new Location()
-                    {
-                        ap_id = data.ap_id,
-                        item = item,
-                        @checked = Core.Instance.Data.@checked.Contains(data.id)
-                    });
-                }
+                Core.Instance.LocationManager.locations = ((JObject)success.SlotData["locations"]).ToObject<Dictionary<string, long>>();
 
                 Authenticated = true;
                 if (Core.Instance.Data.deathLink) EnableDeathLink();
@@ -328,7 +301,9 @@ namespace Archipelago
             if (helper.Index > Core.Instance.Data.index)
             {
                 string player = (Session.Players.GetPlayerAlias(helper.PeekItem().Player) == "") ? "?" : Session.Players.GetPlayerAlias(helper.PeekItem().Player);
-                Core.Logger.LogInfo($"Received item: {helper.PeekItemName()} | Type: {Core.Instance.LocationManager.GetItemType(helper.PeekItemName())} | Player: {player}");
+                string log = $"Received item: {helper.PeekItemName()} | Type: {Core.Instance.LocationManager.GetItemType(helper.PeekItemName())}";
+                if (player != Core.Instance.Data.slot_name) log += $" | Player: {player}";
+                Core.Logger.LogInfo(log);
 
                 BRCItem item = new BRCItem()
                 {

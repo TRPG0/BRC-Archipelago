@@ -2,7 +2,7 @@
 using Reptile;
 using System.Collections.Generic;
 
-namespace Archipelago.Patches
+namespace Archipelago.BRC.Patches
 {
     [HarmonyPatch(typeof(CharacterSelect), "PopulateListOfSelectableCharacters")]
     public class CharacterSelect_PopulateListOfSelectableCharacters_Patch

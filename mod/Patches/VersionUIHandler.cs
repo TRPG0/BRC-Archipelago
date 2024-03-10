@@ -1,9 +1,8 @@
 ﻿using HarmonyLib;
 using Reptile;
-using System;
 using TMPro;
 
-namespace Archipelago.Patches
+namespace Archipelago.BRC.Patches
 {
     [HarmonyPatch(typeof(VersionUIHandler), "SetVersionText")]
     public class VersionUIHandler_SetVersionText_Patch
@@ -13,10 +12,10 @@ namespace Archipelago.Patches
             if (Core.TargetGameVersion.ToString() != Reptile.Core.Instance.GameVersion.ToString())
             {
                 Core.Logger.LogWarning($"The current game version ({Reptile.Core.Instance.GameVersion}) does not match the target version. ({Core.TargetGameVersion})");
-                Core.Logger.LogWarning($"Some things may not work properly.");
+                Core.Logger.LogWarning("Some things may not work properly.");
             }
 
-            __instance.versionText.text = "ARCHIPELAGO: " + Core.PluginVersion + " (prerelease 6)\n" + __instance.versionText.text;
+            __instance.versionText.text = "ARCHIPELAGO: " + Core.PluginVersion + " (prerelease 7)\n" + __instance.versionText.text;
             __instance.versionText.alignment = TextAlignmentOptions.BottomLeft;
         }
     }

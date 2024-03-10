@@ -1,7 +1,6 @@
 ﻿using Reptile;
-using System;
 
-namespace Archipelago.Structures
+namespace Archipelago.BRC.Structures
 {
     public class Notification
     {

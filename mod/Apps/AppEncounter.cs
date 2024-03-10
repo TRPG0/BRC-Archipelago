@@ -5,9 +5,8 @@ using Reptile.Phone;
 using System.Collections;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
-namespace Archipelago.Apps
+namespace Archipelago.BRC.Apps
 {
     public class AppEncounter : App
     {

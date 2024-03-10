@@ -3,7 +3,7 @@ using Reptile;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Archipelago.Components
+namespace Archipelago.BRC.Components
 {
     public class RandoRequirement : MonoBehaviour
     {
@@ -19,6 +19,7 @@ namespace Archipelago.Components
         public void InitGraffiti(List<GraffitiSize> sizes, GameObject originalTrigger, RequirementLinkType type = RequirementLinkType.Trigger)
         {
             Needs = RequirementNeeds.Graffiti;
+            Type = type;
             Sizes = sizes;
             Trigger = originalTrigger;
             collider = GetComponent<Collider>();
@@ -30,6 +31,7 @@ namespace Archipelago.Components
         public void InitREP(int rep, GameObject originalTrigger, RequirementLinkType type = RequirementLinkType.Trigger)
         {
             Needs = RequirementNeeds.REP;
+            Type = type;
             Rep = rep;
             Trigger = originalTrigger;
             collider = GetComponent<Collider>();
@@ -41,6 +43,7 @@ namespace Archipelago.Components
         public void InitBoth(List<GraffitiSize> sizes, int rep, GameObject originalTrigger, RequirementLinkType type = RequirementLinkType.Trigger)
         {
             Needs = RequirementNeeds.Both;
+            Type = type;
             Sizes = sizes;
             Rep = rep;
             Trigger = originalTrigger;

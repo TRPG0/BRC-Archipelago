@@ -1,9 +1,9 @@
-﻿using Archipelago.Structures;
+﻿using Archipelago.BRC.Structures;
 using Reptile;
 using System;
 using System.Collections.Generic;
 
-namespace Archipelago
+namespace Archipelago.BRC
 {
     internal static class Requirements
     {

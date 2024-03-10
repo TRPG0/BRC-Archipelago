@@ -1,11 +1,11 @@
-﻿using Archipelago.Structures;
+﻿using Archipelago.BRC.Structures;
 using HarmonyLib;
 using ModLocalizer;
 using Reptile;
 using Reptile.Phone;
 using System.Collections.Generic;
 
-namespace Archipelago.Patches
+namespace Archipelago.BRC.Patches
 {
     [HarmonyPatch(typeof(GraffitiGame), "OnDestroy")]
     public class GraffitiGame_OnDestroy_Patch

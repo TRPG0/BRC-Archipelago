@@ -3,7 +3,7 @@ using HarmonyLib;
 using Reptile;
 using BepInEx;
 
-namespace Archipelago.Patches
+namespace Archipelago.BRC.Patches
 {
     [BepInDependency("com.yuril.brc_styleswapmod")]
     [HarmonyPatch(typeof(brc_styleswapmodPlugin), "SwapStyle")]

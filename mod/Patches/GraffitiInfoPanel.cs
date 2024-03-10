@@ -2,7 +2,7 @@
 using Reptile;
 using Reptile.Phone;
 
-namespace Archipelago.Patches
+namespace Archipelago.BRC.Patches
 {
     [HarmonyPatch(typeof(GraffitiInfoPanel), "Show")]
     public class GraffitiInfoPanel_Show_Patch

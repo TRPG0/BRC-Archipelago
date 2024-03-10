@@ -2,7 +2,7 @@
 using Reptile;
 using Reptile.Phone;
 
-namespace Archipelago.Patches
+namespace Archipelago.BRC.Patches
 {
     [HarmonyPatch(typeof(PhoneScrollUnlockableButton), "SetContent")]
     public class PhoneScrollUnlockableButton_SetContent_Patch

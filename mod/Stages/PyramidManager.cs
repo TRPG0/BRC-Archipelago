@@ -1,13 +1,8 @@
-﻿using HarmonyLib;
-using Reptile;
-using System;
+﻿using Reptile;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
-namespace Archipelago.Stages
+namespace Archipelago.BRC.Stages
 {
     public class PyramidManager : StageManager
     {
