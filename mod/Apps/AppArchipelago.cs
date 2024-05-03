@@ -42,6 +42,7 @@ namespace Archipelago.BRC.Apps
 
         public static readonly List<AppArchipelagoOptions> canChange = new List<AppArchipelagoOptions>()
         {
+            AppArchipelagoOptions.SkipDreams,
             AppArchipelagoOptions.DontSavePhotos,
             AppArchipelagoOptions.ScoreDifficulty,
             AppArchipelagoOptions.DamageMultiplier,
@@ -309,7 +310,13 @@ namespace Archipelago.BRC.Apps
             }
             else if (State == AppArchipelagoState.Options)
             {
-                if (CurrentOption == AppArchipelagoOptions.DontSavePhotos)
+                if (CurrentOption == AppArchipelagoOptions.SkipDreams)
+                {
+                    Core.Instance.UIManager.PlaySfxGameplay(SfxCollectionID.PhoneSfx, AudioClipID.FlipPhone_Select);
+                    Core.Instance.Data.skipDreams ^= true;
+                    StartCoroutine(UpdateOptionText());
+                }
+                else if (CurrentOption == AppArchipelagoOptions.DontSavePhotos)
                 {
                     Core.Instance.UIManager.PlaySfxGameplay(SfxCollectionID.PhoneSfx, AudioClipID.FlipPhone_Select);
                     Core.configDontSavePhotos.Value ^= true;

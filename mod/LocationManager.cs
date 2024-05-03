@@ -28,7 +28,7 @@ namespace Archipelago.BRC
             {
                 Core.Logger.LogInfo($"Checking location \"{loc}\" | {locations[loc]}");
                 Core.Instance.Multiworld.Session.Locations.CompleteLocationChecks(locations[loc]);
-                if (playSound) Core.Instance.UIManager.PlaySfxGameplay(SfxCollectionID.MenuSfx, AudioClipID.unlockNotification);
+                if (playSound && !Core.Instance.Data.@checked.Contains(loc)) Core.Instance.UIManager.PlaySfxGameplay(SfxCollectionID.MenuSfx, AudioClipID.unlockNotification);
             }
             else Core.Logger.LogWarning($"Location \"{loc}\" does not exist.");
         }

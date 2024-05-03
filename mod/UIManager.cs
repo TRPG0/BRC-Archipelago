@@ -40,7 +40,7 @@ namespace Archipelago.BRC
 
         public TextMeshProUGUI APMenuStatus;
         public TextMeshProUGUI APMenuLocations;
-        public const int totalLocations = 247;
+        public const int maxLocations = 247;
         public TextMeshProUGUI APMenuResult;
         public TextMeshProUGUI APMenuChat;
         public int connectingSlot = -1;
@@ -203,7 +203,7 @@ namespace Archipelago.BRC
             APMenuLocations.horizontalAlignment = HorizontalAlignmentOptions.Right;
             APMenuLocations.fontStyle = FontStyles.Normal;
             APMenuLocations.color = Color.black;
-            APMenuLocations.text = $"? / {totalLocations}";
+            APMenuLocations.text = $"0 / ?";
             Vector3 pos14 = APMenuStatus.transform.localPosition;
             pos14.y = APMenuAddressLabel.transform.localPosition.y;
             APMenuLocations.transform.localPosition = pos14;
@@ -327,6 +327,7 @@ namespace Archipelago.BRC
         {
             string status = string.Empty;
             string locations = Core.Instance.SaveManager.DataExists(connectingSlot) ? Core.Instance.Data.@checked.Count.ToString() : "?";
+            string totalLocations = Core.Instance.SaveManager.DataExists(connectingSlot) ? Core.Instance.Data.junkPhotos ? (maxLocations - 18).ToString() : maxLocations.ToString() : "?";
 
             switch (state)
             {
@@ -423,6 +424,12 @@ namespace Archipelago.BRC
                 else
                 {
                     Core.Logger.LogInfo($"Save slot {slotId} has randomizer data and is connected. Starting game.");
+
+                    foreach (string loc in Core.Instance.Data.@checked)
+                    {
+                        Core.Instance.LocationManager.CheckLocation(loc, false);
+                    }
+
                     Traverse.Create(ssm).Method("StartGameFromSlot", new object[] { slotId }).GetValue();
                     HideMenu();
                     APMenuChat.gameObject.SetActive(false);

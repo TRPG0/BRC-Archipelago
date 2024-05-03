@@ -138,13 +138,15 @@ namespace Archipelago.BRC.Stages
 
         public virtual void SkipDream(SceneObjectsRegister sceneObjectsRegister)
         {
-            if (!Core.Instance.Data.skipDreams) return;
             foreach (GameplayEvent obj in sceneObjectsRegister.gameplayEvents)
             {
                 if (obj is DreamEncounter de)
                 {
-                    de.OnIntro.AddListener(de.CheatComplete);
-                    Core.Logger.LogInfo($"Added CheatComplete to OnIntro of {de.name}");
+                    de.OnIntro.AddListener(delegate
+                    {
+                        if (Core.Instance.Data.skipDreams) de.CheatComplete();
+                    });
+                    Core.Logger.LogInfo($"Modified OnIntro of {de.name}");
                     break;
                 }
             }

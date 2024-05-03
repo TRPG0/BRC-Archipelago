@@ -15,7 +15,10 @@ namespace Archipelago.BRC.Patches
                 Core.Logger.LogWarning("Some things may not work properly.");
             }
 
-            __instance.versionText.text = "ARCHIPELAGO: " + Core.PluginVersion + " (prerelease 7)\n" + __instance.versionText.text;
+            string lineBreak = "\n";
+            if (Core.isSlopCrewLoaded) lineBreak += "\n";
+
+            __instance.versionText.text = "ARCHIPELAGO: " + Core.PluginVersion + " (prerelease 10)" + lineBreak + __instance.versionText.text;
             __instance.versionText.alignment = TextAlignmentOptions.BottomLeft;
         }
     }

@@ -8,9 +8,9 @@ namespace Archipelago.BRC
     internal static class Requirements
     {
         public const int grafSLimit = 5;
-        public const int grafMLimit = 9;
-        public const int grafLLimit = 8;
-        public const int grafXLLimit = 6;
+        public const int grafMLimit = 7;
+        public const int grafLLimit = 6;
+        public const int grafXLLimit = 4;
 
         public static RepValues HideoutStoryRep = new RepValues(20, 20);
 

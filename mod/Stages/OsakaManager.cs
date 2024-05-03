@@ -67,7 +67,7 @@ namespace Archipelago.BRC.Stages
                 }
                 else if (obj.name == "SnakeBossEncounter")
                 {
-                    ((CombatEncounter)obj).OnCompleted.AddListener(Core.Instance.Multiworld.SendCompletion);
+                    ((CombatEncounter)obj).OnOutro.AddListener(Core.Instance.Multiworld.SendCompletion);
                     Core.Logger.LogInfo("Added SendCompletion call to SnakeBossEncounter");
                 }
                 else if (obj is DreamEncounter de)
@@ -87,15 +87,17 @@ namespace Archipelago.BRC.Stages
                 if (obj is DreamEncounter de)
                 {
                     de.OnCompleted.AddListener(ActivateIntro);
-                    if (!Core.Instance.Data.skipDreams) return;
                     Traverse traverse = Traverse.Create(de);
                     traverse.Field<bool>("startMusicAfterFirstCheckpoint").Value = false;
                     de.OnIntro.AddListener(delegate
                     {
-                        WorldHandler.instance.PlaceCurrentPlayerAt(de.checkpoints[5].spawnLocation);
-                        WorldHandler.instance.GetCurrentPlayer().SetCharacter(Characters.legendFace);
+                        if (Core.Instance.Data.skipDreams)
+                        {
+                            WorldHandler.instance.PlaceCurrentPlayerAt(de.checkpoints[5].spawnLocation);
+                            WorldHandler.instance.GetCurrentPlayer().SetCharacter(Characters.legendFace);
+                        }
                     });
-                    Core.Logger.LogInfo($"Added PlaceCurrentPlayerAt to OnIntro of {de.name}");
+                    Core.Logger.LogInfo($"Modified OnIntro of {de.name}");
                     return;
                 }
             }

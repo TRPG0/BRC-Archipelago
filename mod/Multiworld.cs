@@ -238,6 +238,17 @@ namespace Archipelago.BRC
                 string text = "";
                 string color = "<color=#FFFFFFFF>";
 
+                if (Core.configPlayerOtherNotifs.Value
+                    && p.Data[0].Type == JsonMessagePartType.PlayerId
+                    && Session.Players.GetPlayerName(int.Parse(p.Data[0].Text)) == Core.Instance.Data.slot_name
+                    && p.Data[1].Text == " sent ")
+                {
+                    string itemName = Session.Items.GetItemName(long.Parse(p.Data[2].Text));
+                    string forPlayer = Session.Players.GetPlayerAlias(int.Parse(p.Data[4].Text));
+
+                    Core.Instance.LocationManager.notifQueue.Add(new Notification("AppArchipelago", $"{itemName} ({forPlayer})", null));
+                }
+
                 foreach (var messagePart in p.Data)
                 {
                     switch (messagePart.Type)

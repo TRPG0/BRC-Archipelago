@@ -94,7 +94,7 @@ namespace Archipelago.BRC.Components
                 if (HasGraffiti() && HasRep())
                 {
                     if (Type == RequirementLinkType.Trigger) Trigger.SetActive(true);
-                    else if (Type == RequirementLinkType.ProgressObject) Trigger.GetComponent<ProgressObject>().SetTriggerable(true);
+                    else if (Type == RequirementLinkType.ProgressObject) Trigger.GetComponentInParent<ProgressObject>(true).SetTriggerable(true);
                     gameObject.SetActive(false);
                     Core.Logger.LogInfo($"Enabled trigger of {transform.parent.name}");
                 }
@@ -103,7 +103,7 @@ namespace Archipelago.BRC.Components
             else if (source == Needs)
             {
                 if (Type == RequirementLinkType.Trigger) Trigger.SetActive(true);
-                else if (Type == RequirementLinkType.ProgressObject) Trigger.GetComponent<ProgressObject>().SetTriggerable(true);
+                else if (Type == RequirementLinkType.ProgressObject) Trigger.GetComponentInParent<ProgressObject>(true).SetTriggerable(true);
                 gameObject.SetActive(false);
                 Core.Logger.LogInfo($"Enabled trigger of {transform.parent.name}");
             }
@@ -113,7 +113,7 @@ namespace Archipelago.BRC.Components
         {
             if (!IsActive()) return;
             if (Type == RequirementLinkType.Trigger) Trigger.SetActive(false);
-            else if (Type == RequirementLinkType.ProgressObject) Trigger.GetComponent<ProgressObject>().SetTriggerable(false);
+            else if (Type == RequirementLinkType.ProgressObject) Trigger.GetComponentInParent<ProgressObject>(true).SetTriggerable(false);
             gameObject.SetActive(true);
             Core.Logger.LogInfo($"Disabled trigger of {transform.parent.name}");
         }

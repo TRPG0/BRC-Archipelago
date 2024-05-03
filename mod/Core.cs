@@ -16,6 +16,7 @@ namespace Archipelago.BRC
 {
     [BepInPlugin(PluginGUID, PluginName, PluginVersion)]
     [BepInDependency("com.yuril.brc_styleswapmod", BepInDependency.DependencyFlags.SoftDependency)]
+    [BepInDependency("SlopCrew.Plugin", BepInDependency.DependencyFlags.SoftDependency)]
     [BepInDependency("trpg.brc.modlocalizer")]
     public class Core : BaseUnityPlugin
     {
@@ -50,9 +51,11 @@ namespace Archipelago.BRC
         public static ConfigEntry<Color> configColorItemFiller;
         public static ConfigEntry<Color> configColorItemTrap;
         public static ConfigEntry<Color> configColorLocation;
+        public static ConfigEntry<bool> configPlayerOtherNotifs;
         public static ConfigEntry<bool> configDontSavePhotos;
 
-        public static bool isQuickStyleSwapLoaded = false;
+        internal static bool isQuickStyleSwapLoaded = false;
+        internal static bool isSlopCrewLoaded = false;
 
         public static bool FailScoreEncounters { get; private set; } = false;
 
@@ -158,8 +161,8 @@ namespace Archipelago.BRC
                     isQuickStyleSwapLoaded = true;
                     Logger.LogInfo("QuickStyleSwap is loaded. Applying SwapStyle patch.");
                     Harmony.PatchAll(typeof(brc_styleswapmodPlugin_SwapStyle_Patch));
-
                 }
+                else if (plugin.Value.Metadata.GUID == "SlopCrew.Plugin") isSlopCrewLoaded = true;
             }
 
             Reptile.Core.OnCoreInitialized += SaveManager.GetSavePath;
@@ -214,6 +217,11 @@ namespace Archipelago.BRC
                 "colorLocation",
                 new Color(0, 1, 0.5f),
                 "The color used to represent locations.");
+
+            configPlayerOtherNotifs = Config.Bind("Notifications",
+                "otherPlayerNotifs",
+                true,
+                "Get phone notifications when collecting items that belong to other players.");
 
             configDontSavePhotos = Config.Bind("Camera",
                 "dontSavePhotos",

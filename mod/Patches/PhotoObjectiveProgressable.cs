@@ -9,7 +9,7 @@ namespace Archipelago.BRC.Patches
     {
         public static void Postfix(PhotoObjectiveProgressable __instance)
         {
-            if (Core.Instance.SaveManager.DataExists())
+            if (Core.Instance.SaveManager.DataExists() && !Core.Instance.Data.junkPhotos)
             {
                 string loc = $"{__instance.transform.parent.name}/{__instance.name}";
 
