@@ -18,7 +18,7 @@ namespace Archipelago.BRC.Patches
             string lineBreak = "\n";
             if (Core.isSlopCrewLoaded) lineBreak += "\n";
 
-            __instance.versionText.text = "ARCHIPELAGO: " + Core.PluginVersion + " (prerelease 10)" + lineBreak + __instance.versionText.text;
+            __instance.versionText.text = "ARCHIPELAGO: " + Core.PluginVersion + " (RC)" + lineBreak + __instance.versionText.text;
             __instance.versionText.alignment = TextAlignmentOptions.BottomLeft;
         }
     }

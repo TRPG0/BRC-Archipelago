@@ -1,4 +1,4 @@
-# BRC-Archipelago
+## Archipelago (RC)
 
 ### What is this?
 

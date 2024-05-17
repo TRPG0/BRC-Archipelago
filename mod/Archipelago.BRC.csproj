@@ -4,7 +4,7 @@
     <TargetFramework>net472</TargetFramework>
     <AssemblyName>Archipelago</AssemblyName>
     <Description>Connect to an Archipelago server to play Bomb Rush Cyberfunk randomizer.</Description>
-    <Version>1.0.0</Version>
+    <Version>0.9.0</Version>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
