@@ -22,7 +22,7 @@ namespace Archipelago.BRC
     {
         public const string PluginGUID = "trpg.brc.archipelago";
         public const string PluginName = "Archipelago";
-        public const string PluginVersion = "0.9.0";
+        public const string PluginVersion = "0.9.1";
         internal static GameVersion TargetGameVersion;
 
         public static Core Instance;

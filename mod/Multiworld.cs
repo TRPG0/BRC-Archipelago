@@ -13,13 +13,13 @@ using Reptile;
 using System.Linq;
 using Random = UnityEngine.Random;
 using ModLocalizer;
-using Newtonsoft.Json;
+using Archipelago.MultiClient.Net.Models;
 
 namespace Archipelago.BRC
 {
     public class Multiworld
     {
-        public static int[] AP_VERSION = new int[] { 0, 4, 4 };
+        public static int[] AP_VERSION = new int[] { 0, 5, 0 };
 
         public bool Authenticated;
         public ArchipelagoSession Session;
@@ -243,7 +243,7 @@ namespace Archipelago.BRC
                     && Session.Players.GetPlayerName(int.Parse(p.Data[0].Text)) == Core.Instance.Data.slot_name
                     && p.Data[1].Text == " sent ")
                 {
-                    string itemName = Session.Items.GetItemName(long.Parse(p.Data[2].Text));
+                    string itemName = Session.Items.GetItemName(long.Parse(p.Data[2].Text), Session.Players.GetPlayerInfo(p.Data[2].Player.Value).Game);
                     string forPlayer = Session.Players.GetPlayerAlias(int.Parse(p.Data[4].Text));
 
                     Core.Instance.LocationManager.notifQueue.Add(new Notification("AppArchipelago", $"{itemName} ({forPlayer})", null));
@@ -281,7 +281,7 @@ namespace Archipelago.BRC
                             }
                             if (long.TryParse(messagePart.Text, out long itemId))
                             {
-                                string itemName = Session.Items.GetItemName(itemId) ?? $"Item: {itemId}";
+                                string itemName = Session.Items.GetItemName(itemId, Session.Players.GetPlayerInfo(messagePart.Player.Value).Game) ?? $"Item: {itemId}";
                                 text += color + itemName + "</color>";
                             }
                             else text += $"{color}{messagePart.Text}</color>";
@@ -290,7 +290,7 @@ namespace Archipelago.BRC
                             color = $"<color=#{ColorUtility.ToHtmlStringRGBA(Core.configColorLocation.Value)}>";
                             if (long.TryParse(messagePart.Text, out long locationId))
                             {
-                                string locationName = Session.Locations.GetLocationNameFromId(locationId) ?? $"Location: {locationId}";
+                                string locationName = Session.Locations.GetLocationNameFromId(locationId, Session.Players.GetPlayerInfo(messagePart.Player.Value).Game) ?? $"Location: {locationId}";
                                 text += color + locationName + "</color>";
                             }
                             else text += $"{color}{messagePart.Text}</color>";
@@ -311,20 +311,21 @@ namespace Archipelago.BRC
         {
             if (helper.Index > Core.Instance.Data.index)
             {
-                string player = (Session.Players.GetPlayerAlias(helper.PeekItem().Player) == "") ? "?" : Session.Players.GetPlayerAlias(helper.PeekItem().Player);
-                string log = $"Received item: {helper.PeekItemName()} | Type: {Core.Instance.LocationManager.GetItemType(helper.PeekItemName())}";
+                ItemInfo item = helper.PeekItem();
+                string player = (Session.Players.GetPlayerAlias(item.Player) == "") ? "?" : Session.Players.GetPlayerAlias(item.Player);
+                string log = $"Received item: {item.ItemName} | Type: {Core.Instance.LocationManager.GetItemType(item.ItemName)}";
                 if (player != Core.Instance.Data.slot_name) log += $" | Player: {player}";
                 Core.Logger.LogInfo(log);
 
-                BRCItem item = new BRCItem()
+                BRCItem brcitem = new BRCItem()
                 {
-                    item_name = helper.PeekItemName(),
-                    type = Core.Instance.LocationManager.GetItemType(helper.PeekItemName()),
+                    item_name = item.ItemName,
+                    type = Core.Instance.LocationManager.GetItemType(item.ItemName),
                     player_name = Core.Instance.Data.slot_name
                 };
 
 
-                Core.Instance.LocationManager.itemQueue.Add(item);
+                Core.Instance.LocationManager.itemQueue.Add(brcitem);
 
                 Core.Instance.Data.index++;
             }
