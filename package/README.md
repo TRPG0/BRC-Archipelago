@@ -1,8 +1,8 @@
-## Archipelago (RC)
+## Archipelago
 
 ### What is this?
 
-This is a randomizer for Bomb Rush Cyberfunk made to work with the [Archipelago](http://archipelago.gg:24242/) collection of randomizers, meaning that it can be played solo or in a multiworld with any of the other [supported games](http://archipelago.gg:24242/games) that Archipelago is compatible with.
+This is a randomizer for Bomb Rush Cyberfunk made to work with the [Archipelago](http://archipelago.gg/) collection of randomizers, meaning that it can be played solo or in a multiworld with any of the other [supported games](http://archipelago.gg/games) that Archipelago is compatible with.
 
 ### What does randomization do in this game?
 
@@ -21,6 +21,21 @@ Several changes have been made to the game for a better experience as a randomiz
 - One single REP count is used throughout the game, instead of having separate totals for each stage. REP requirements are the same as the original game, but added together in order. At least 960 REP is needed to finish the game.
 
 The mod also adds two new apps to the phone, an "Encounter" app which lets you retry certain events early, and the "Archipelago" app which lets you view chat messages and change some options while playing.
+
+After installing Archipelago, there are some additional mods that can also be installed for a better experience:
+
+- [MoreMap](https://thunderstore.io/c/bomb-rush-cyberfunk/p/TRPG/MoreMap/) by TRPG
+    - Adds pins to the map for every type of collectible.
+- [FasterLoadTimes](https://thunderstore.io/c/bomb-rush-cyberfunk/p/cspotcode/FasterLoadTimes/) by cspotcode
+    - Load stages faster by skipping assets that are already loaded.
+- [CutsceneSkip](https://thunderstore.io/c/bomb-rush-cyberfunk/p/Jay/CutsceneSkip/) by Jay
+    - Makes every cutscene skippable.
+- [GimmeMyBoost](https://thunderstore.io/c/bomb-rush-cyberfunk/p/Yuri/GimmeMyBoost/) by Yuri
+    - Retains boost when loading into a new stage.
+- [DisableAnnoyingCutscenes](https://thunderstore.io/c/bomb-rush-cyberfunk/p/viliger/DisableAnnoyingCutscenes/) by viliger
+    - Disables the police cutscenes when increasing your heat level.
+- [FastTravel](https://thunderstore.io/c/bomb-rush-cyberfunk/p/tari/FastTravel/) by tari
+    - Adds an app to the phone to call for a taxi from anywhere.
 
 ### Connecting
 
