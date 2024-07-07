@@ -182,6 +182,7 @@ namespace Archipelago.BRC
                 Core.Instance.Data.slot_name = name;
                 Core.Instance.Data.host_name = address;
                 Core.Instance.Data.password = password;
+                Core.Instance.Data.fakeRep = 0;
                 Core.Instance.SaveManager.currentSlot = slotId;
                 Core.Instance.SaveManager.SaveData();
                 Core.Instance.UIManager.slotButtons[slotId].ChangeState(APSlotButton.SlotState.Connected);
@@ -309,26 +310,26 @@ namespace Archipelago.BRC
 
         public void ItemReceived(ReceivedItemsHelper helper)
         {
+            ItemInfo item = helper.PeekItem();
             if (helper.Index > Core.Instance.Data.index)
             {
-                ItemInfo item = helper.PeekItem();
                 string player = (Session.Players.GetPlayerAlias(item.Player) == "") ? "?" : Session.Players.GetPlayerAlias(item.Player);
                 string log = $"Received item: {item.ItemName} | Type: {Core.Instance.LocationManager.GetItemType(item.ItemName)}";
                 if (player != Core.Instance.Data.slot_name) log += $" | Player: {player}";
                 Core.Logger.LogInfo(log);
-
-                BRCItem brcitem = new BRCItem()
-                {
-                    item_name = item.ItemName,
-                    type = Core.Instance.LocationManager.GetItemType(item.ItemName),
-                    player_name = Core.Instance.Data.slot_name
-                };
-
-
-                Core.Instance.LocationManager.itemQueue.Add(brcitem);
-
-                Core.Instance.Data.index++;
             }
+
+            BRCItem brcitem = new BRCItem()
+            {
+                item_name = item.ItemName,
+                type = Core.Instance.LocationManager.GetItemType(item.ItemName),
+                player_name = Core.Instance.Data.slot_name,
+                received = helper.Index <= Core.Instance.Data.index
+            };
+
+            Core.Instance.LocationManager.itemQueue.Add(brcitem);
+
+            if (helper.Index > Core.Instance.Data.index) Core.Instance.Data.index++;
             helper.DequeueItem();
         }
 

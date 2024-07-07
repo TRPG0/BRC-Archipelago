@@ -1,3 +1,8 @@
+## 1.0.1
+
+- Added a failsafe in case of missing items.
+- Fixed the Camera App still attempting to check for storage space even when "Don't Save Photos" is enabled.
+
 ## 1.0.0
 
 - [Archipelago](https://archipelago.gg/) 0.5.0 is released!

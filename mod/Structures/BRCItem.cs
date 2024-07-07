@@ -3,6 +3,7 @@
     public class BRCItem : AItem
     {
         public BRCType type;
+        public bool received;
     }
 
     public enum BRCType

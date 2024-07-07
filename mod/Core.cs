@@ -22,7 +22,7 @@ namespace Archipelago.BRC
     {
         public const string PluginGUID = "trpg.brc.archipelago";
         public const string PluginName = "Archipelago";
-        public const string PluginVersion = "1.0.0";
+        public const string PluginVersion = "1.0.1";
         internal static GameVersion TargetGameVersion;
 
         public static Core Instance;
@@ -136,6 +136,7 @@ namespace Archipelago.BRC
             Harmony.PatchAll(typeof(PhoneScrollUnlockableButton_SetContent_Patch));
             Harmony.PatchAll(typeof(PhotoObjectiveProgressable_MadePhotograph_Patch));
             Harmony.PatchAll(typeof(PhotosManager_SavePhoto_Patch));
+            Harmony.PatchAll(typeof(PhotosManager_IsPhotoStorageFull));
             Harmony.PatchAll(typeof(Player_ChangeHP_Patch));
             Harmony.PatchAll(typeof(Player_CheckNPCTriggerForConversation_Patch));
             Harmony.PatchAll(typeof(Player_OnTriggerEnter_Patch));

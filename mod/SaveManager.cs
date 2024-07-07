@@ -104,5 +104,16 @@ namespace Archipelago.BRC
             }
             return unlocked;
         }
+
+        public int CountCharactersUnlocked()
+        {
+            int count = 0;
+            CharacterProgress[] totalCharacterProgress = Traverse.Create(CurrentSaveSlot).Field<CharacterProgress[]>("totalCharacterProgress").Value;
+            for (int i = 0; i < totalCharacterProgress.Length; i++)
+            {
+                if (totalCharacterProgress[i].unlocked) count++;
+            }
+            return count;
+        }
     }
 }

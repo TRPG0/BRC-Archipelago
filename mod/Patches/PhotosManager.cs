@@ -24,4 +24,13 @@ namespace Archipelago.BRC.Patches
             else return true;
         }
     }
+
+    [HarmonyPatch(typeof(PhotosManager), "IsPhotoStorageFull")]
+    public class PhotosManager_IsPhotoStorageFull
+    {
+        public static void Postfix(ref bool __result)
+        {
+            if (Core.Instance.SaveManager.DataExists() && Core.configDontSavePhotos.Value) __result = false;
+        }
+    }
 }
