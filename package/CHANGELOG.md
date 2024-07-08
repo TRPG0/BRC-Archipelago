@@ -1,3 +1,7 @@
+## 1.0.2
+
+- Fixed Death Link killing the player even when the game is paused.
+
 ## 1.0.1
 
 - Added a failsafe in case of missing items.

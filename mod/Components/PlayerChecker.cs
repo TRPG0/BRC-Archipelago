@@ -9,7 +9,7 @@ namespace Archipelago.BRC.Components
         private Player player;
         private Traverse playerT;
         private Traverse whT;
-        public bool CanGetItem => !playerT.Field<bool>("isDisabled").Value && !playerT.Field<bool>("inGraffitiGame").Value && !player.IsDead();
+        public bool CanGetItem => !Reptile.Core.Instance.BaseModule.IsInGamePaused && !playerT.Field<bool>("isDisabled").Value && !playerT.Field<bool>("inGraffitiGame").Value && !player.IsDead();
         public bool CanGetNotif
         {
             get
