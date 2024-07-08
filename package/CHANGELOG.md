@@ -1,5 +1,6 @@
 ## 1.0.2
 
+- Update Archipelago.MultiClient.Net to `6.2.0`.
 - Fixed Death Link killing the player even when the game is paused.
 
 ## 1.0.1
