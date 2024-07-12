@@ -1,3 +1,7 @@
+## 1.0.3
+
+- Fixed depleted graffiti being added back to the player's inventory after reconnecting.
+
 ## 1.0.2
 
 - Update Archipelago.MultiClient.Net to `6.2.0`.
