@@ -22,7 +22,7 @@ namespace Archipelago.BRC
     {
         public const string PluginGUID = "trpg.brc.archipelago";
         public const string PluginName = "Archipelago";
-        public const string PluginVersion = "1.0.3";
+        public const string PluginVersion = "1.0.4";
         internal static GameVersion TargetGameVersion;
 
         public static Core Instance;
@@ -228,6 +228,15 @@ namespace Archipelago.BRC
                 "dontSavePhotos",
                 false,
                 "Don't save photos taken with the Camera app. Only takes effect when playing randomizer.");
+        }
+
+        private void OnApplicationQuit()
+        {
+            if (SaveManager.DataExists())
+            {
+                StageProgress stageProgress = SaveManager.CurrentSaveSlot.GetCurrentStageProgress();
+                if (stageProgress != null) stageProgress.reputation = 0;
+            }
         }
     }
 }

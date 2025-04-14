@@ -1,3 +1,9 @@
+## 1.0.4
+
+- Update Archipelago.MultiClient.Net to `6.6.0`.
+- Fixed graffiti sometimes reappearing with negative uses after a reconnect.
+- Fixed "Skip Dreams" option not being saved.
+
 ## 1.0.3
 
 - Fixed depleted graffiti being added back to the player's inventory after reconnecting.

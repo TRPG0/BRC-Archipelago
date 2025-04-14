@@ -59,12 +59,11 @@ namespace Archipelago.BRC
                         else if (brcitem.type == BRCType.GraffitiL) Core.Instance.stageManager.YesGraffiti(GraffitiSize.L);
                         else if (brcitem.type == BRCType.GraffitiXL) Core.Instance.stageManager.YesGraffiti(GraffitiSize.XL);
 
-                        if (Core.Instance.Data.to_lock.Contains(substring)) Core.Instance.Data.to_lock.Remove(substring);
-
                         GraffitiAppEntry graffiti = WorldHandler.instance.graffitiArtInfo.FindByTitle(substring).unlockable;
                         if (!Core.Instance.Data.limitedGraffiti || Core.Instance.Data.limitedGraffiti &&
                             (!Core.Instance.Data.grafUses.ContainsKey(graffiti.Uid) || (Core.Instance.Data.grafUses.ContainsKey(graffiti.Uid) && !brcitem.received)))
                         {
+                            if (Core.Instance.Data.to_lock.Contains(substring)) Core.Instance.Data.to_lock.Remove(substring);
                             Core.Instance.SaveManager.CurrentSaveSlot.GetUnlockableDataByUid(graffiti.Uid).IsUnlocked = true;
                         }
 

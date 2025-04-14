@@ -19,7 +19,7 @@ namespace Archipelago.BRC
 {
     public class Multiworld
     {
-        public static int[] AP_VERSION = new int[] { 0, 5, 0 };
+        public static int[] AP_VERSION = new int[] { 0, 6, 1 };
 
         public bool Authenticated;
         public ArchipelagoSession Session;
@@ -127,7 +127,6 @@ namespace Archipelago.BRC
             {
                 TryGetSlotDataValue(ref Core.Instance.Data.logic, success.SlotData, "logic", Logic.Glitchless);
                 TryGetSlotDataValue(ref Core.Instance.Data.skipIntro, success.SlotData, "skip_intro", true);
-                TryGetSlotDataValue(ref Core.Instance.Data.skipDreams, success.SlotData, "skip_dreams", false);
                 TryGetSlotDataValue(ref Core.Instance.Data.skipHands, success.SlotData, "skip_statue_hands", false);
                 TryGetSlotDataValue(ref Core.Instance.Data.totalRep, success.SlotData, "total_rep", 1400);
                 TryGetSlotDataValue(ref Core.Instance.Data.endingRep, success.SlotData, "extra_rep_required", false);
@@ -163,6 +162,7 @@ namespace Archipelago.BRC
                         else Core.Instance.Data.grafUses["S"] = 0;
                     }
 
+                    TryGetSlotDataValue(ref Core.Instance.Data.skipDreams, success.SlotData, "skip_dreams", false);
                     TryGetSlotDataValue(ref Core.Instance.Data.damageMultiplier, success.SlotData, "damage_multiplier", 1);
                     TryGetSlotDataValue(ref Core.Instance.Data.scoreDifficulty, success.SlotData, "score_difficulty", ScoreDifficulty.Normal);
                     // can't use properties in ref methods 
