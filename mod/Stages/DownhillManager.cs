@@ -37,6 +37,15 @@ namespace Archipelago.BRC.Stages
                     Core.Logger.LogInfo("Found BarricadeChunks1");
                 }
             }
+
+            foreach (GameplayEvent ge in sceneObjectsRegister.gameplayEvents)
+            {
+                if (ge.name == "CombatEncounter_IreneUnlockChallenge")
+                {
+                    CreateRequirementGraffiti(ge.gameObject, new List<GraffitiSize>() { GraffitiSize.M });
+                    Core.Logger.LogInfo("Found CombatEncounter_IreneUnlockChallenge");
+                }
+            }
         }
 
         public void DeactivateBarricade()

@@ -1,3 +1,7 @@
+## 1.0.5
+
+- Fixed a softlock that could occur in Versum Hill if the player doesn't have any M graffiti.
+
 ## 1.0.4
 
 - Update Archipelago.MultiClient.Net to `6.6.0`.

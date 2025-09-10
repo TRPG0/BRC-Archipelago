@@ -55,9 +55,9 @@ namespace Archipelago.BRC
                         if (brcitem.type == BRCType.GraffitiXL) substring = brcitem.item_name.Substring(15, brcitem.item_name.Length-16);
                         else substring = brcitem.item_name.Substring(14, brcitem.item_name.Length - 15);
 
-                        if (brcitem.type == BRCType.GraffitiM) Core.Instance.stageManager.YesGraffiti(GraffitiSize.M);
-                        else if (brcitem.type == BRCType.GraffitiL) Core.Instance.stageManager.YesGraffiti(GraffitiSize.L);
-                        else if (brcitem.type == BRCType.GraffitiXL) Core.Instance.stageManager.YesGraffiti(GraffitiSize.XL);
+                        if (brcitem.type == BRCType.GraffitiM && !Core.Instance.SaveManager.IsAnyGraffitiUnlocked(GraffitiSize.M)) Core.Instance.stageManager.YesGraffiti(GraffitiSize.M);
+                        else if (brcitem.type == BRCType.GraffitiL && !Core.Instance.SaveManager.IsAnyGraffitiUnlocked(GraffitiSize.L)) Core.Instance.stageManager.YesGraffiti(GraffitiSize.L);
+                        else if (brcitem.type == BRCType.GraffitiXL && !Core.Instance.SaveManager.IsAnyGraffitiUnlocked(GraffitiSize.XL)) Core.Instance.stageManager.YesGraffiti(GraffitiSize.XL);
 
                         GraffitiAppEntry graffiti = WorldHandler.instance.graffitiArtInfo.FindByTitle(substring).unlockable;
                         if (!Core.Instance.Data.limitedGraffiti || Core.Instance.Data.limitedGraffiti &&

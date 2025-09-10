@@ -70,8 +70,11 @@ namespace Archipelago.BRC.Components
             bool has = true;
             foreach (GraffitiSize size in Sizes)
             {
-                if (!Core.Instance.SaveManager.IsAnyGraffitiUnlocked(size)) has = false;
-                break;
+                if (!Core.Instance.SaveManager.IsAnyGraffitiUnlocked(size))
+                {
+                    has = false;
+                    break;
+                }
             }
             return has;
         }
@@ -88,7 +91,7 @@ namespace Archipelago.BRC.Components
 
         public void EnableTrigger(RequirementNeeds source)
         {
-            if (IsActive()) return;
+            //if (IsActive()) return;
             if (Needs == RequirementNeeds.Both)
             {
                 if (HasGraffiti() && HasRep())
@@ -111,7 +114,7 @@ namespace Archipelago.BRC.Components
 
         public void DisableTrigger()
         {
-            if (!IsActive()) return;
+            //if (!IsActive()) return;
             if (Type == RequirementLinkType.Trigger) Trigger.SetActive(false);
             else if (Type == RequirementLinkType.ProgressObject) Trigger.GetComponentInParent<ProgressObject>(true).SetTriggerable(false);
             gameObject.SetActive(true);
