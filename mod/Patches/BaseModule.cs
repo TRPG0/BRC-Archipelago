@@ -108,6 +108,8 @@ namespace Archipelago.BRC.Patches
                         break;
                 }
 
+                if (Story.GetCurrentObjectiveInfo().chapter == Story.Chapter.CHAPTER_6) Core.Instance.Multiworld.SendCompletion();
+
                 if (Core.Instance.stageManager != null) Core.Instance.stageManager.DoStageSetup();
             }
         }

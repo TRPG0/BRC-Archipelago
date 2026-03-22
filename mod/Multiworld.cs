@@ -19,7 +19,7 @@ namespace Archipelago.BRC
 {
     public class Multiworld
     {
-        public static int[] AP_VERSION = new int[] { 0, 6, 1 };
+        public static Version apVersion = new Version(0, 6, 6);
 
         public bool Authenticated;
         public ArchipelagoSession Session;
@@ -116,7 +116,7 @@ namespace Archipelago.BRC
                 "Bomb Rush Cyberfunk",
                 name,
                 ItemsHandlingFlags.AllItems,
-                new Version(AP_VERSION[0], AP_VERSION[1], AP_VERSION[2]),
+                apVersion,
                 null,
                 null,
                 password == "" ? null : password,
